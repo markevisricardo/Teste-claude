@@ -202,6 +202,10 @@ class CFlow_DB {
 	public static function maybe_upgrade() {
 		if ( get_option( 'cflow_db_version' ) !== CFLOW_DB_VERSION ) {
 			self::install();
+			// Atualização sem reativar: cria/define a página do painel se ainda não houver.
+			if ( ! get_option( CFlow_Frontend::PAGE_OPTION ) ) {
+				CFlow_Frontend::request_setup();
+			}
 		}
 	}
 

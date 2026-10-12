@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Comment Flow – Automação de Comentários do Instagram
  * Description:       Plataforma de automações para Instagram pela API oficial da Meta. Cada usuário se cadastra, conecta o próprio Instagram e vê só os seus dados. Painel no shortcode [comment_flow].
- * Version:           0.6.0
+ * Version:           0.6.1
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Author:            Comment Flow
@@ -12,8 +12,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'CFLOW_VERSION', '0.6.0' );
-define( 'CFLOW_DB_VERSION', '4' );
+define( 'CFLOW_VERSION', '0.6.1' );
+define( 'CFLOW_DB_VERSION', '5' );
 define( 'CFLOW_FILE', __FILE__ );
 define( 'CFLOW_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CFLOW_URL', plugin_dir_url( __FILE__ ) );
@@ -44,6 +44,7 @@ if ( is_admin() ) {
 
 register_activation_hook( __FILE__, array( 'CFlow_DB', 'install' ) );
 register_activation_hook( __FILE__, array( 'CFlow_Auth', 'add_role' ) );
+register_activation_hook( __FILE__, array( 'CFlow_Frontend', 'request_setup' ) );
 register_activation_hook( __FILE__, array( 'CFlow_Token_Refresher', 'schedule' ) );
 register_deactivation_hook( __FILE__, array( 'CFlow_Token_Refresher', 'unschedule' ) );
 

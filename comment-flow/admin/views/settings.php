@@ -4,6 +4,8 @@
  *
  * @var array        $settings
  * @var string|false $notice
+ * @var int          $page_id
+ * @var bool         $is_front
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -41,12 +43,30 @@ $fields  = array(
 		<section class="<?php echo esc_attr( CFlow_App::CARD ); ?>">
 			<h2 class="m-0 mb-2 p-0 text-lg font-semibold text-white"><?php esc_html_e( '1. Página do painel', 'comment-flow' ); ?></h2>
 			<p class="text-sm leading-6 text-neutral-400">
-				<?php esc_html_e( 'Coloque o shortcode abaixo na página principal (ou em qualquer página). Quem não tem conta vê "Entrar / Criar conta"; quem está logado vê o painel.', 'comment-flow' ); ?>
+				<?php esc_html_e( 'A página com o shortcode [comment_flow] mostra "Entrar / Criar conta" para visitantes e o painel para quem está logado.', 'comment-flow' ); ?>
 			</p>
-			<div class="mt-4 flex flex-wrap items-center gap-3">
-				<code class="text-sm">[comment_flow]</code>
-				<span class="text-xs text-neutral-500"><?php echo esc_html( sprintf( /* translators: %s: URL */ __( 'Página atual do painel: %s', 'comment-flow' ), $app_url ) ); ?></span>
+			<div class="mt-4 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-solid <?php echo $is_front ? 'border-blue-500/30 bg-blue-500/5' : 'border-red-500/30 bg-red-500/10'; ?> p-4">
+				<div class="text-sm">
+					<?php if ( $is_front ) : ?>
+						<p class="font-semibold text-white"><?php esc_html_e( '✓ O painel é a página inicial do site.', 'comment-flow' ); ?></p>
+					<?php elseif ( $page_id ) : ?>
+						<p class="font-semibold text-white"><?php esc_html_e( 'O painel está numa página, mas ela não é a página inicial.', 'comment-flow' ); ?></p>
+					<?php else : ?>
+						<p class="font-semibold text-white"><?php esc_html_e( 'Ainda não há uma página com o painel.', 'comment-flow' ); ?></p>
+					<?php endif; ?>
+					<p class="mt-1 text-xs text-neutral-400"><?php echo esc_html( sprintf( /* translators: %s: URL */ __( 'Endereço do painel: %s', 'comment-flow' ), $app_url ) ); ?></p>
+				</div>
+				<?php if ( ! $is_front ) : ?>
+					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+						<input type="hidden" name="action" value="cflow_setup_page">
+						<?php wp_nonce_field( 'cflow_setup_page' ); ?>
+						<button type="submit" class="<?php echo esc_attr( CFlow_App::BTN_PRIMARY ); ?>"><?php echo esc_html( $page_id ? __( 'Usar como página inicial', 'comment-flow' ) : __( 'Criar página e usar como inicial', 'comment-flow' ) ); ?></button>
+					</form>
+				<?php endif; ?>
 			</div>
+			<p class="mt-4 text-xs leading-5 text-neutral-500">
+				<?php esc_html_e( 'Logado como administrador, você vê o painel, e não o cadastro. Para conferir a tela de cadastro, abra o site numa janela anônima. Se usar plugin de cache, exclua essa página do cache.', 'comment-flow' ); ?>
+			</p>
 		</section>
 
 		<section class="<?php echo esc_attr( CFlow_App::CARD ); ?>">

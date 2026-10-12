@@ -27,7 +27,7 @@ Ele usa somente a **API oficial da Meta** (Instagram API with Instagram Login). 
 
 1. Crie o subdomínio com um WordPress novo e HTTPS.
 2. Envie o `.zip` em **Plugins > Adicionar novo > Enviar plugin** e ative.
-3. Crie uma página (ex.: "Início") com o conteúdo `[comment_flow]` e defina-a como página inicial em **Configurações > Leitura**.
+3. Ao ativar, o plugin cria a página "Comment Flow" com `[comment_flow]` e, se o site ainda mostra os posts na home, já a define como página inicial. Se o site já tinha outra página inicial, use o botão **Usar como página inicial** em *Comment Flow > Configurações*. Também funciona com Elementor e outros construtores: basta colocar o shortcode na página.
 4. Em **wp-admin > Comment Flow > Configurações**, copie as 5 URLs para o app da Meta (próxima seção) e salve o **App ID** e o **App Secret** do Instagram.
 5. Abra o site: aparece a tela **Entrar / Criar conta**. Depois do cadastro, a pessoa cai em **Minha conta** e clica em **Conectar com o Instagram**.
 
