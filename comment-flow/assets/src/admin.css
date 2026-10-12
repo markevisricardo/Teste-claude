@@ -1,0 +1,235 @@
+/*
+ * Fonte do CSS do painel. Gere o arquivo final com:  npm run build:css
+ * (o resultado vai para assets/admin.css, que é o que o WordPress carrega).
+ */
+
+/* Com o preflight desligado, "base" gera só as variáveis --tw-* usadas por ring/shadow/transform. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------
+ * Fundo escuro no wp-admin, só nas telas do plugin (body.cflow-dark).
+ * ------------------------------------------------------------------- */
+
+html.wp-toolbar:has(body.cflow-dark),
+body.cflow-dark {
+	background: #000;
+}
+
+body.cflow-dark #wpcontent,
+body.cflow-dark #wpbody,
+body.cflow-dark #wpbody-content {
+	background: transparent;
+}
+
+body.cflow-dark #wpfooter,
+body.cflow-dark #wpfooter a {
+	color: #525252;
+}
+
+/* Avisos de outros plugins e do WordPress dentro das nossas telas. */
+body.cflow-dark .notice,
+body.cflow-dark div.updated,
+body.cflow-dark div.error {
+	background: #0a0a0a;
+	color: #e5e5e5;
+	border: 1px solid #262626;
+	border-left: 4px solid #3b82f6;
+	border-radius: 12px;
+	box-shadow: none;
+	margin: 0 0 16px;
+}
+
+body.cflow-dark .notice-error,
+body.cflow-dark div.error {
+	border-left-color: #ef4444;
+}
+
+body.cflow-dark .notice a {
+	color: #60a5fa;
+}
+
+body.cflow-dark .notice-dismiss::before {
+	color: #737373;
+}
+
+/* Painel em tela cheia no front-end (templates/app.php). */
+html:has(> body.cflow-screen),
+body.cflow-screen {
+	background: #000;
+	margin: 0;
+	min-height: 100%;
+}
+
+/* ---------------------------------------------------------------------
+ * "Reset" escopado (o preflight está desligado para não afetar o wp-admin).
+ * ------------------------------------------------------------------- */
+
+.cflow-app {
+	color: #fff;
+	font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+.cflow-app h1,
+.cflow-app h2,
+.cflow-app h3,
+.cflow-app p,
+.cflow-app ul,
+.cflow-app ol,
+.cflow-app li,
+.cflow-app figure {
+	margin: 0;
+	padding: 0;
+	color: inherit;
+}
+
+.cflow-app *,
+.cflow-app *::before,
+.cflow-app *::after {
+	box-sizing: border-box;
+}
+
+.cflow-app a {
+	text-decoration: none;
+}
+
+/* Botões e campos herdam a fonte (o tema pode definir outra). */
+.cflow-app button,
+.cflow-app input,
+.cflow-app select,
+.cflow-app textarea {
+	font-family: inherit;
+	letter-spacing: normal;
+	text-transform: none;
+}
+
+/* Elementos escondidos pelo seletor de gatilho (vence display das utilities). */
+.cflow-app [hidden] {
+	display: none !important;
+}
+
+.cflow-app a:focus {
+	box-shadow: none;
+	outline: 2px solid #3b82f6;
+	outline-offset: 2px;
+}
+
+.cflow-app code {
+	background: #171717;
+	color: #bfdbfe;
+	border-radius: 6px;
+	padding: 2px 6px;
+	font-size: 12px;
+}
+
+.cflow-app input[type="text"],
+.cflow-app input[type="url"],
+.cflow-app input[type="email"],
+.cflow-app input[type="search"],
+.cflow-app input[type="password"],
+.cflow-app input[type="number"],
+.cflow-app textarea,
+.cflow-app select {
+	box-shadow: none;
+	min-height: 40px;
+	max-width: none;
+}
+
+.cflow-app input:focus,
+.cflow-app textarea:focus,
+.cflow-app select:focus {
+	border-color: #3b82f6;
+	box-shadow: 0 0 0 1px #3b82f6;
+	outline: none;
+}
+
+.cflow-app select {
+	-webkit-appearance: none;
+	appearance: none;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='%23a3a3a3'%3E%3Cpath d='M5.5 7.5 10 12l4.5-4.5'/%3E%3C/svg%3E");
+	background-position: right 10px center;
+	background-repeat: no-repeat;
+	background-size: 16px;
+	padding-right: 36px;
+}
+
+.cflow-app ::placeholder {
+	color: #525252;
+	opacity: 1;
+}
+
+/* Paginação gerada pelo paginate_links(). */
+.cflow-app .page-numbers {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 36px;
+	height: 36px;
+	padding: 0 10px;
+	margin-right: 4px;
+	border: 1px solid #262626;
+	border-radius: 8px;
+	color: #d4d4d4;
+	font-size: 13px;
+}
+
+.cflow-app a.page-numbers:hover {
+	border-color: #3b82f6;
+	color: #fff;
+}
+
+.cflow-app .page-numbers.current {
+	background: #2563eb;
+	border-color: #2563eb;
+	color: #fff;
+}
+
+/* ---------------------------------------------------------------------
+ * Fundo com brilho azul e grade de pontos (painel e telas do wp-admin).
+ * ------------------------------------------------------------------- */
+
+.cflow-app .cflow-bg,
+body.cflow-dark #wpwrap {
+	background-color: #000;
+	background-image:
+		radial-gradient(ellipse 70% 45% at 50% -5%, rgba(37, 99, 235, 0.32), transparent 70%),
+		radial-gradient(ellipse 40% 35% at 100% 100%, rgba(29, 78, 216, 0.18), transparent 70%),
+		radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.07) 1px, transparent 0);
+	background-size: 100% 100%, 100% 100%, 24px 24px;
+	background-attachment: fixed;
+}
+
+/* Cabeçalho azul: brilho e textura por cima do gradiente. */
+.cflow-app .cflow-hero::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-image:
+		radial-gradient(circle at 85% -20%, rgba(255, 255, 255, 0.25), transparent 45%),
+		radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.12) 1px, transparent 0);
+	background-size: 100% 100%, 18px 18px;
+	pointer-events: none;
+}
+
+/* Botões dentro do cabeçalho azul: o primário fica branco. */
+.cflow-app .cflow-hero .bg-blue-600 {
+	background-color: #fff;
+	color: #1d4ed8;
+	box-shadow: 0 10px 15px -3px rgba(23, 37, 84, 0.35);
+}
+
+.cflow-app .cflow-hero .bg-blue-600:hover {
+	background-color: #eff6ff;
+	color: #1e40af;
+}
+
+.cflow-app .cflow-hero .border-neutral-700 {
+	border-color: rgba(255, 255, 255, 0.4);
+}
+
+.cflow-app .cflow-hero .border-neutral-700:hover {
+	border-color: #fff;
+	color: #fff;
+}
