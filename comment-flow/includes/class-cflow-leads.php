@@ -2,6 +2,7 @@
 /**
  * Leads: uma linha por pessoa por automação, com os dados capturados na DM.
  * Ao contrário dos logs, leads não são apagados automaticamente.
+ * Todas as consultas filtram pelo inquilino atual (CFlow_Tenant).
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -33,8 +34,9 @@ class CFlow_Leads {
 
 		$wpdb->query(
 			$wpdb->prepare(
-				"INSERT INTO {$table} (automation_id, comment_from_id, username, last_comment, created_at, updated_at) VALUES (%d, %s, %s, %s, %s, %s)
+				"INSERT INTO {$table} (user_id, automation_id, comment_from_id, username, last_comment, created_at, updated_at) VALUES (%d, %d, %s, %s, %s, %s, %s)
 				ON DUPLICATE KEY UPDATE username = IF(VALUES(username) = '', username, VALUES(username)), last_comment = VALUES(last_comment), comments_count = comments_count + 1, updated_at = VALUES(updated_at)",
+				CFlow_Tenant::id(),
 				$automation_id,
 				$person_id,
 				$username,
@@ -51,7 +53,8 @@ class CFlow_Leads {
 		global $wpdb;
 		return (int) $wpdb->get_var(
 			$wpdb->prepare(
-				'SELECT id FROM ' . CFlow_DB::leads_table() . ' WHERE automation_id = %d AND comment_from_id = %s',
+				'SELECT id FROM ' . CFlow_DB::leads_table() . ' WHERE user_id = %d AND automation_id = %d AND comment_from_id = %s',
+				CFlow_Tenant::id(),
 				$automation_id,
 				$comment_from_id
 			)
@@ -61,12 +64,12 @@ class CFlow_Leads {
 	public static function update( $id, array $data ) {
 		global $wpdb;
 		$data['updated_at'] = current_time( 'mysql', true );
-		$wpdb->update( CFlow_DB::leads_table(), $data, array( 'id' => (int) $id ) );
+		$wpdb->update( CFlow_DB::leads_table(), $data, array( 'id' => (int) $id, 'user_id' => CFlow_Tenant::id() ) );
 	}
 
 	public static function delete( $id ) {
 		global $wpdb;
-		$wpdb->delete( CFlow_DB::leads_table(), array( 'id' => (int) $id ) );
+		$wpdb->delete( CFlow_DB::leads_table(), array( 'id' => (int) $id, 'user_id' => CFlow_Tenant::id() ) );
 	}
 
 	/**
@@ -78,9 +81,10 @@ class CFlow_Leads {
 		$now = current_time( 'mysql', true );
 		return (bool) $wpdb->query(
 			$wpdb->prepare(
-				'UPDATE ' . CFlow_DB::leads_table() . ' SET locked_until = %s WHERE id = %d AND ( locked_until IS NULL OR locked_until < %s )',
+				'UPDATE ' . CFlow_DB::leads_table() . ' SET locked_until = %s WHERE id = %d AND user_id = %d AND ( locked_until IS NULL OR locked_until < %s )',
 				gmdate( 'Y-m-d H:i:s', time() + MINUTE_IN_SECONDS ),
 				$id,
+				CFlow_Tenant::id(),
 				$now
 			)
 		);
@@ -88,7 +92,7 @@ class CFlow_Leads {
 
 	public static function unlock( $id ) {
 		global $wpdb;
-		$wpdb->update( CFlow_DB::leads_table(), array( 'locked_until' => null ), array( 'id' => (int) $id ) );
+		$wpdb->update( CFlow_DB::leads_table(), array( 'locked_until' => null ), array( 'id' => (int) $id, 'user_id' => CFlow_Tenant::id() ) );
 	}
 
 	/* ---------------------------------------------------------------------
@@ -98,7 +102,7 @@ class CFlow_Leads {
 	public static function get( $id ) {
 		global $wpdb;
 		$row = $wpdb->get_row(
-			$wpdb->prepare( 'SELECT * FROM ' . CFlow_DB::leads_table() . ' WHERE id = %d', $id ),
+			$wpdb->prepare( 'SELECT * FROM ' . CFlow_DB::leads_table() . ' WHERE id = %d AND user_id = %d', $id, CFlow_Tenant::id() ),
 			ARRAY_A
 		);
 		return $row ? $row : null;
@@ -112,7 +116,8 @@ class CFlow_Leads {
 		$steps = "'" . implode( "','", self::OPEN_STEPS ) . "'";
 		$row   = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM ' . CFlow_DB::leads_table() . " WHERE ( ig_scoped_id = %s OR comment_from_id = %s ) AND capture_step IN ({$steps}) ORDER BY updated_at DESC, id DESC LIMIT 1",
+				'SELECT * FROM ' . CFlow_DB::leads_table() . " WHERE user_id = %d AND ( ig_scoped_id = %s OR comment_from_id = %s ) AND capture_step IN ({$steps}) ORDER BY updated_at DESC, id DESC LIMIT 1",
+				CFlow_Tenant::id(),
 				$sender_id,
 				$sender_id
 			),
@@ -156,8 +161,8 @@ class CFlow_Leads {
 
 	private static function where( array $args ) {
 		global $wpdb;
-		$clauses = array();
-		$params  = array();
+		$clauses = array( 'user_id = %d' );
+		$params  = array( CFlow_Tenant::id() );
 
 		if ( $args['automation_id'] ) {
 			$clauses[] = 'automation_id = %d';
@@ -169,7 +174,7 @@ class CFlow_Leads {
 			array_push( $params, $like, $like, $like );
 		}
 
-		return array( $clauses ? 'WHERE ' . implode( ' AND ', $clauses ) : '', $params );
+		return array( 'WHERE ' . implode( ' AND ', $clauses ), $params );
 	}
 
 	/* ---------------------------------------------------------------------

@@ -38,8 +38,9 @@ class CFlow_Conversation {
 	/**
 	 * Processa uma mensagem recebida (executado pela fila).
 	 */
-	public static function handle( $sender_id, $text, $mid, $attempt = 0 ) {
-		$settings = CFlow_Settings::all();
+	public static function handle( $user_id, $sender_id, $text, $mid, $attempt = 0 ) {
+		CFlow_Tenant::set( (int) $user_id );
+		$settings = CFlow_Accounts::current();
 		if ( '' === $settings['access_token'] || '' === $settings['ig_user_id'] ) {
 			return;
 		}

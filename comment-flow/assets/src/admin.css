@@ -51,6 +51,14 @@ body.cflow-dark .notice-dismiss::before {
 	color: #737373;
 }
 
+/* Painel em tela cheia no front-end (templates/app.php). */
+html:has(> body.cflow-screen),
+body.cflow-screen {
+	background: #000;
+	margin: 0;
+	min-height: 100%;
+}
+
 /* ---------------------------------------------------------------------
  * "Reset" escopado (o preflight está desligado para não afetar o wp-admin).
  * ------------------------------------------------------------------- */
@@ -84,6 +92,16 @@ body.cflow-dark .notice-dismiss::before {
 	text-decoration: none;
 }
 
+/* Botões e campos herdam a fonte (o tema pode definir outra). */
+.cflow-app button,
+.cflow-app input,
+.cflow-app select,
+.cflow-app textarea {
+	font-family: inherit;
+	letter-spacing: normal;
+	text-transform: none;
+}
+
 /* Elementos escondidos pelo seletor de gatilho (vence display das utilities). */
 .cflow-app [hidden] {
 	display: none !important;
@@ -105,6 +123,7 @@ body.cflow-dark .notice-dismiss::before {
 
 .cflow-app input[type="text"],
 .cflow-app input[type="url"],
+.cflow-app input[type="email"],
 .cflow-app input[type="search"],
 .cflow-app input[type="password"],
 .cflow-app input[type="number"],
@@ -124,6 +143,8 @@ body.cflow-dark .notice-dismiss::before {
 }
 
 .cflow-app select {
+	-webkit-appearance: none;
+	appearance: none;
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='%23a3a3a3'%3E%3Cpath d='M5.5 7.5 10 12l4.5-4.5'/%3E%3C/svg%3E");
 	background-position: right 10px center;
 	background-repeat: no-repeat;

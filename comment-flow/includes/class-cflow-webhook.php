@@ -62,8 +62,8 @@ class CFlow_Webhook {
 	}
 
 	/**
-	 * Enfileira os comentários e mensagens de um payload da Meta (recebido
-	 * direto, no modo app próprio, ou repassado pelo hub, no modo licença).
+	 * Distribui um payload da Meta: cada entrada vai para o usuário dono da
+	 * conta do Instagram (entry.id). Contas desconhecidas são ignoradas.
 	 *
 	 * @return int Quantos eventos foram enfileirados.
 	 */
@@ -72,8 +72,28 @@ class CFlow_Webhook {
 			return 0;
 		}
 
-		$own_id   = (string) CFlow_Settings::get( 'ig_user_id' );
-		$delay    = (int) CFlow_Settings::get( 'delay_seconds' );
+		$received = 0;
+		foreach ( $payload['entry'] as $entry ) {
+			$account = ! empty( $entry['id'] ) ? CFlow_Accounts::by_ig_user( (string) $entry['id'] ) : null;
+			if ( ! $account ) {
+				continue;
+			}
+			$received += CFlow_Tenant::run_as(
+				(int) $account['user_id'],
+				static function () use ( $entry, $account ) {
+					return self::process_account_entries( array( 'entry' => array( $entry ) ), $account );
+				}
+			);
+		}
+		return $received;
+	}
+
+	/**
+	 * Enfileira os comentários e mensagens de uma conta (inquilino já definido).
+	 */
+	private static function process_account_entries( array $payload, array $account ) {
+		$own_id   = (string) $account['ig_user_id'];
+		$delay    = (int) $account['delay_seconds'];
 		$received = 0;
 
 		foreach ( self::extract_comments( $payload ) as $comment ) {

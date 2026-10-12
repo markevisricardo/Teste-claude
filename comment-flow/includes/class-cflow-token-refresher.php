@@ -32,25 +32,21 @@ class CFlow_Token_Refresher {
 	public static function run() {
 		CFlow_DB::purge_logs_older_than( self::LOG_RETENTION );
 
-		$settings = CFlow_Settings::all();
-		if ( '' === $settings['access_token'] ) {
-			return;
-		}
-		if ( (int) $settings['token_expires_at'] - time() > self::REFRESH_WINDOW ) {
-			return;
-		}
+		// Renova o token de cada usuário que vence nos próximos dias.
+		foreach ( CFlow_Accounts::expiring( self::REFRESH_WINDOW ) as $account ) {
+			$api    = new CFlow_Instagram_API( $account['access_token'] );
+			$result = $api->refresh_token();
+			if ( is_wp_error( $result ) || empty( $result['access_token'] ) ) {
+				continue; // Tenta de novo amanhã; o painel mostra a data de expiração.
+			}
 
-		$api    = new CFlow_Instagram_API( $settings['access_token'] );
-		$result = $api->refresh_token();
-		if ( is_wp_error( $result ) || empty( $result['access_token'] ) ) {
-			return; // Tenta de novo amanhã; o painel mostra a data de expiração.
+			CFlow_Accounts::update(
+				$account['user_id'],
+				array(
+					'access_token'     => $result['access_token'],
+					'token_expires_at' => time() + ( isset( $result['expires_in'] ) ? (int) $result['expires_in'] : 60 * DAY_IN_SECONDS ),
+				)
+			);
 		}
-
-		CFlow_Settings::update(
-			array(
-				'access_token'     => $result['access_token'],
-				'token_expires_at' => time() + ( isset( $result['expires_in'] ) ? (int) $result['expires_in'] : 60 * DAY_IN_SECONDS ),
-			)
-		);
 	}
 }

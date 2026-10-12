@@ -26,7 +26,11 @@ class CFlow_Instagram_API {
 	private $access_token;
 
 	public function __construct( $access_token = null ) {
-		$this->access_token = null === $access_token ? CFlow_Settings::get( 'access_token' ) : $access_token;
+		if ( null === $access_token ) {
+			$account      = CFlow_Accounts::current();
+			$access_token = $account['access_token'];
+		}
+		$this->access_token = $access_token;
 	}
 
 	/* ---------------------------------------------------------------------

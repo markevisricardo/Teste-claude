@@ -20,7 +20,9 @@ class CFlow_Processor {
 			return;
 		}
 
-		$settings = CFlow_Settings::all();
+		// Daqui em diante, tudo pertence ao dono do log.
+		CFlow_Tenant::set( (int) $log['user_id'] );
+		$settings = CFlow_Accounts::current();
 		if ( '' === $settings['access_token'] || '' === $settings['ig_user_id'] ) {
 			CFlow_DB::update_log( $log_id, array( 'status' => 'failed', 'error' => __( 'Conta do Instagram não conectada.', 'comment-flow' ) ) );
 			return;

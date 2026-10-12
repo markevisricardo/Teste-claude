@@ -1,9 +1,9 @@
 {
   "name": "comment-flow-build",
   "private": true,
-  "description": "Build do CSS (Tailwind) dos plugins Comment Flow e Comment Flow Hub",
+  "description": "Build do CSS (Tailwind) do plugin Comment Flow",
   "scripts": {
-    "build:css": "tailwindcss -c tailwind.config.js -i comment-flow/assets/src/admin.css -o comment-flow/assets/admin.css --minify && cp comment-flow/assets/admin.css comment-flow-hub/assets/admin.css",
+    "build:css": "tailwindcss -c tailwind.config.js -i comment-flow/assets/src/admin.css -o comment-flow/assets/admin.css --minify",
     "watch:css": "tailwindcss -c tailwind.config.js -i comment-flow/assets/src/admin.css -o comment-flow/assets/admin.css --watch"
   },
   "devDependencies": {

@@ -1,7 +1,7 @@
 <?php
 /**
- * Registro das pessoas com quem a conta já conversou pela DM. Serve para
- * saber se uma mensagem é a primeira (gatilho de boas-vindas).
+ * Registro das pessoas com quem a conta do inquilino já conversou pela DM.
+ * Serve para saber se uma mensagem é a primeira (gatilho de boas-vindas).
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -20,7 +20,8 @@ class CFlow_Contacts {
 
 		return (bool) $wpdb->query(
 			$wpdb->prepare(
-				'INSERT IGNORE INTO ' . CFlow_DB::contacts_table() . ' (ig_scoped_id, first_seen_at) VALUES (%s, %s)',
+				'INSERT IGNORE INTO ' . CFlow_DB::contacts_table() . ' (user_id, ig_scoped_id, first_seen_at) VALUES (%d, %s, %s)',
+				CFlow_Tenant::id(),
 				$ig_scoped_id,
 				current_time( 'mysql', true )
 			)

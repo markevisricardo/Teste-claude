@@ -1,33 +1,46 @@
 # Comment Flow
 
-Plugin WordPress de automações para Instagram, no estilo ManyChat, tudo pela API oficial da Meta. Ele responde comentários por palavra-chave com DM (Private Reply), responde palavras-chave e a primeira mensagem no direct, exige que a pessoa siga a conta antes de liberar o link ("seguir para liberar"), captura e-mail e telefone e exporta os leads em CSV.
+Plataforma de automações para Instagram no estilo ManyChat, feita como **um único plugin WordPress** e usando só a API oficial da Meta.
+
+Cada pessoa se cadastra com e-mail e senha, conecta o próprio Instagram em um clique e vê **apenas os seus dados**: automações, leads e logs. O painel fica no front-end do site, na página onde você colocar o shortcode `[comment_flow]` (por exemplo, a home de `commentflow.aceleradordeclinicas.com.br`).
+
+O que o plugin faz:
+
+- responde comentários por palavra-chave e manda DM (Private Reply);
+- responde palavras-chave e a primeira mensagem no direct;
+- só libera o link para quem segue a conta ("seguir para liberar");
+- captura e-mail e telefone;
+- exporta os leads em CSV.
 
 | Pasta | O que é |
 |---|---|
-| [`comment-flow/`](comment-flow/) | Plugin instalado no site de cada cliente ([README](comment-flow/README.md)) |
-| [`comment-flow-hub/`](comment-flow-hub/) | Servidor central: app da Meta, licenças e repasse dos webhooks para os clientes ([README](comment-flow-hub/README.md)) |
+| [`comment-flow/`](comment-flow/) | O plugin ([README](comment-flow/README.md)) |
 
 ## Telas
 
-| Automações | Leads |
+| Entrar / criar conta | Automações |
 |---|---|
-| ![Automações](docs/screenshots/automations.png) | ![Leads](docs/screenshots/leads.png) |
+| ![Entrar](docs/screenshots/login.png) | ![Automações](docs/screenshots/dashboard.png) |
 
-| Automação por comentário | Automação por DM (seguir para liberar) |
+| Minha conta (conectar o Instagram) | Leads |
 |---|---|
-| ![Editar automação](docs/screenshots/edit.png) | ![Automação por DM](docs/screenshots/edit-dm.png) |
+| ![Minha conta](docs/screenshots/account-new.png) | ![Leads](docs/screenshots/leads.png) |
 
-| Configurações (modo licença) | Hub: licenças dos clientes |
+| Editor de automação | Logs |
 |---|---|
-| ![Configurações](docs/screenshots/settings-license.png) | ![Hub](docs/screenshots/hub-licenses.png) |
+| ![Editor](docs/screenshots/edit.png) | ![Logs](docs/screenshots/logs.png) |
+
+| wp-admin: configurações da plataforma | wp-admin: usuários |
+|---|---|
+| ![Configurações](docs/screenshots/admin-settings.png) | ![Usuários](docs/screenshots/admin-users.png) |
 
 ## Desenvolvimento
 
-O CSS do painel é feito com Tailwind CSS e já vem compilado em `comment-flow/assets/admin.css`. Para gerar de novo depois de mudar as telas:
+O CSS é feito com Tailwind CSS e já vem compilado em `comment-flow/assets/admin.css`. Para gerar de novo depois de mudar as telas:
 
 ```bash
 npm install
 npm run build:css
 ```
 
-Para instalar no WordPress, envie só a pasta do plugin (ou um `.zip` dela): `comment-flow/` nos sites dos clientes e `comment-flow-hub/` no site do hub. `node_modules`, `package.json` e `docs/` não precisam ir para o site.
+Para instalar no WordPress, envie só a pasta `comment-flow/` (ou um `.zip` dela). `node_modules`, `package.json` e `docs/` não vão para o site.
