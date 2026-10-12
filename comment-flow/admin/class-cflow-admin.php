@@ -36,6 +36,9 @@ class CFlow_Admin {
 		add_action( 'admin_post_cflow_toggle_automation', array( __CLASS__, 'toggle_automation' ) );
 		add_action( 'admin_post_cflow_export_leads', array( __CLASS__, 'export_leads' ) );
 		add_action( 'admin_post_cflow_delete_lead', array( __CLASS__, 'delete_lead' ) );
+		add_action( 'admin_post_cflow_set_mode', array( __CLASS__, 'set_mode' ) );
+		add_action( 'admin_post_cflow_activate_license', array( __CLASS__, 'activate_license' ) );
+		add_action( 'admin_post_cflow_remove_license', array( __CLASS__, 'remove_license' ) );
 	}
 
 	public static function menu() {
@@ -224,11 +227,13 @@ class CFlow_Admin {
 	public static function save_settings() {
 		self::guard( 'cflow_save_settings' );
 
-		$values = array(
-			'app_id'        => sanitize_text_field( wp_unslash( $_POST['app_id'] ?? '' ) ),
-			'verify_token'  => sanitize_text_field( wp_unslash( $_POST['verify_token'] ?? '' ) ),
-			'delay_seconds' => min( 300, absint( $_POST['delay_seconds'] ?? 5 ) ),
-		);
+		$values = array( 'delay_seconds' => min( 300, absint( $_POST['delay_seconds'] ?? 5 ) ) );
+		// Os campos do app próprio só vêm no formulário desse modo.
+		foreach ( array( 'app_id', 'verify_token' ) as $field ) {
+			if ( isset( $_POST[ $field ] ) ) {
+				$values[ $field ] = sanitize_text_field( wp_unslash( $_POST[ $field ] ) );
+			}
+		}
 
 		// Campo de segredo vazio = manter o valor atual.
 		$secret = trim( (string) wp_unslash( $_POST['app_secret'] ?? '' ) );
@@ -240,6 +245,73 @@ class CFlow_Admin {
 		CFlow_Settings::ensure_verify_token();
 
 		self::redirect( 'cflow-settings', 'success', __( 'Configurações salvas.', 'comment-flow' ) );
+	}
+
+	/**
+	 * Troca entre licença (app central) e app próprio. A conta conectada é
+	 * desconectada, porque o token pertence ao app do modo anterior.
+	 */
+	public static function set_mode() {
+		self::guard( 'cflow_set_mode' );
+		$mode = sanitize_key( $_POST['mode'] ?? '' );
+		if ( ! in_array( $mode, array( 'hub', 'own' ), true ) || $mode === CFlow_Settings::mode() ) {
+			self::redirect( 'cflow-settings', 'success', __( 'Nada mudou.', 'comment-flow' ) );
+		}
+		CFlow_Settings::update( array_merge( array( 'mode' => $mode ), self::disconnected_account() ) );
+		self::redirect( 'cflow-settings', 'success', 'hub' === $mode ? __( 'Modo licença ativado.', 'comment-flow' ) : __( 'Modo app próprio ativado.', 'comment-flow' ) );
+	}
+
+	public static function activate_license() {
+		self::guard( 'cflow_activate_license' );
+		$key = strtoupper( preg_replace( '/[^A-Za-z0-9-]/', '', (string) wp_unslash( $_POST['license_key'] ?? '' ) ) );
+		if ( '' === $key ) {
+			self::redirect( 'cflow-settings', 'error', __( 'Informe a chave de licença.', 'comment-flow' ) );
+		}
+		if ( ! is_ssl() && 0 !== strpos( home_url(), 'https://' ) ) {
+			self::redirect( 'cflow-settings', 'error', __( 'O site precisa usar HTTPS para ativar a licença.', 'comment-flow' ) );
+		}
+
+		$result = CFlow_Hub::activate( $key );
+		if ( is_wp_error( $result ) ) {
+			self::redirect( 'cflow-settings', 'error', $result->get_error_message() );
+		}
+
+		CFlow_Settings::update(
+			array(
+				'mode'        => 'hub',
+				'license_key' => $key,
+				'site_secret' => (string) $result['site_secret'],
+				'hub_client'  => (string) $result['client_name'],
+			)
+		);
+		self::redirect( 'cflow-settings', 'success', __( 'Licença ativada! Agora conecte a conta do Instagram.', 'comment-flow' ) );
+	}
+
+	public static function remove_license() {
+		self::guard( 'cflow_remove_license' );
+		if ( CFlow_Settings::has_license() ) {
+			CFlow_Hub::signed( 'deactivate' ); // Libera a chave no hub (se ele estiver acessível).
+		}
+		CFlow_Settings::update(
+			array_merge(
+				array(
+					'license_key' => '',
+					'site_secret' => '',
+					'hub_client'  => '',
+				),
+				self::disconnected_account()
+			)
+		);
+		self::redirect( 'cflow-settings', 'success', __( 'Licença removida deste site.', 'comment-flow' ) );
+	}
+
+	private static function disconnected_account() {
+		return array(
+			'access_token'     => '',
+			'token_expires_at' => 0,
+			'ig_user_id'       => '',
+			'ig_username'      => '',
+		);
 	}
 
 	public static function save_automation() {

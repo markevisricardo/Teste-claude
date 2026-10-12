@@ -10,7 +10,7 @@ class CFlow_Settings {
 	const OPTION = 'cflow_settings';
 
 	/** Campos guardados criptografados. */
-	const SECRET_FIELDS = array( 'app_secret', 'access_token' );
+	const SECRET_FIELDS = array( 'app_secret', 'access_token', 'site_secret' );
 
 	public static function defaults() {
 		return array(
@@ -22,6 +22,11 @@ class CFlow_Settings {
 			'ig_user_id'       => '',
 			'ig_username'      => '',
 			'delay_seconds'    => 5,
+			// Modo de conexão: 'hub' (licença do app central) ou 'own' (app próprio).
+			'mode'             => '',
+			'license_key'      => '',
+			'site_secret'      => '',
+			'hub_client'       => '',
 		);
 	}
 
@@ -52,6 +57,22 @@ class CFlow_Settings {
 		}
 
 		update_option( self::OPTION, $data, false );
+	}
+
+	/**
+	 * Modo de conexão. Instalações antigas com app próprio continuam nele.
+	 */
+	public static function mode() {
+		$s = self::all();
+		if ( in_array( $s['mode'], array( 'hub', 'own' ), true ) ) {
+			return $s['mode'];
+		}
+		return '' !== $s['app_id'] ? 'own' : 'hub';
+	}
+
+	public static function has_license() {
+		$s = self::all();
+		return '' !== $s['license_key'] && '' !== $s['site_secret'];
 	}
 
 	public static function is_connected() {

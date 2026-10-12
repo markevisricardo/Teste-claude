@@ -21,7 +21,16 @@ Ele usa somente a **API oficial da Meta** (Instagram API with Instagram Login). 
 1. Copie a pasta `comment-flow/` para `wp-content/plugins/`, ou compacte-a em `.zip` e envie em Plugins > Adicionar novo.
 2. Ative o plugin. O menu **Comment Flow** vai aparecer no painel.
 
-## Configurando o app na Meta
+## Modos de conexão
+
+Em **Comment Flow → Configurações** você escolhe o modo:
+
+- **Licença Comment Flow** (para clientes): cole a chave recebida, clique em **Ativar licença** e depois em **Conectar com o Instagram**. Não precisa criar nada na Meta: o login e os webhooks passam pelo [Comment Flow Hub](../comment-flow-hub/README.md).
+- **App próprio da Meta:** você cria e configura o seu app, como descrito abaixo. As instalações antigas continuam neste modo.
+
+Trocar de modo desconecta a conta do Instagram, porque o token pertence ao app do modo anterior. As automações e os leads continuam.
+
+## Configurando o app na Meta (modo app próprio)
 
 1. Em developers.facebook.com, crie um app do tipo **Empresa** e adicione o produto **Instagram**.
 2. Abra **Instagram > Configuração da API com login do Instagram**:

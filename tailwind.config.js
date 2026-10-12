@@ -6,7 +6,7 @@
  */
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-	content: ['./comment-flow/admin/**/*.php'],
+	content: ['./comment-flow/admin/**/*.php', './comment-flow-hub/admin/**/*.php'],
 	important: '.cflow-app',
 	corePlugins: {
 		preflight: false,

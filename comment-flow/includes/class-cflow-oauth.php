@@ -18,6 +18,7 @@ class CFlow_OAuth {
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
 		add_action( 'admin_post_cflow_connect', array( __CLASS__, 'start' ) );
 		add_action( 'admin_post_cflow_disconnect', array( __CLASS__, 'disconnect' ) );
+		add_action( 'admin_post_cflow_hub_return', array( __CLASS__, 'hub_return' ) );
 	}
 
 	public static function register_routes() {
@@ -38,6 +39,10 @@ class CFlow_OAuth {
 		}
 		check_admin_referer( 'cflow_connect' );
 
+		if ( 'hub' === CFlow_Settings::mode() ) {
+			self::start_with_hub();
+		}
+
 		$app_id = CFlow_Settings::get( 'app_id' );
 		if ( '' === $app_id || '' === CFlow_Settings::get( 'app_secret' ) ) {
 			self::back( 'error', __( 'Preencha o App ID e o App Secret antes de conectar.', 'comment-flow' ) );
@@ -48,6 +53,61 @@ class CFlow_OAuth {
 
 		wp_redirect( CFlow_Instagram_API::authorize_url( $app_id, CFlow_Settings::oauth_redirect_url(), $state ) ); // phpcs:ignore WordPress.Security.SafeRedirect
 		exit;
+	}
+
+	/**
+	 * Modo licença: o login é feito pelo app central (hub).
+	 */
+	private static function start_with_hub() {
+		if ( ! CFlow_Settings::has_license() ) {
+			self::back( 'error', __( 'Ative a sua chave de licença antes de conectar.', 'comment-flow' ) );
+		}
+		$return = wp_nonce_url( admin_url( 'admin-post.php?action=cflow_hub_return' ), 'cflow_hub_return' );
+		$url    = CFlow_Hub::connect_url( $return );
+		if ( is_wp_error( $url ) ) {
+			self::back( 'error', $url->get_error_message() );
+		}
+		wp_redirect( $url ); // phpcs:ignore WordPress.Security.SafeRedirect -- login do Instagram.
+		exit;
+	}
+
+	/**
+	 * Volta do login feito pelo hub: busca o token no hub (servidor a servidor).
+	 */
+	public static function hub_return() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Sem permissão.', 'comment-flow' ), 403 );
+		}
+		check_admin_referer( 'cflow_hub_return' );
+
+		// phpcs:disable WordPress.Security.NonceVerification -- verificado acima.
+		if ( ! empty( $_GET['cflow_hub_error'] ) ) {
+			self::back( 'error', sanitize_text_field( wp_unslash( $_GET['cflow_hub_error'] ) ) );
+		}
+		$code    = isset( $_GET['cflow_hub_code'] ) ? sanitize_text_field( wp_unslash( $_GET['cflow_hub_code'] ) ) : '';
+		$warning = isset( $_GET['cflow_hub_warning'] ) ? sanitize_text_field( wp_unslash( $_GET['cflow_hub_warning'] ) ) : '';
+		// phpcs:enable
+
+		$token = CFlow_Hub::claim( $code );
+		if ( is_wp_error( $token ) ) {
+			self::back( 'error', $token->get_error_message() );
+		}
+
+		CFlow_Settings::update(
+			array(
+				'access_token'     => (string) $token['access_token'],
+				'token_expires_at' => time() + (int) $token['expires_in'],
+				'ig_user_id'       => (string) $token['ig_user_id'],
+				'ig_username'      => (string) $token['username'],
+			)
+		);
+		delete_transient( 'cflow_recent_media' );
+
+		if ( '' !== $warning ) {
+			/* translators: %s: mensagem de erro da API */
+			self::back( 'warning', sprintf( __( 'Conta conectada, mas a inscrição nos webhooks falhou: %s', 'comment-flow' ), $warning ) );
+		}
+		self::back( 'success', __( 'Conta do Instagram conectada!', 'comment-flow' ) );
 	}
 
 	public static function callback( WP_REST_Request $request ) {
@@ -111,6 +171,10 @@ class CFlow_OAuth {
 			wp_die( esc_html__( 'Sem permissão.', 'comment-flow' ), 403 );
 		}
 		check_admin_referer( 'cflow_disconnect' );
+
+		if ( 'hub' === CFlow_Settings::mode() && CFlow_Settings::has_license() ) {
+			CFlow_Hub::signed( 'disconnect' ); // Para de receber os eventos da conta.
+		}
 
 		CFlow_Settings::update(
 			array(

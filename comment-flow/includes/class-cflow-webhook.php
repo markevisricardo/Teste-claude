@@ -58,8 +58,18 @@ class CFlow_Webhook {
 		}
 
 		$payload = json_decode( $body, true );
-		if ( ! is_array( $payload ) || empty( $payload['entry'] ) || ! is_array( $payload['entry'] ) ) {
-			return new WP_REST_Response( array( 'received' => 0 ), 200 );
+		return new WP_REST_Response( array( 'received' => is_array( $payload ) ? self::process_payload( $payload ) : 0 ), 200 );
+	}
+
+	/**
+	 * Enfileira os comentários e mensagens de um payload da Meta (recebido
+	 * direto, no modo app próprio, ou repassado pelo hub, no modo licença).
+	 *
+	 * @return int Quantos eventos foram enfileirados.
+	 */
+	public static function process_payload( array $payload ) {
+		if ( empty( $payload['entry'] ) || ! is_array( $payload['entry'] ) ) {
+			return 0;
 		}
 
 		$own_id   = (string) CFlow_Settings::get( 'ig_user_id' );
@@ -97,8 +107,8 @@ class CFlow_Webhook {
 			++$received;
 		}
 
-		// Responde rápido; o trabalho pesado fica na fila.
-		return new WP_REST_Response( array( 'received' => $received ), 200 );
+		// O trabalho pesado fica na fila.
+		return $received;
 	}
 
 	public static function valid_signature( $body, $header ) {
