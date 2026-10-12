@@ -12,12 +12,15 @@
  * Fundo escuro no wp-admin, só nas telas do plugin (body.cflow-dark).
  * ------------------------------------------------------------------- */
 
-body.cflow-dark,
-body.cflow-dark #wpwrap,
+html.wp-toolbar:has(body.cflow-dark),
+body.cflow-dark {
+	background: #000;
+}
+
 body.cflow-dark #wpcontent,
 body.cflow-dark #wpbody,
 body.cflow-dark #wpbody-content {
-	background: #000;
+	background: transparent;
 }
 
 body.cflow-dark #wpfooter,
@@ -180,5 +183,53 @@ body.cflow-screen {
 .cflow-app .page-numbers.current {
 	background: #2563eb;
 	border-color: #2563eb;
+	color: #fff;
+}
+
+/* ---------------------------------------------------------------------
+ * Fundo com brilho azul e grade de pontos (painel e telas do wp-admin).
+ * ------------------------------------------------------------------- */
+
+.cflow-app .cflow-bg,
+body.cflow-dark #wpwrap {
+	background-color: #000;
+	background-image:
+		radial-gradient(ellipse 70% 45% at 50% -5%, rgba(37, 99, 235, 0.32), transparent 70%),
+		radial-gradient(ellipse 40% 35% at 100% 100%, rgba(29, 78, 216, 0.18), transparent 70%),
+		radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.07) 1px, transparent 0);
+	background-size: 100% 100%, 100% 100%, 24px 24px;
+	background-attachment: fixed;
+}
+
+/* Cabeçalho azul: brilho e textura por cima do gradiente. */
+.cflow-app .cflow-hero::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-image:
+		radial-gradient(circle at 85% -20%, rgba(255, 255, 255, 0.25), transparent 45%),
+		radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.12) 1px, transparent 0);
+	background-size: 100% 100%, 18px 18px;
+	pointer-events: none;
+}
+
+/* Botões dentro do cabeçalho azul: o primário fica branco. */
+.cflow-app .cflow-hero .bg-blue-600 {
+	background-color: #fff;
+	color: #1d4ed8;
+	box-shadow: 0 10px 15px -3px rgba(23, 37, 84, 0.35);
+}
+
+.cflow-app .cflow-hero .bg-blue-600:hover {
+	background-color: #eff6ff;
+	color: #1e40af;
+}
+
+.cflow-app .cflow-hero .border-neutral-700 {
+	border-color: rgba(255, 255, 255, 0.4);
+}
+
+.cflow-app .cflow-hero .border-neutral-700:hover {
+	border-color: #fff;
 	color: #fff;
 }

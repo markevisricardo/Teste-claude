@@ -9,15 +9,15 @@
 defined( 'ABSPATH' ) || exit;
 ?>
 <div class="wrap cflow-app"><div class="mx-auto max-w-7xl pb-16 pt-4">
-	<div class="mb-8">
-		<h1 class="m-0 p-0 text-2xl font-semibold tracking-tight text-white"><?php esc_html_e( 'Usuários da plataforma', 'comment-flow' ); ?></h1>
-		<p class="mt-1 text-sm text-neutral-400">
+	<div class="cflow-hero relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 px-6 py-7 shadow-2xl shadow-blue-900/40 sm:px-8"><div class="relative">
+		<h1 class="m-0 p-0 text-3xl font-semibold tracking-tight text-white"><?php esc_html_e( 'Usuários da plataforma', 'comment-flow' ); ?></h1>
+		<p class="mt-1 text-sm text-blue-100">
 			<?php
 			/* translators: %d: quantidade */
 			echo esc_html( sprintf( _n( '%d pessoa cadastrada.', '%d pessoas cadastradas.', count( $users ), 'comment-flow' ), count( $users ) ) );
 			?>
 		</p>
-	</div>
+	</div></div>
 	<hr class="wp-header-end m-0 border-0">
 
 	<div class="overflow-hidden rounded-2xl border border-solid border-neutral-800 bg-neutral-950">

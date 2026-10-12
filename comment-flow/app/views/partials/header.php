@@ -22,56 +22,58 @@ $cflow_user    = wp_get_current_user();
 $cflow_notice  = CFlow_App::flash();
 ?>
 <header class="mx-auto mb-8 max-w-7xl">
-	<div class="flex flex-wrap items-center justify-between gap-4 border-0 border-b border-solid border-neutral-900 pb-6 pt-2">
+	<div class="cflow-hero relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 px-5 pb-8 pt-5 shadow-2xl shadow-blue-900/40 sm:px-8">
+	<div class="relative flex flex-wrap items-center justify-between gap-4 border-0 border-b border-solid border-white/15 pb-5">
 		<a href="<?php echo esc_url( CFlow_App::url() ); ?>" class="flex items-center gap-3">
-			<span class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-lg shadow-blue-600/30">
-				<svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg>
+			<span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-lg shadow-blue-950/30">
+				<svg class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg>
 			</span>
 			<span>
 				<span class="block text-base font-semibold tracking-tight text-white">Comment Flow</span>
-				<span class="block text-xs text-neutral-500"><?php esc_html_e( 'Automações para Instagram', 'comment-flow' ); ?></span>
+				<span class="block text-xs text-blue-100/80"><?php esc_html_e( 'Automações para Instagram', 'comment-flow' ); ?></span>
 			</span>
 		</a>
 
 		<div class="flex flex-wrap items-center gap-3">
 			<?php if ( '' !== $cflow_account['access_token'] ) : ?>
-				<a href="<?php echo esc_url( CFlow_App::url( 'account' ) ); ?>" class="inline-flex items-center gap-2 rounded-full border border-solid border-blue-500/30 bg-blue-500/10 px-3 py-1.5 text-xs font-medium text-blue-200 hover:text-white">
-					<span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-blue-400"></span></span>
+				<a href="<?php echo esc_url( CFlow_App::url( 'account' ) ); ?>" class="inline-flex items-center gap-2 rounded-full border border-solid border-white/25 bg-white/15 px-3 py-1.5 text-xs font-medium text-white hover:bg-white/25">
+					<span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></span></span>
 					@<?php echo esc_html( $cflow_account['ig_username'] ); ?>
 				</a>
 			<?php else : ?>
-				<a href="<?php echo esc_url( CFlow_App::url( 'account' ) ); ?>" class="inline-flex items-center gap-2 rounded-full border border-solid border-neutral-700 px-3 py-1.5 text-xs font-medium text-neutral-300 hover:border-blue-500 hover:text-white">
-					<span class="h-2 w-2 rounded-full bg-neutral-600"></span>
+				<a href="<?php echo esc_url( CFlow_App::url( 'account' ) ); ?>" class="inline-flex items-center gap-2 rounded-full border border-solid border-white/25 bg-black/20 px-3 py-1.5 text-xs font-medium text-white hover:bg-black/30">
+					<span class="h-2 w-2 rounded-full bg-amber-300"></span>
 					<?php esc_html_e( 'Instagram não conectado', 'comment-flow' ); ?>
 				</a>
 			<?php endif; ?>
-			<span class="hidden h-6 w-px bg-neutral-800 sm:block"></span>
-			<span class="hidden text-sm text-neutral-400 sm:inline"><?php echo esc_html( $cflow_user->display_name ); ?></span>
-			<a href="<?php echo esc_url( wp_logout_url( CFlow_App::url() ) ); ?>" class="text-sm font-medium text-neutral-400 hover:text-white"><?php esc_html_e( 'Sair', 'comment-flow' ); ?></a>
+			<span class="hidden h-6 w-px bg-white/20 sm:block"></span>
+			<span class="hidden text-sm text-blue-100 sm:inline"><?php echo esc_html( $cflow_user->display_name ); ?></span>
+			<a href="<?php echo esc_url( wp_logout_url( CFlow_App::url() ) ); ?>" class="text-sm font-medium text-blue-100 hover:text-white"><?php esc_html_e( 'Sair', 'comment-flow' ); ?></a>
 		</div>
 	</div>
 
-	<nav class="mt-4 flex gap-1 overflow-x-auto" aria-label="<?php esc_attr_e( 'Navegação do painel', 'comment-flow' ); ?>">
+	<nav class="relative mt-4 flex gap-1 overflow-x-auto" aria-label="<?php esc_attr_e( 'Navegação do painel', 'comment-flow' ); ?>">
 		<?php foreach ( $cflow_nav as $view => $label ) : ?>
 			<?php $is_current = $view === $cflow_active; ?>
 			<a href="<?php echo esc_url( CFlow_App::url( $view ) ); ?>"
-				class="<?php echo $is_current ? 'bg-white/10 text-white' : 'text-neutral-400 hover:bg-white/5 hover:text-white'; ?> whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+				class="<?php echo $is_current ? 'bg-white text-blue-700 shadow-sm' : 'text-blue-100 hover:bg-white/10 hover:text-white'; ?> whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors"
 				<?php echo $is_current ? 'aria-current="page"' : ''; ?>>
 				<?php echo esc_html( $label ); ?>
 			</a>
 		<?php endforeach; ?>
 	</nav>
 
-	<div class="mt-8 flex flex-wrap items-end justify-between gap-4">
+	<div class="relative mt-8 flex flex-wrap items-end justify-between gap-4">
 		<div>
-			<h1 class="m-0 p-0 text-2xl font-semibold leading-tight tracking-tight text-white"><?php echo esc_html( $cflow_title ); ?></h1>
+			<h1 class="m-0 p-0 text-3xl font-semibold leading-tight tracking-tight text-white"><?php echo esc_html( $cflow_title ); ?></h1>
 			<?php if ( ! empty( $cflow_subtitle ) ) : ?>
-				<p class="mt-1 text-sm text-neutral-400"><?php echo esc_html( $cflow_subtitle ); ?></p>
+				<p class="mt-1 text-sm text-blue-100"><?php echo esc_html( $cflow_subtitle ); ?></p>
 			<?php endif; ?>
 		</div>
 		<?php if ( ! empty( $cflow_actions ) ) : ?>
 			<div class="flex flex-wrap items-center gap-2"><?php echo $cflow_actions; // phpcs:ignore WordPress.Security.EscapeOutput -- montado com esc_* na view. ?></div>
 		<?php endif; ?>
+	</div>
 	</div>
 
 	<?php if ( $cflow_notice ) : ?>

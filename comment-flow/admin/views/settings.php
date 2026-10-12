@@ -20,13 +20,13 @@ $fields  = array(
 );
 ?>
 <div class="wrap cflow-app"><div class="mx-auto max-w-4xl pb-16 pt-4">
-	<div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+	<div class="cflow-hero relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 px-6 py-7 shadow-2xl shadow-blue-900/40 sm:px-8"><div class="relative flex flex-wrap items-center justify-between gap-4">
 		<div>
-			<h1 class="m-0 p-0 text-2xl font-semibold tracking-tight text-white"><?php esc_html_e( 'Comment Flow — Configurações', 'comment-flow' ); ?></h1>
-			<p class="mt-1 text-sm text-neutral-400"><?php esc_html_e( 'O app da Meta da plataforma, usado por todos os usuários.', 'comment-flow' ); ?></p>
+			<h1 class="m-0 p-0 text-3xl font-semibold tracking-tight text-white"><?php esc_html_e( 'Comment Flow — Configurações', 'comment-flow' ); ?></h1>
+			<p class="mt-1 text-sm text-blue-100"><?php esc_html_e( 'O app da Meta da plataforma, usado por todos os usuários.', 'comment-flow' ); ?></p>
 		</div>
 		<a href="<?php echo esc_url( $app_url ); ?>" target="_blank" rel="noopener noreferrer" class="<?php echo esc_attr( CFlow_App::BTN_SECONDARY ); ?>"><?php esc_html_e( 'Abrir o painel ↗', 'comment-flow' ); ?></a>
-	</div>
+	</div></div>
 	<hr class="wp-header-end m-0 border-0">
 
 	<?php if ( $notice ) : ?>

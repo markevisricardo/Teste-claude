@@ -83,7 +83,7 @@ class CFlow_App {
 	 */
 	public static function render() {
 		ob_start();
-		echo '<div class="cflow-app"><div class="min-h-screen bg-black px-4 py-6 font-sans sm:px-8">';
+		echo '<div class="cflow-app"><div class="cflow-bg min-h-screen px-4 py-6 font-sans sm:px-8">';
 
 		if ( ! is_user_logged_in() ) {
 			CFlow_Auth::render_forms();
