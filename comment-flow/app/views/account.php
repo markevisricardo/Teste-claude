@@ -70,7 +70,14 @@ $step = static function ( $number, $title, $done ) {
 					</button>
 				</form>
 				<?php if ( ! $has_app ) : ?>
-					<p class="mt-3 text-xs text-red-400"><?php esc_html_e( 'A plataforma ainda está sendo configurada. Tente de novo mais tarde.', 'comment-flow' ); ?></p>
+					<?php if ( current_user_can( 'manage_options' ) ) : ?>
+						<p class="mt-3 text-xs text-red-400">
+							<?php esc_html_e( 'Falta salvar o App ID e o App Secret do Instagram.', 'comment-flow' ); ?>
+							<a class="<?php echo esc_attr( CFlow_App::LINK ); ?>" href="<?php echo esc_url( admin_url( 'admin.php?page=cflow' ) ); ?>"><?php esc_html_e( 'Abrir as configurações →', 'comment-flow' ); ?></a>
+						</p>
+					<?php else : ?>
+						<p class="mt-3 text-xs text-red-400"><?php esc_html_e( 'A plataforma ainda está sendo configurada. Tente de novo mais tarde.', 'comment-flow' ); ?></p>
+					<?php endif; ?>
 				<?php endif; ?>
 				<ul class="mt-5 list-disc space-y-1 pl-5 text-xs leading-5 text-neutral-500">
 					<li><?php esc_html_e( 'A conta precisa ser Profissional (Empresa ou Criador de conteúdo).', 'comment-flow' ); ?></li>
