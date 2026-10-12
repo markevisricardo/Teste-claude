@@ -21,6 +21,31 @@ class CFlow_Matcher {
 		return null;
 	}
 
+	/**
+	 * Automação de DM para uma mensagem recebida: primeiro as de palavra-chave
+	 * (por prioridade); se nenhuma casar e for a primeira conversa, a de
+	 * boas-vindas.
+	 *
+	 * @param array $automations Automações de DM ativas, ordenadas por prioridade.
+	 */
+	public static function find_dm( $text, array $automations, $is_first_conversation ) {
+		foreach ( $automations as $automation ) {
+			if ( 'dm_keyword' === $automation['trigger_type']
+				&& '' !== trim( (string) $automation['keywords'] )
+				&& self::matches( array( 'text' => $text, 'media_id' => '' ), array( 'media_id' => '' ) + $automation ) ) {
+				return $automation;
+			}
+		}
+		if ( $is_first_conversation ) {
+			foreach ( $automations as $automation ) {
+				if ( 'dm_welcome' === $automation['trigger_type'] && 'active' === $automation['status'] ) {
+					return $automation;
+				}
+			}
+		}
+		return null;
+	}
+
 	public static function matches( array $comment, array $automation ) {
 		if ( 'active' !== $automation['status'] ) {
 			return false;

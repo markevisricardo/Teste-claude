@@ -34,7 +34,7 @@ class CFlow_Processor {
 					'text'     => $log['comment_text'],
 					'media_id' => $log['media_id'],
 				),
-				CFlow_DB::get_automations( true )
+				CFlow_DB::get_automations( true, 'comment' )
 			);
 		}
 
@@ -95,6 +95,8 @@ class CFlow_Processor {
 				$error = $result;
 			} else {
 				CFlow_DB::update_log( $log_id, array( 'dm_sent' => 1 ) );
+				// Já conversamos com a pessoa: a próxima DM dela não é "primeira mensagem".
+				CFlow_Contacts::remember( ! empty( $result['recipient_id'] ) ? (string) $result['recipient_id'] : $log['from_id'] );
 				if ( $lead_id ) {
 					$lead_data = array(
 						'dm_sent'      => 1,
@@ -127,8 +129,12 @@ class CFlow_Processor {
 		CFlow_DB::update_log( $log_id, array( 'status' => 'failed', 'error' => $error->get_error_message() ) );
 	}
 
+	/**
+	 * A automação precisa de conversa na DM (captura de dados ou "seguir
+	 * para liberar")? Nesse caso a primeira DM é um convite.
+	 */
 	public static function captures( array $automation ) {
-		return ! empty( $automation['capture_email'] ) || ! empty( $automation['capture_phone'] );
+		return ! empty( $automation['capture_email'] ) || ! empty( $automation['capture_phone'] ) || ! empty( $automation['require_follow'] );
 	}
 
 	public static function is_retryable( WP_Error $error ) {

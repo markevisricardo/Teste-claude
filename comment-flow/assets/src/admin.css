@@ -84,6 +84,11 @@ body.cflow-dark .notice-dismiss::before {
 	text-decoration: none;
 }
 
+/* Elementos escondidos pelo seletor de gatilho (vence display das utilities). */
+.cflow-app [hidden] {
+	display: none !important;
+}
+
 .cflow-app a:focus {
 	box-shadow: none;
 	outline: 2px solid #3b82f6;

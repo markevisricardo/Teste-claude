@@ -29,7 +29,7 @@ $cflow_notice    = CFlow_Admin::flash();
 			</span>
 			<div>
 				<p class="text-base font-semibold tracking-tight text-white">Comment Flow</p>
-				<p class="text-xs text-neutral-500"><?php esc_html_e( 'Automação de comentários do Instagram', 'comment-flow' ); ?></p>
+				<p class="text-xs text-neutral-500"><?php esc_html_e( 'Automações para Instagram', 'comment-flow' ); ?></p>
 			</div>
 		</div>
 

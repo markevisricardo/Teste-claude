@@ -22,6 +22,11 @@ class CFlow_DB {
 		return $wpdb->prefix . 'cflow_leads';
 	}
 
+	public static function contacts_table() {
+		global $wpdb;
+		return $wpdb->prefix . 'cflow_contacts';
+	}
+
 	public static function install() {
 		global $wpdb;
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -30,12 +35,14 @@ class CFlow_DB {
 		$automations = self::automations_table();
 		$logs        = self::logs_table();
 		$leads       = self::leads_table();
+		$contacts    = self::contacts_table();
 
 		dbDelta(
 			"CREATE TABLE {$automations} (
 				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				name varchar(191) NOT NULL DEFAULT '',
 				status varchar(20) NOT NULL DEFAULT 'active',
+				trigger_type varchar(20) NOT NULL DEFAULT 'comment',
 				media_id varchar(64) NOT NULL DEFAULT '',
 				keywords text NOT NULL,
 				match_mode varchar(20) NOT NULL DEFAULT 'contains',
@@ -49,11 +56,16 @@ class CFlow_DB {
 				optin_button varchar(20) NOT NULL DEFAULT '',
 				email_question text NULL,
 				phone_question text NULL,
+				require_follow tinyint(1) NOT NULL DEFAULT 0,
+				follow_prompt text NULL,
+				follow_button varchar(20) NOT NULL DEFAULT '',
+				follow_retry text NULL,
 				priority int(11) NOT NULL DEFAULT 10,
 				created_at datetime NOT NULL,
 				updated_at datetime NOT NULL,
 				PRIMARY KEY  (id),
-				KEY status_priority (status,priority)
+				KEY status_priority (status,priority),
+				KEY trigger_type (trigger_type)
 			) {$charset};"
 		);
 
@@ -108,6 +120,15 @@ class CFlow_DB {
 			) {$charset};"
 		);
 
+		// Pessoas com quem a conta já conversou (para detectar a primeira DM).
+		dbDelta(
+			"CREATE TABLE {$contacts} (
+				ig_scoped_id varchar(64) NOT NULL,
+				first_seen_at datetime NOT NULL,
+				PRIMARY KEY  (ig_scoped_id)
+			) {$charset};"
+		);
+
 		update_option( 'cflow_db_version', CFLOW_DB_VERSION, false );
 		CFlow_Settings::ensure_verify_token();
 	}
@@ -131,12 +152,32 @@ class CFlow_DB {
 		return $row ? $row : null;
 	}
 
-	public static function get_automations( $only_active = false ) {
+	/**
+	 * @param bool        $only_active Só as ativas.
+	 * @param string|null $group       'comment' (comentários), 'dm' (gatilhos de DM) ou null (todas).
+	 */
+	public static function get_automations( $only_active = false, $group = null ) {
 		global $wpdb;
-		$where = $only_active ? "WHERE status = 'active'" : '';
+		$clauses = array();
+		if ( $only_active ) {
+			$clauses[] = "status = 'active'";
+		}
+		if ( 'comment' === $group ) {
+			$clauses[] = "trigger_type = 'comment'";
+		} elseif ( 'dm' === $group ) {
+			$clauses[] = "trigger_type IN ('dm_keyword', 'dm_welcome')";
+		}
+		$where = $clauses ? 'WHERE ' . implode( ' AND ', $clauses ) : '';
 		return $wpdb->get_results(
 			'SELECT * FROM ' . self::automations_table() . " {$where} ORDER BY priority ASC, id ASC",
 			ARRAY_A
+		);
+	}
+
+	public static function has_active_dm_automations() {
+		global $wpdb;
+		return (bool) $wpdb->get_var(
+			'SELECT 1 FROM ' . self::automations_table() . " WHERE status = 'active' AND trigger_type IN ('dm_keyword', 'dm_welcome') LIMIT 1"
 		);
 	}
 

@@ -53,6 +53,34 @@ Para atender contas que não têm função no app, você precisa de:
 | DM | Texto da Private Reply, com botão opcional (título de até 20 caracteres + URL) |
 | Prioridade | Quando mais de uma automação casa, vale a de menor número |
 
+## Gatilhos
+
+Cada automação tem um tipo de gatilho, escolhido no topo do formulário:
+
+| Gatilho | Quando dispara | Observações |
+|---|---|---|
+| **Comentário em post** | Alguém comenta uma palavra-chave num post ou reel | Responde no comentário e manda a Private Reply |
+| **Palavra-chave na DM** | Alguém manda a palavra no direct (ex.: "OI") | Palavras-chave obrigatórias. Quem mandar de novo recebe de novo |
+| **Boas-vindas (primeira DM)** | Alguém manda a **primeira** mensagem para a conta | Só uma por pessoa. Quem já conversava antes não recebe |
+
+Se a mensagem casar com uma palavra-chave de DM, vale essa automação, mesmo que seja a primeira mensagem.
+
+> **Sobre "novos seguidores":** a API oficial não avisa quando alguém segue a conta e não permite mandar DM para quem nunca interagiu. Para dar boas-vindas a novos seguidores, convide-os a puxar conversa ("me manda OI no direct" na bio ou o link `ig.me/m/seuusuario`) e use o gatilho de boas-vindas ou de palavra-chave.
+
+Para identificar a primeira mensagem, o plugin guarda quem já conversou com a conta (tabela `cflow_contacts`). Para alguém que ele ainda não conhece, consulta o histórico da conversa na API: se houver mensagens com mais de 10 minutos, a pessoa já conversava antes e não recebe as boas-vindas.
+
+## Seguir para liberar
+
+Com **Exigir que siga a conta** ligado, antes de enviar a mensagem final o plugin confere se a pessoa segue a conta (campo `is_user_follow_business` da API):
+
+```
+Segue?  ── sim ──▶ envia a mensagem final
+   └── não ──▶ "Me segue e toca em 'Já segui' 👇"  [Já segui ✅]
+                  └─ tocou ─▶ confere de novo (repete até seguir)
+```
+
+A verificação vem depois da captura de e-mail e telefone. Em automações de comentário, ligar essa opção faz a primeira DM virar o convite com botão, porque a consulta só é permitida depois que a pessoa responde. Se a API não conseguir confirmar, o plugin entrega mesmo assim e registra o erro no lead.
+
 ## Captura de e-mail e telefone (leads)
 
 Ligue **Pedir e-mail** e/ou **Pedir telefone** no passo 3 da automação. O fluxo fica assim:
@@ -117,6 +145,7 @@ comment-flow/
 │   ├── class-cflow-processor.php     # executa a automação
 │   ├── class-cflow-conversation.php  # captura de e-mail/telefone na DM
 │   ├── class-cflow-leads.php         # leads, validação e CSV
+│   ├── class-cflow-contacts.php      # quem já conversou (primeira DM)
 │   └── class-cflow-token-refresher.php
 ├── admin/
 │   ├── class-cflow-admin.php         # menus, handlers e classes Tailwind reutilizadas

@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 class CFlow_Leads {
 
 	/** Etapas da captura em que a conversa ainda espera uma resposta. */
-	const OPEN_STEPS = array( 'awaiting_optin', 'awaiting_email', 'awaiting_phone' );
+	const OPEN_STEPS = array( 'awaiting_optin', 'awaiting_email', 'awaiting_phone', 'awaiting_follow' );
 
 	/* ---------------------------------------------------------------------
 	 * Escrita
@@ -19,6 +19,14 @@ class CFlow_Leads {
 	 * Cria ou atualiza o lead de quem comentou. Retorna o ID do lead.
 	 */
 	public static function upsert_from_comment( $automation_id, array $log ) {
+		return self::upsert( $automation_id, $log['from_id'], $log['from_username'], $log['comment_text'] );
+	}
+
+	/**
+	 * Cria ou atualiza o lead de uma pessoa numa automação (por comentário ou
+	 * por DM). $person_id é o ID de quem comentou ou mandou a mensagem.
+	 */
+	public static function upsert( $automation_id, $person_id, $username, $text ) {
 		global $wpdb;
 		$table = CFlow_DB::leads_table();
 		$now   = current_time( 'mysql', true );
@@ -26,19 +34,17 @@ class CFlow_Leads {
 		$wpdb->query(
 			$wpdb->prepare(
 				"INSERT INTO {$table} (automation_id, comment_from_id, username, last_comment, created_at, updated_at) VALUES (%d, %s, %s, %s, %s, %s)
-				ON DUPLICATE KEY UPDATE username = VALUES(username), last_comment = VALUES(last_comment), comments_count = comments_count + 1, updated_at = VALUES(updated_at)",
+				ON DUPLICATE KEY UPDATE username = IF(VALUES(username) = '', username, VALUES(username)), last_comment = VALUES(last_comment), comments_count = comments_count + 1, updated_at = VALUES(updated_at)",
 				$automation_id,
-				$log['from_id'],
-				$log['from_username'],
-				$log['comment_text'],
+				$person_id,
+				$username,
+				$text,
 				$now,
 				$now
 			)
 		);
 
-		return (int) $wpdb->get_var(
-			$wpdb->prepare( "SELECT id FROM {$table} WHERE automation_id = %d AND comment_from_id = %s", $automation_id, $log['from_id'] )
-		);
+		return self::find_id( $automation_id, $person_id );
 	}
 
 	public static function find_id( $automation_id, $comment_from_id ) {
@@ -209,6 +215,7 @@ class CFlow_Leads {
 			'awaiting_optin' => __( 'Aguardando resposta', 'comment-flow' ),
 			'awaiting_email' => __( 'Aguardando e-mail', 'comment-flow' ),
 			'awaiting_phone' => __( 'Aguardando telefone', 'comment-flow' ),
+			'awaiting_follow' => __( 'Aguardando seguir', 'comment-flow' ),
 			'done'           => __( 'Concluída', 'comment-flow' ),
 		);
 		return isset( $labels[ $step ] ) ? $labels[ $step ] : $step;
@@ -222,8 +229,8 @@ class CFlow_Leads {
 			__( 'Telefone', 'comment-flow' ),
 			__( 'Consentimento em (UTC)', 'comment-flow' ),
 			__( 'Automação', 'comment-flow' ),
-			__( 'Último comentário', 'comment-flow' ),
-			__( 'Comentários', 'comment-flow' ),
+			__( 'Última interação', 'comment-flow' ),
+			__( 'Interações', 'comment-flow' ),
 			__( 'DM enviada', 'comment-flow' ),
 			__( 'Captura', 'comment-flow' ),
 			__( 'Primeiro contato (UTC)', 'comment-flow' ),

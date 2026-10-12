@@ -177,14 +177,70 @@ class CFlow_Instagram_API {
 	 * Envia uma DM comum para um usuário (IGSID). Só funciona dentro da janela
 	 * de 24h aberta pela última mensagem da pessoa.
 	 */
-	public function send_message( $ig_user_id, $recipient_id, $text, $button_label = '', $button_url = '' ) {
+	public function send_message( $ig_user_id, $recipient_id, $text, $button_label = '', $button_url = '', $quick_reply = '' ) {
 		return $this->post_json(
 			$ig_user_id . '/messages',
 			array(
 				'recipient' => array( 'id' => $recipient_id ),
-				'message'   => self::build_message( $text, $button_label, $button_url ),
+				'message'   => self::build_message( $text, $button_label, $button_url, $quick_reply ),
 			)
 		);
+	}
+
+	/**
+	 * Perfil de quem conversa com a conta (só funciona para quem já mandou
+	 * mensagem ou interagiu): username e se segue a conta.
+	 *
+	 * @return array|WP_Error
+	 */
+	public function user_profile( $ig_scoped_id ) {
+		return $this->get( $ig_scoped_id, array( 'fields' => 'username,is_user_follow_business' ) );
+	}
+
+	/**
+	 * A pessoa segue a conta conectada?
+	 *
+	 * @return bool|WP_Error
+	 */
+	public function user_follows( $ig_scoped_id ) {
+		$profile = $this->user_profile( $ig_scoped_id );
+		if ( is_wp_error( $profile ) ) {
+			return $profile;
+		}
+		if ( ! array_key_exists( 'is_user_follow_business', $profile ) ) {
+			return new WP_Error( 'cflow_api', __( 'A API não informou se a pessoa segue a conta.', 'comment-flow' ), array( 'retryable' => false ) );
+		}
+		return (bool) $profile['is_user_follow_business'];
+	}
+
+	/**
+	 * Data (timestamp) da mensagem mais antiga da conversa com a pessoa, ou
+	 * null se não houver conversa.
+	 *
+	 * @return int|null|WP_Error
+	 */
+	public function oldest_message_time( $ig_user_id, $ig_scoped_id ) {
+		$conversations = $this->get( $ig_user_id . '/conversations', array( 'user_id' => $ig_scoped_id ) );
+		if ( is_wp_error( $conversations ) ) {
+			return $conversations;
+		}
+		if ( empty( $conversations['data'][0]['id'] ) ) {
+			return null;
+		}
+
+		$conversation = $this->get( $conversations['data'][0]['id'], array( 'fields' => 'messages{created_time}' ) );
+		if ( is_wp_error( $conversation ) ) {
+			return $conversation;
+		}
+
+		$oldest = null;
+		foreach ( isset( $conversation['messages']['data'] ) ? $conversation['messages']['data'] : array() as $message ) {
+			$time = isset( $message['created_time'] ) ? strtotime( $message['created_time'] ) : false;
+			if ( false !== $time && ( null === $oldest || $time < $oldest ) ) {
+				$oldest = $time;
+			}
+		}
+		return $oldest;
 	}
 
 	/**
@@ -217,7 +273,7 @@ class CFlow_Instagram_API {
 				array(
 					'content_type' => 'text',
 					'title'        => $quick_reply,
-					'payload'      => 'CFLOW_OPTIN',
+					'payload'      => 'CFLOW_QUICK_REPLY',
 				),
 			);
 		}

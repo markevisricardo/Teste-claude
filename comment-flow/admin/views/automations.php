@@ -15,7 +15,7 @@ foreach ( $stats as $row ) {
 
 $cflow_active   = 'cflow';
 $cflow_title    = __( 'Automações', 'comment-flow' );
-$cflow_subtitle = __( 'Responda comentários e envie DMs automaticamente por palavra-chave.', 'comment-flow' );
+$cflow_subtitle = __( 'Responda comentários e mensagens no direct automaticamente.', 'comment-flow' );
 $cflow_actions  = sprintf(
 	'<a href="%1$s" class="%2$s"><span class="text-base leading-none">+</span>%3$s</a>',
 	esc_url( admin_url( 'admin.php?page=cflow-edit' ) ),
@@ -89,15 +89,26 @@ $cflow_actions  = sprintf(
 								<a href="<?php echo esc_url( $edit_url ); ?>" class="font-semibold text-white hover:text-blue-300"><?php echo esc_html( $a['name'] ); ?></a>
 								<p class="mt-1 text-xs text-neutral-500">
 									<?php
-									echo '' === $a['media_id']
-										? esc_html__( 'Qualquer post ou reel', 'comment-flow' )
-										: esc_html( sprintf( /* translators: %s: ID da mídia */ __( 'Post %s', 'comment-flow' ), $a['media_id'] ) );
+									$trigger_type = isset( $a['trigger_type'] ) ? $a['trigger_type'] : 'comment';
+									if ( 'comment' !== $trigger_type ) {
+										$triggers = CFlow_Admin::triggers();
+										echo '<span class="font-medium text-blue-300">' . esc_html( $triggers[ $trigger_type ] ) . '</span>';
+									} else {
+										echo '' === $a['media_id']
+											? esc_html__( 'Comentário · qualquer post ou reel', 'comment-flow' )
+											: esc_html( sprintf( /* translators: %s: ID da mídia */ __( 'Comentário · post %s', 'comment-flow' ), $a['media_id'] ) );
+									}
+									if ( ! empty( $a['require_follow'] ) ) {
+										echo ' · ' . esc_html__( 'exige seguir', 'comment-flow' );
+									}
 									?>
 									· <?php echo esc_html( sprintf( /* translators: %d: prioridade */ __( 'prioridade %d', 'comment-flow' ), (int) $a['priority'] ) ); ?>
 								</p>
 							</td>
 							<td class="<?php echo esc_attr( CFlow_Admin::TD ); ?>">
-								<?php if ( empty( $keywords ) ) : ?>
+								<?php if ( 'dm_welcome' === $trigger_type ) : ?>
+									<span class="text-xs italic text-neutral-500"><?php esc_html_e( 'primeira mensagem', 'comment-flow' ); ?></span>
+								<?php elseif ( empty( $keywords ) ) : ?>
 									<span class="text-xs italic text-neutral-500"><?php esc_html_e( 'qualquer comentário', 'comment-flow' ); ?></span>
 								<?php else : ?>
 									<div class="flex max-w-xs flex-wrap gap-1.5">

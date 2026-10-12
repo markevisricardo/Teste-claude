@@ -79,13 +79,18 @@ class CFlow_Webhook {
 			}
 		}
 
+		$has_dm_automations = null;
 		foreach ( self::extract_messages( $payload ) as $message ) {
 			// Ignora ecos (mensagens enviadas pela própria conta).
 			if ( $message['is_echo'] || ( '' !== $own_id && $message['sender_id'] === $own_id ) || $message['sender_id'] === $message['account_id'] ) {
 				continue;
 			}
-			// DMs de quem não está numa captura não interessam ao plugin.
-			if ( ! CFlow_Leads::find_open_conversation( $message['sender_id'] ) ) {
+			// Só interessam DMs de quem está numa conversa em andamento ou que
+			// possam disparar uma automação de DM (palavra-chave/boas-vindas).
+			if ( null === $has_dm_automations ) {
+				$has_dm_automations = CFlow_DB::has_active_dm_automations();
+			}
+			if ( ! $has_dm_automations && ! CFlow_Leads::find_open_conversation( $message['sender_id'] ) ) {
 				continue;
 			}
 			CFlow_Queue::push_message( $message['sender_id'], $message['text'], $message['mid'] );

@@ -10,6 +10,7 @@ global $wpdb;
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}cflow_automations" ); // phpcs:ignore WordPress.DB
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}cflow_logs" ); // phpcs:ignore WordPress.DB
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}cflow_leads" ); // phpcs:ignore WordPress.DB
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}cflow_contacts" ); // phpcs:ignore WordPress.DB
 
 delete_option( 'cflow_settings' );
 delete_option( 'cflow_db_version' );

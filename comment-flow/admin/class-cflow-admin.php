@@ -116,6 +116,7 @@ class CFlow_Admin {
 			$automation = array(
 				'name'            => '',
 				'status'          => 'active',
+				'trigger_type'    => self::trigger_from_request(),
 				'media_id'        => '',
 				'keywords'        => '',
 				'match_mode'      => 'word',
@@ -126,12 +127,29 @@ class CFlow_Admin {
 				'priority'        => 10,
 				'capture_email'   => 0,
 				'capture_phone'   => 0,
+				'require_follow'  => 0,
 			);
 			// Textos de captura vêm preenchidos com os padrões.
 			$automation = array_merge( $automation, array_diff_key( CFlow_Conversation::defaults(), array_flip( array( 'invalid_email', 'invalid_phone' ) ) ) );
 		}
 		$media = self::recent_media();
 		include CFLOW_DIR . 'admin/views/edit.php';
+	}
+
+	/**
+	 * Tipos de gatilho de uma automação.
+	 */
+	public static function triggers() {
+		return array(
+			'comment'    => __( 'Comentário em post', 'comment-flow' ),
+			'dm_keyword' => __( 'Palavra-chave na DM', 'comment-flow' ),
+			'dm_welcome' => __( 'Boas-vindas (primeira DM)', 'comment-flow' ),
+		);
+	}
+
+	private static function trigger_from_request() {
+		$trigger = isset( $_GET['trigger'] ) ? sanitize_key( wp_unslash( $_GET['trigger'] ) ) : 'comment'; // phpcs:ignore WordPress.Security.NonceVerification
+		return array_key_exists( $trigger, self::triggers() ) ? $trigger : 'comment';
 	}
 
 	public static function page_leads() {
@@ -231,6 +249,9 @@ class CFlow_Admin {
 		$media_id   = sanitize_text_field( wp_unslash( $_POST['media_id'] ?? '' ) );
 		$manual     = sanitize_text_field( wp_unslash( $_POST['media_id_manual'] ?? '' ) );
 		$match_mode = sanitize_key( $_POST['match_mode'] ?? 'word' );
+		$trigger    = sanitize_key( $_POST['trigger_type'] ?? 'comment' );
+		$trigger    = array_key_exists( $trigger, self::triggers() ) ? $trigger : 'comment';
+		$back       = $id ? array( 'id' => $id ) : array( 'trigger' => $trigger );
 
 		$data = array(
 			'name'            => sanitize_text_field( wp_unslash( $_POST['name'] ?? '' ) ),
@@ -249,20 +270,36 @@ class CFlow_Admin {
 			'optin_button'    => mb_substr( sanitize_text_field( wp_unslash( $_POST['optin_button'] ?? '' ) ), 0, 20 ),
 			'email_question'  => sanitize_textarea_field( wp_unslash( $_POST['email_question'] ?? '' ) ),
 			'phone_question'  => sanitize_textarea_field( wp_unslash( $_POST['phone_question'] ?? '' ) ),
+			'trigger_type'    => $trigger,
+			'require_follow'  => isset( $_POST['require_follow'] ) ? 1 : 0,
+			'follow_prompt'   => sanitize_textarea_field( wp_unslash( $_POST['follow_prompt'] ?? '' ) ),
+			'follow_button'   => mb_substr( sanitize_text_field( wp_unslash( $_POST['follow_button'] ?? '' ) ), 0, 20 ),
+			'follow_retry'    => sanitize_textarea_field( wp_unslash( $_POST['follow_retry'] ?? '' ) ),
 		);
+
+		// Gatilhos de DM não têm post nem resposta pública.
+		if ( 'comment' !== $trigger ) {
+			$data['media_id']       = '';
+			$data['public_replies'] = '';
+		}
+		if ( 'dm_welcome' === $trigger ) {
+			$data['keywords'] = '';
+		}
 
 		if ( '' === $data['name'] ) {
 			$data['name'] = __( 'Automação sem nome', 'comment-flow' );
 		}
 		if ( '' === trim( $data['public_replies'] ) && '' === trim( $data['dm_text'] ) ) {
-			self::redirect( 'cflow-edit', 'error', __( 'Defina ao menos uma resposta pública ou uma mensagem de DM.', 'comment-flow' ), $id ? array( 'id' => $id ) : array() );
+			self::redirect( 'cflow-edit', 'error', __( 'Defina ao menos uma resposta pública ou uma mensagem de DM.', 'comment-flow' ), $back );
 		}
 		if ( ( '' === $data['dm_button_label'] ) !== ( '' === $data['dm_button_url'] ) ) {
-			self::redirect( 'cflow-edit', 'error', __( 'O botão da DM precisa de texto e URL (ou deixe os dois vazios).', 'comment-flow' ), $id ? array( 'id' => $id ) : array() );
+			self::redirect( 'cflow-edit', 'error', __( 'O botão da DM precisa de texto e URL (ou deixe os dois vazios).', 'comment-flow' ), $back );
 		}
-
-		if ( ( $data['capture_email'] || $data['capture_phone'] ) && '' === trim( $data['dm_text'] ) ) {
-			self::redirect( 'cflow-edit', 'error', __( 'Com a captura ligada, a mensagem no direct é a entrega final e não pode ficar vazia.', 'comment-flow' ), $id ? array( 'id' => $id ) : array() );
+		if ( ( 'comment' !== $trigger || CFlow_Processor::captures( $data ) ) && '' === trim( $data['dm_text'] ) ) {
+			self::redirect( 'cflow-edit', 'error', __( 'A mensagem no direct (entrega final) não pode ficar vazia.', 'comment-flow' ), $back );
+		}
+		if ( 'dm_keyword' === $trigger && '' === trim( $data['keywords'] ) ) {
+			self::redirect( 'cflow-edit', 'error', __( 'Informe ao menos uma palavra-chave para o gatilho de DM.', 'comment-flow' ), $back );
 		}
 
 		$id = CFlow_DB::save_automation( $data, $id );
@@ -335,6 +372,7 @@ class CFlow_Admin {
 			'awaiting_optin' => 'bg-white/5 text-white ring-white/15',
 			'awaiting_email' => 'bg-white/5 text-white ring-white/15',
 			'awaiting_phone' => 'bg-white/5 text-white ring-white/15',
+			'awaiting_follow' => 'bg-white/5 text-white ring-white/15',
 		);
 		$tone = isset( $tones[ $status ] ) ? $tones[ $status ] : 'bg-neutral-800/60 text-neutral-400 ring-neutral-700';
 

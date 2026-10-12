@@ -1,6 +1,6 @@
 # Comment Flow
 
-Plugin WordPress de automação de comentários do Instagram, no estilo ManyChat. Ele responde comentários por palavra-chave, envia DM (Private Reply), captura e-mail e telefone na conversa e exporta os leads em CSV, tudo pela API oficial da Meta.
+Plugin WordPress de automações para Instagram, no estilo ManyChat, tudo pela API oficial da Meta. Ele responde comentários por palavra-chave com DM (Private Reply), responde palavras-chave e a primeira mensagem no direct, exige que a pessoa siga a conta antes de liberar o link ("seguir para liberar"), captura e-mail e telefone e exporta os leads em CSV.
 
 O plugin está em [`comment-flow/`](comment-flow/). A instalação, a configuração do app na Meta e os detalhes estão no [README do plugin](comment-flow/README.md).
 
@@ -10,9 +10,13 @@ O plugin está em [`comment-flow/`](comment-flow/). A instalação, a configura�
 |---|---|
 | ![Automações](docs/screenshots/automations.png) | ![Leads](docs/screenshots/leads.png) |
 
-| Editar automação | Configurações |
+| Automação por comentário | Automação por DM (seguir para liberar) |
 |---|---|
-| ![Editar automação](docs/screenshots/edit.png) | ![Configurações](docs/screenshots/settings.png) |
+| ![Editar automação](docs/screenshots/edit.png) | ![Automação por DM](docs/screenshots/edit-dm.png) |
+
+| Configurações |
+|---|
+| ![Configurações](docs/screenshots/settings.png) |
 
 ## Desenvolvimento
 

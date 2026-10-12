@@ -55,7 +55,7 @@ $cflow_actions  = sprintf(
 						<th class="<?php echo esc_attr( CFlow_Admin::TH ); ?>"><?php esc_html_e( 'Usuário', 'comment-flow' ); ?></th>
 						<th class="<?php echo esc_attr( CFlow_Admin::TH ); ?>"><?php esc_html_e( 'Contato', 'comment-flow' ); ?></th>
 						<th class="<?php echo esc_attr( CFlow_Admin::TH ); ?>"><?php esc_html_e( 'Automação', 'comment-flow' ); ?></th>
-						<th class="<?php echo esc_attr( CFlow_Admin::TH ); ?>"><?php esc_html_e( 'Último comentário', 'comment-flow' ); ?></th>
+						<th class="<?php echo esc_attr( CFlow_Admin::TH ); ?>"><?php esc_html_e( 'Última interação', 'comment-flow' ); ?></th>
 						<th class="<?php echo esc_attr( CFlow_Admin::TH ); ?>"><?php esc_html_e( 'Captura', 'comment-flow' ); ?></th>
 						<th class="<?php echo esc_attr( CFlow_Admin::TH ); ?>"><?php esc_html_e( 'Primeiro contato', 'comment-flow' ); ?></th>
 						<th class="<?php echo esc_attr( CFlow_Admin::TH ); ?>"><span class="sr-only"><?php esc_html_e( 'Ações', 'comment-flow' ); ?></span></th>
