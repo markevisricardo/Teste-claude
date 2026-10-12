@@ -9,10 +9,26 @@ class CFlow_Admin {
 
 	const CAP = 'manage_options';
 
+	/*
+	 * Classes Tailwind reutilizadas pelas telas (ficam aqui para o Tailwind
+	 * encontrá-las ao gerar o CSS).
+	 */
+	const CARD          = 'rounded-2xl border border-solid border-neutral-800 bg-neutral-950 p-6 shadow-xl shadow-black/40';
+	const INPUT         = 'block w-full rounded-lg border border-solid border-neutral-800 bg-black px-3 py-2 text-sm leading-6 text-white transition-colors hover:border-neutral-700';
+	const LABEL         = 'block text-sm font-medium text-white';
+	const HELP          = 'mt-2 text-xs leading-5 text-neutral-500';
+	const LINK          = 'font-medium text-blue-400 transition-colors hover:text-blue-300';
+	const BTN_PRIMARY   = 'inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border-0 bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition-colors hover:bg-blue-500 hover:text-white disabled:cursor-not-allowed disabled:bg-neutral-800 disabled:text-neutral-500 disabled:shadow-none';
+	const BTN_SECONDARY = 'inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-solid border-neutral-700 bg-transparent px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:border-blue-500 hover:text-blue-300';
+	const TOGGLE        = "relative h-6 w-11 shrink-0 rounded-full bg-neutral-800 transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-transform after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-5 peer-focus-visible:ring-2 peer-focus-visible:ring-blue-400 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-black";
+	const TH            = 'whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-500';
+	const TD            = 'px-4 py-4 align-top text-sm text-neutral-300';
+
 	public static function init() {
 		add_action( 'admin_menu', array( __CLASS__, 'menu' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'assets' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'notices' ) );
+		add_filter( 'admin_body_class', array( __CLASS__, 'body_class' ) );
 
 		add_action( 'admin_post_cflow_save_settings', array( __CLASS__, 'save_settings' ) );
 		add_action( 'admin_post_cflow_save_automation', array( __CLASS__, 'save_automation' ) );
@@ -46,7 +62,30 @@ class CFlow_Admin {
 		wp_enqueue_style( 'cflow-admin', CFLOW_URL . 'assets/admin.css', array(), CFLOW_VERSION );
 	}
 
+	public static function is_plugin_screen() {
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		return 0 === strpos( $page, 'cflow' );
+	}
+
+	public static function body_class( $classes ) {
+		return self::is_plugin_screen() ? $classes . ' cflow-dark' : $classes;
+	}
+
+	/**
+	 * Aviso pendente (sucesso/erro), consumido uma única vez.
+	 */
+	public static function flash() {
+		$notice = get_transient( 'cflow_notice' );
+		if ( $notice ) {
+			delete_transient( 'cflow_notice' );
+		}
+		return is_array( $notice ) ? $notice : null;
+	}
+
 	public static function notices() {
+		if ( self::is_plugin_screen() ) {
+			return; // Nas nossas telas o aviso é exibido pelo cabeçalho do plugin.
+		}
 		$notice = get_transient( 'cflow_notice' );
 		if ( ! $notice ) {
 			return;
@@ -280,6 +319,30 @@ class CFlow_Admin {
 			$args['s'] = rawurlencode( $search );
 		}
 		return wp_nonce_url( add_query_arg( $args, admin_url( 'admin-post.php' ) ), 'cflow_export_leads' );
+	}
+
+	/**
+	 * Selo de status (Tailwind).
+	 */
+	public static function badge( $status, $label ) {
+		$tones = array(
+			'active'         => 'bg-blue-500/10 text-blue-300 ring-blue-500/30',
+			'done'           => 'bg-blue-500/10 text-blue-300 ring-blue-500/30',
+			'failed'         => 'bg-red-500/10 text-red-300 ring-red-500/30',
+			'queued'         => 'bg-white/5 text-white ring-white/15',
+			'processing'     => 'bg-white/5 text-white ring-white/15',
+			'retry'          => 'bg-white/5 text-white ring-white/15',
+			'awaiting_optin' => 'bg-white/5 text-white ring-white/15',
+			'awaiting_email' => 'bg-white/5 text-white ring-white/15',
+			'awaiting_phone' => 'bg-white/5 text-white ring-white/15',
+		);
+		$tone = isset( $tones[ $status ] ) ? $tones[ $status ] : 'bg-neutral-800/60 text-neutral-400 ring-neutral-700';
+
+		return sprintf(
+			'<span class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset %1$s"><span class="h-1.5 w-1.5 rounded-full bg-current"></span>%2$s</span>',
+			esc_attr( $tone ),
+			esc_html( $label )
+		);
 	}
 
 	public static function status_label( $status ) {

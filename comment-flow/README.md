@@ -118,9 +118,31 @@ comment-flow/
 │   ├── class-cflow-conversation.php  # captura de e-mail/telefone na DM
 │   ├── class-cflow-leads.php         # leads, validação e CSV
 │   └── class-cflow-token-refresher.php
-├── admin/                            # telas do painel
-└── assets/admin.css
+├── admin/
+│   ├── class-cflow-admin.php         # menus, handlers e classes Tailwind reutilizadas
+│   └── views/                        # telas (partials/header.php = cabeçalho comum)
+└── assets/
+    ├── src/admin.css                 # fonte do CSS (Tailwind)
+    └── admin.css                     # CSS compilado, carregado pelo WordPress
 ```
+
+## Layout (tema escuro com Tailwind CSS)
+
+O painel usa um tema escuro em preto, azul e branco, feito com **Tailwind CSS 3**. O CSS já vem compilado em `assets/admin.css`, então **instalar o plugin não exige Node nem build**.
+
+Para não interferir no resto do wp-admin:
+- as utilities são geradas com o escopo `.cflow-app` (`important: '.cflow-app'` no `tailwind.config.js`) e só valem dentro das telas do plugin;
+- o *preflight* (reset) do Tailwind fica desligado; um reset mínimo e escopado está em `assets/src/admin.css`;
+- o fundo preto do wp-admin só é aplicado nas telas do plugin, pela classe `cflow-dark` no `<body>`.
+
+Para alterar o visual, edite as views ou `assets/src/admin.css` e gere o CSS de novo na raiz do repositório:
+
+```bash
+npm install
+npm run build:css   # ou: npm run watch:css
+```
+
+As classes mais usadas (cartão, input, botões, interruptor, tabela) ficam como constantes em `CFlow_Admin` (`CARD`, `INPUT`, `BTN_PRIMARY`…). Mudar uma delas muda todas as telas.
 
 ## Próximos passos sugeridos
 

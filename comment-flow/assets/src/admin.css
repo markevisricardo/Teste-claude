@@ -1,0 +1,158 @@
+/*
+ * Fonte do CSS do painel. Gere o arquivo final com:  npm run build:css
+ * (o resultado vai para assets/admin.css, que é o que o WordPress carrega).
+ */
+
+/* Com o preflight desligado, "base" gera só as variáveis --tw-* usadas por ring/shadow/transform. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------
+ * Fundo escuro no wp-admin, só nas telas do plugin (body.cflow-dark).
+ * ------------------------------------------------------------------- */
+
+body.cflow-dark,
+body.cflow-dark #wpwrap,
+body.cflow-dark #wpcontent,
+body.cflow-dark #wpbody,
+body.cflow-dark #wpbody-content {
+	background: #000;
+}
+
+body.cflow-dark #wpfooter,
+body.cflow-dark #wpfooter a {
+	color: #525252;
+}
+
+/* Avisos de outros plugins e do WordPress dentro das nossas telas. */
+body.cflow-dark .notice,
+body.cflow-dark div.updated,
+body.cflow-dark div.error {
+	background: #0a0a0a;
+	color: #e5e5e5;
+	border: 1px solid #262626;
+	border-left: 4px solid #3b82f6;
+	border-radius: 12px;
+	box-shadow: none;
+	margin: 0 0 16px;
+}
+
+body.cflow-dark .notice-error,
+body.cflow-dark div.error {
+	border-left-color: #ef4444;
+}
+
+body.cflow-dark .notice a {
+	color: #60a5fa;
+}
+
+body.cflow-dark .notice-dismiss::before {
+	color: #737373;
+}
+
+/* ---------------------------------------------------------------------
+ * "Reset" escopado (o preflight está desligado para não afetar o wp-admin).
+ * ------------------------------------------------------------------- */
+
+.cflow-app {
+	color: #fff;
+	font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+.cflow-app h1,
+.cflow-app h2,
+.cflow-app h3,
+.cflow-app p,
+.cflow-app ul,
+.cflow-app ol,
+.cflow-app li,
+.cflow-app figure {
+	margin: 0;
+	padding: 0;
+	color: inherit;
+}
+
+.cflow-app *,
+.cflow-app *::before,
+.cflow-app *::after {
+	box-sizing: border-box;
+}
+
+.cflow-app a {
+	text-decoration: none;
+}
+
+.cflow-app a:focus {
+	box-shadow: none;
+	outline: 2px solid #3b82f6;
+	outline-offset: 2px;
+}
+
+.cflow-app code {
+	background: #171717;
+	color: #bfdbfe;
+	border-radius: 6px;
+	padding: 2px 6px;
+	font-size: 12px;
+}
+
+.cflow-app input[type="text"],
+.cflow-app input[type="url"],
+.cflow-app input[type="search"],
+.cflow-app input[type="password"],
+.cflow-app input[type="number"],
+.cflow-app textarea,
+.cflow-app select {
+	box-shadow: none;
+	min-height: 40px;
+	max-width: none;
+}
+
+.cflow-app input:focus,
+.cflow-app textarea:focus,
+.cflow-app select:focus {
+	border-color: #3b82f6;
+	box-shadow: 0 0 0 1px #3b82f6;
+	outline: none;
+}
+
+.cflow-app select {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='%23a3a3a3'%3E%3Cpath d='M5.5 7.5 10 12l4.5-4.5'/%3E%3C/svg%3E");
+	background-position: right 10px center;
+	background-repeat: no-repeat;
+	background-size: 16px;
+	padding-right: 36px;
+}
+
+.cflow-app ::placeholder {
+	color: #525252;
+	opacity: 1;
+}
+
+/* Paginação gerada pelo paginate_links(). */
+.cflow-app .page-numbers {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 36px;
+	height: 36px;
+	padding: 0 10px;
+	margin-right: 4px;
+	border: 1px solid #262626;
+	border-radius: 8px;
+	color: #d4d4d4;
+	font-size: 13px;
+}
+
+.cflow-app a.page-numbers:hover {
+	border-color: #3b82f6;
+	color: #fff;
+}
+
+.cflow-app .page-numbers.current {
+	background: #2563eb;
+	border-color: #2563eb;
+	color: #fff;
+}
