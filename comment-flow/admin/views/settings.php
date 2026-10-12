@@ -101,6 +101,9 @@ $days_left = $settings['token_expires_at'] ? (int) floor( ( $settings['token_exp
 				<?php wp_nonce_field( 'cflow_connect' ); ?>
 				<?php submit_button( __( 'Conectar com o Instagram', 'comment-flow' ), 'primary', 'submit', false, '' === $settings['app_id'] || '' === $settings['app_secret'] ? array( 'disabled' => 'disabled' ) : array() ); ?>
 			</form>
+			<?php if ( '' === $settings['app_id'] || '' === $settings['app_secret'] ) : ?>
+				<p class="description cflow-error"><?php esc_html_e( 'Preencha e salve o Instagram App ID e o Instagram App Secret (passo 2) para liberar este botão.', 'comment-flow' ); ?></p>
+			<?php endif; ?>
 			<p class="description"><?php esc_html_e( 'A conta precisa ser Profissional (Empresa ou Criador de conteúdo).', 'comment-flow' ); ?></p>
 		<?php endif; ?>
 	</div>
