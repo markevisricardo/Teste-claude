@@ -1,0 +1,228 @@
+<?php
+/**
+ * Tabelas próprias: automações e log de comentários processados.
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+class CFlow_DB {
+
+	public static function automations_table() {
+		global $wpdb;
+		return $wpdb->prefix . 'cflow_automations';
+	}
+
+	public static function logs_table() {
+		global $wpdb;
+		return $wpdb->prefix . 'cflow_logs';
+	}
+
+	public static function install() {
+		global $wpdb;
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+
+		$charset     = $wpdb->get_charset_collate();
+		$automations = self::automations_table();
+		$logs        = self::logs_table();
+
+		dbDelta(
+			"CREATE TABLE {$automations} (
+				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+				name varchar(191) NOT NULL DEFAULT '',
+				status varchar(20) NOT NULL DEFAULT 'active',
+				media_id varchar(64) NOT NULL DEFAULT '',
+				keywords text NOT NULL,
+				match_mode varchar(20) NOT NULL DEFAULT 'contains',
+				public_replies text NOT NULL,
+				dm_text text NOT NULL,
+				dm_button_label varchar(80) NOT NULL DEFAULT '',
+				dm_button_url varchar(2048) NOT NULL DEFAULT '',
+				priority int(11) NOT NULL DEFAULT 10,
+				created_at datetime NOT NULL,
+				updated_at datetime NOT NULL,
+				PRIMARY KEY  (id),
+				KEY status_priority (status,priority)
+			) {$charset};"
+		);
+
+		dbDelta(
+			"CREATE TABLE {$logs} (
+				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+				comment_id varchar(64) NOT NULL,
+				media_id varchar(64) NOT NULL DEFAULT '',
+				from_id varchar(64) NOT NULL DEFAULT '',
+				from_username varchar(191) NOT NULL DEFAULT '',
+				comment_text text NOT NULL,
+				automation_id bigint(20) unsigned NOT NULL DEFAULT 0,
+				status varchar(20) NOT NULL DEFAULT 'queued',
+				public_reply_sent tinyint(1) NOT NULL DEFAULT 0,
+				dm_sent tinyint(1) NOT NULL DEFAULT 0,
+				attempts tinyint(3) unsigned NOT NULL DEFAULT 0,
+				error text NULL,
+				created_at datetime NOT NULL,
+				updated_at datetime NOT NULL,
+				PRIMARY KEY  (id),
+				UNIQUE KEY comment_id (comment_id),
+				KEY automation_status (automation_id,status),
+				KEY created_at (created_at)
+			) {$charset};"
+		);
+
+		update_option( 'cflow_db_version', CFLOW_DB_VERSION, false );
+		CFlow_Settings::ensure_verify_token();
+	}
+
+	public static function maybe_upgrade() {
+		if ( get_option( 'cflow_db_version' ) !== CFLOW_DB_VERSION ) {
+			self::install();
+		}
+	}
+
+	/* ---------------------------------------------------------------------
+	 * Automações
+	 * ------------------------------------------------------------------- */
+
+	public static function get_automation( $id ) {
+		global $wpdb;
+		$row = $wpdb->get_row(
+			$wpdb->prepare( 'SELECT * FROM ' . self::automations_table() . ' WHERE id = %d', $id ),
+			ARRAY_A
+		);
+		return $row ? $row : null;
+	}
+
+	public static function get_automations( $only_active = false ) {
+		global $wpdb;
+		$where = $only_active ? "WHERE status = 'active'" : '';
+		return $wpdb->get_results(
+			'SELECT * FROM ' . self::automations_table() . " {$where} ORDER BY priority ASC, id ASC",
+			ARRAY_A
+		);
+	}
+
+	public static function save_automation( array $data, $id = 0 ) {
+		global $wpdb;
+		$now                = current_time( 'mysql', true );
+		$data['updated_at'] = $now;
+
+		if ( $id ) {
+			$wpdb->update( self::automations_table(), $data, array( 'id' => (int) $id ) );
+			return (int) $id;
+		}
+
+		$data['created_at'] = $now;
+		$wpdb->insert( self::automations_table(), $data );
+		return (int) $wpdb->insert_id;
+	}
+
+	public static function delete_automation( $id ) {
+		global $wpdb;
+		$wpdb->delete( self::automations_table(), array( 'id' => (int) $id ) );
+	}
+
+	/* ---------------------------------------------------------------------
+	 * Logs
+	 * ------------------------------------------------------------------- */
+
+	/**
+	 * Registra o comentário. Retorna o ID do log, ou 0 se o comentário já
+	 * havia sido recebido (deduplicação pela chave única comment_id).
+	 */
+	public static function claim_comment( array $comment ) {
+		global $wpdb;
+		$now = current_time( 'mysql', true );
+
+		$inserted = $wpdb->query(
+			$wpdb->prepare(
+				'INSERT IGNORE INTO ' . self::logs_table() . ' (comment_id, media_id, from_id, from_username, comment_text, status, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+				$comment['id'],
+				$comment['media_id'],
+				$comment['from_id'],
+				$comment['from_username'],
+				$comment['text'],
+				'queued',
+				$now,
+				$now
+			)
+		);
+
+		return $inserted ? (int) $wpdb->insert_id : 0;
+	}
+
+	/**
+	 * Marca o log como "processing" de forma atômica, para que dois workers
+	 * nunca enviem a mesma resposta. Logs presos em "processing" há mais de
+	 * 10 minutos (worker que morreu) podem ser retomados.
+	 */
+	public static function lock_log( $id ) {
+		global $wpdb;
+		$now   = current_time( 'mysql', true );
+		$stale = gmdate( 'Y-m-d H:i:s', time() - 10 * MINUTE_IN_SECONDS );
+
+		return (bool) $wpdb->query(
+			$wpdb->prepare(
+				'UPDATE ' . self::logs_table() . " SET status = 'processing', attempts = attempts + 1, updated_at = %s WHERE id = %d AND ( status IN ('queued', 'retry') OR ( status = 'processing' AND updated_at < %s ) )",
+				$now,
+				$id,
+				$stale
+			)
+		);
+	}
+
+	public static function get_log( $id ) {
+		global $wpdb;
+		$row = $wpdb->get_row(
+			$wpdb->prepare( 'SELECT * FROM ' . self::logs_table() . ' WHERE id = %d', $id ),
+			ARRAY_A
+		);
+		return $row ? $row : null;
+	}
+
+	public static function update_log( $id, array $data ) {
+		global $wpdb;
+		$data['updated_at'] = current_time( 'mysql', true );
+		$wpdb->update( self::logs_table(), $data, array( 'id' => (int) $id ) );
+	}
+
+	public static function get_logs( $limit = 50, $offset = 0 ) {
+		global $wpdb;
+		return $wpdb->get_results(
+			$wpdb->prepare( 'SELECT * FROM ' . self::logs_table() . ' ORDER BY id DESC LIMIT %d OFFSET %d', $limit, $offset ),
+			ARRAY_A
+		);
+	}
+
+	public static function count_logs() {
+		global $wpdb;
+		return (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::logs_table() );
+	}
+
+	/**
+	 * Estatísticas por automação: [automation_id => [matched, dms]].
+	 */
+	public static function automation_stats() {
+		global $wpdb;
+		$rows  = $wpdb->get_results(
+			'SELECT automation_id, COUNT(*) AS matched, SUM(dm_sent) AS dms FROM ' . self::logs_table() . ' WHERE automation_id > 0 GROUP BY automation_id',
+			ARRAY_A
+		);
+		$stats = array();
+		foreach ( $rows as $row ) {
+			$stats[ (int) $row['automation_id'] ] = array(
+				'matched' => (int) $row['matched'],
+				'dms'     => (int) $row['dms'],
+			);
+		}
+		return $stats;
+	}
+
+	public static function purge_logs_older_than( $days ) {
+		global $wpdb;
+		$wpdb->query(
+			$wpdb->prepare(
+				'DELETE FROM ' . self::logs_table() . ' WHERE created_at < %s',
+				gmdate( 'Y-m-d H:i:s', time() - DAY_IN_SECONDS * (int) $days )
+			)
+		);
+	}
+}

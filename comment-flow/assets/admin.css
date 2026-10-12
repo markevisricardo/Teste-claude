@@ -1,0 +1,108 @@
+.cflow .cflow-card {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 6px;
+	padding: 4px 20px 16px;
+	margin: 16px 0;
+	max-width: 980px;
+}
+
+.cflow .cflow-card h2 {
+	margin-top: 16px;
+}
+
+.cflow .cflow-empty {
+	background: #fff;
+	border: 1px dashed #c3c4c7;
+	border-radius: 6px;
+	padding: 32px;
+	text-align: center;
+	max-width: 600px;
+	margin-top: 16px;
+}
+
+.cflow .cflow-media-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+	gap: 8px;
+	max-width: 760px;
+}
+
+.cflow .cflow-media {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	aspect-ratio: 1;
+	border: 2px solid #dcdcde;
+	border-radius: 6px;
+	overflow: hidden;
+	cursor: pointer;
+	background: #f6f7f7;
+	font-size: 12px;
+	text-align: center;
+	padding: 4px;
+	box-sizing: border-box;
+}
+
+.cflow .cflow-media img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.cflow .cflow-media input {
+	position: absolute;
+	top: 6px;
+	left: 6px;
+	z-index: 1;
+	margin: 0;
+}
+
+.cflow .cflow-media:has(input:checked) {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 2px #2271b1;
+}
+
+.cflow .cflow-badge {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 10px;
+	font-size: 12px;
+	background: #f0f0f1;
+	color: #50575e;
+}
+
+.cflow .cflow-badge--active,
+.cflow .cflow-badge--done {
+	background: #edfaef;
+	color: #00611c;
+}
+
+.cflow .cflow-badge--failed {
+	background: #fcf0f1;
+	color: #8a2424;
+}
+
+.cflow .cflow-badge--retry,
+.cflow .cflow-badge--processing,
+.cflow .cflow-badge--queued {
+	background: #fcf9e8;
+	color: #6e5600;
+}
+
+.cflow .cflow-error {
+	color: #b32d2e;
+	font-size: 12px;
+	margin-top: 4px;
+}
+
+.cflow .cflow-actions {
+	white-space: nowrap;
+}
+
+.cflow .cflow-delete {
+	color: #b32d2e;
+}
