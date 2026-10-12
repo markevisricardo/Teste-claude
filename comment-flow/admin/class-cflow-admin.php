@@ -18,6 +18,8 @@ class CFlow_Admin {
 		add_action( 'admin_post_cflow_save_automation', array( __CLASS__, 'save_automation' ) );
 		add_action( 'admin_post_cflow_delete_automation', array( __CLASS__, 'delete_automation' ) );
 		add_action( 'admin_post_cflow_toggle_automation', array( __CLASS__, 'toggle_automation' ) );
+		add_action( 'admin_post_cflow_export_leads', array( __CLASS__, 'export_leads' ) );
+		add_action( 'admin_post_cflow_delete_lead', array( __CLASS__, 'delete_lead' ) );
 	}
 
 	public static function menu() {
@@ -32,6 +34,7 @@ class CFlow_Admin {
 		);
 		add_submenu_page( 'cflow', __( 'Automações', 'comment-flow' ), __( 'Automações', 'comment-flow' ), self::CAP, 'cflow', array( __CLASS__, 'page_automations' ) );
 		add_submenu_page( 'cflow', __( 'Nova automação', 'comment-flow' ), __( 'Nova automação', 'comment-flow' ), self::CAP, 'cflow-edit', array( __CLASS__, 'page_edit' ) );
+		add_submenu_page( 'cflow', __( 'Leads', 'comment-flow' ), __( 'Leads', 'comment-flow' ), self::CAP, 'cflow-leads', array( __CLASS__, 'page_leads' ) );
 		add_submenu_page( 'cflow', __( 'Logs', 'comment-flow' ), __( 'Logs', 'comment-flow' ), self::CAP, 'cflow-logs', array( __CLASS__, 'page_logs' ) );
 		add_submenu_page( 'cflow', __( 'Configurações', 'comment-flow' ), __( 'Configurações', 'comment-flow' ), self::CAP, 'cflow-settings', array( __CLASS__, 'page_settings' ) );
 	}
@@ -82,10 +85,30 @@ class CFlow_Admin {
 				'dm_button_label' => '',
 				'dm_button_url'   => '',
 				'priority'        => 10,
+				'capture_email'   => 0,
+				'capture_phone'   => 0,
 			);
+			// Textos de captura vêm preenchidos com os padrões.
+			$automation = array_merge( $automation, array_diff_key( CFlow_Conversation::defaults(), array_flip( array( 'invalid_email', 'invalid_phone' ) ) ) );
 		}
 		$media = self::recent_media();
 		include CFLOW_DIR . 'admin/views/edit.php';
+	}
+
+	public static function page_leads() {
+		// phpcs:disable WordPress.Security.NonceVerification
+		$filters  = array(
+			'automation_id' => isset( $_GET['automation_id'] ) ? absint( $_GET['automation_id'] ) : 0,
+			'search'        => isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '',
+		);
+		$per_page = 50;
+		$paged    = isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
+		// phpcs:enable
+		$leads       = CFlow_Leads::query( $filters + array( 'limit' => $per_page, 'offset' => ( $paged - 1 ) * $per_page ) );
+		$total       = CFlow_Leads::count( $filters );
+		$automations = CFlow_DB::get_automations();
+		$names       = wp_list_pluck( $automations, 'name', 'id' );
+		include CFLOW_DIR . 'admin/views/leads.php';
 	}
 
 	public static function page_logs() {
@@ -181,6 +204,12 @@ class CFlow_Admin {
 			'dm_button_label' => mb_substr( sanitize_text_field( wp_unslash( $_POST['dm_button_label'] ?? '' ) ), 0, 20 ),
 			'dm_button_url'   => esc_url_raw( wp_unslash( $_POST['dm_button_url'] ?? '' ), array( 'https', 'http' ) ),
 			'priority'        => (int) ( $_POST['priority'] ?? 10 ),
+			'capture_email'   => isset( $_POST['capture_email'] ) ? 1 : 0,
+			'capture_phone'   => isset( $_POST['capture_phone'] ) ? 1 : 0,
+			'optin_text'      => sanitize_textarea_field( wp_unslash( $_POST['optin_text'] ?? '' ) ),
+			'optin_button'    => mb_substr( sanitize_text_field( wp_unslash( $_POST['optin_button'] ?? '' ) ), 0, 20 ),
+			'email_question'  => sanitize_textarea_field( wp_unslash( $_POST['email_question'] ?? '' ) ),
+			'phone_question'  => sanitize_textarea_field( wp_unslash( $_POST['phone_question'] ?? '' ) ),
 		);
 
 		if ( '' === $data['name'] ) {
@@ -191,6 +220,10 @@ class CFlow_Admin {
 		}
 		if ( ( '' === $data['dm_button_label'] ) !== ( '' === $data['dm_button_url'] ) ) {
 			self::redirect( 'cflow-edit', 'error', __( 'O botão da DM precisa de texto e URL (ou deixe os dois vazios).', 'comment-flow' ), $id ? array( 'id' => $id ) : array() );
+		}
+
+		if ( ( $data['capture_email'] || $data['capture_phone'] ) && '' === trim( $data['dm_text'] ) ) {
+			self::redirect( 'cflow-edit', 'error', __( 'Com a captura ligada, a mensagem no direct é a entrega final e não pode ficar vazia.', 'comment-flow' ), $id ? array( 'id' => $id ) : array() );
 		}
 
 		$id = CFlow_DB::save_automation( $data, $id );
@@ -215,12 +248,38 @@ class CFlow_Admin {
 		self::redirect( 'cflow', 'success', __( 'Status atualizado.', 'comment-flow' ) );
 	}
 
+	public static function export_leads() {
+		self::guard( 'cflow_export_leads' );
+		CFlow_Leads::stream_csv(
+			absint( $_GET['automation_id'] ?? 0 ),
+			sanitize_text_field( wp_unslash( $_GET['s'] ?? '' ) )
+		);
+		exit;
+	}
+
+	public static function delete_lead() {
+		self::guard( 'cflow_delete_lead' );
+		CFlow_Leads::delete( absint( $_GET['id'] ?? 0 ) );
+		self::redirect( 'cflow-leads', 'success', __( 'Lead excluído.', 'comment-flow' ) );
+	}
+
 	/* ---------------------------------------------------------------------
 	 * Helpers de view
 	 * ------------------------------------------------------------------- */
 
 	public static function action_url( $action, $id ) {
 		return wp_nonce_url( admin_url( 'admin-post.php?action=' . $action . '&id=' . (int) $id ), $action );
+	}
+
+	public static function export_url( $automation_id = 0, $search = '' ) {
+		$args = array( 'action' => 'cflow_export_leads' );
+		if ( $automation_id ) {
+			$args['automation_id'] = (int) $automation_id;
+		}
+		if ( '' !== $search ) {
+			$args['s'] = rawurlencode( $search );
+		}
+		return wp_nonce_url( add_query_arg( $args, admin_url( 'admin-post.php' ) ), 'cflow_export_leads' );
 	}
 
 	public static function status_label( $status ) {

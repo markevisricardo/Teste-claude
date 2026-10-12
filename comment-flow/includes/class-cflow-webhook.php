@@ -79,6 +79,19 @@ class CFlow_Webhook {
 			}
 		}
 
+		foreach ( self::extract_messages( $payload ) as $message ) {
+			// Ignora ecos (mensagens enviadas pela própria conta).
+			if ( $message['is_echo'] || ( '' !== $own_id && $message['sender_id'] === $own_id ) || $message['sender_id'] === $message['account_id'] ) {
+				continue;
+			}
+			// DMs de quem não está numa captura não interessam ao plugin.
+			if ( ! CFlow_Leads::find_open_conversation( $message['sender_id'] ) ) {
+				continue;
+			}
+			CFlow_Queue::push_message( $message['sender_id'], $message['text'], $message['mid'] );
+			++$received;
+		}
+
 		// Responde rápido; o trabalho pesado fica na fila.
 		return new WP_REST_Response( array( 'received' => $received ), 200 );
 	}
@@ -121,5 +134,48 @@ class CFlow_Webhook {
 		}
 
 		return $comments;
+	}
+
+	/**
+	 * Extrai as mensagens de DM recebidas. Aceita os dois formatos que a Meta
+	 * usa: entry[].messaging[] e entry[].changes[] com field "messages".
+	 *
+	 * @return array[] Cada item: sender_id, text, mid, is_echo, account_id.
+	 */
+	public static function extract_messages( array $payload ) {
+		$events = array();
+
+		foreach ( $payload['entry'] as $entry ) {
+			$account_id = isset( $entry['id'] ) ? (string) $entry['id'] : '';
+			$items      = array();
+
+			if ( ! empty( $entry['messaging'] ) && is_array( $entry['messaging'] ) ) {
+				$items = $entry['messaging'];
+			}
+			if ( ! empty( $entry['changes'] ) && is_array( $entry['changes'] ) ) {
+				foreach ( $entry['changes'] as $change ) {
+					if ( isset( $change['field'], $change['value'] ) && 'messages' === $change['field'] ) {
+						$items[] = $change['value'];
+					}
+				}
+			}
+
+			foreach ( $items as $item ) {
+				// Ignora leituras, reações etc.: só interessam mensagens.
+				if ( ! isset( $item['sender']['id'], $item['message'] ) || ! is_array( $item['message'] ) ) {
+					continue;
+				}
+				$message  = $item['message'];
+				$events[] = array(
+					'sender_id'  => (string) $item['sender']['id'],
+					'text'       => isset( $message['text'] ) ? (string) $message['text'] : '',
+					'mid'        => isset( $message['mid'] ) ? (string) $message['mid'] : '',
+					'is_echo'    => ! empty( $message['is_echo'] ),
+					'account_id' => $account_id,
+				);
+			}
+		}
+
+		return $events;
 	}
 }

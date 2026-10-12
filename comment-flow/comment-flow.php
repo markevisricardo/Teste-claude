@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Comment Flow – Automação de Comentários do Instagram
  * Description:       Responde comentários do Instagram automaticamente e envia uma DM (Private Reply) usando a API oficial da Meta.
- * Version:           0.1.0
+ * Version:           0.2.0
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Author:            Comment Flow
@@ -12,8 +12,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'CFLOW_VERSION', '0.1.0' );
-define( 'CFLOW_DB_VERSION', '1' );
+define( 'CFLOW_VERSION', '0.2.0' );
+define( 'CFLOW_DB_VERSION', '2' );
 define( 'CFLOW_FILE', __FILE__ );
 define( 'CFLOW_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CFLOW_URL', plugin_dir_url( __FILE__ ) );
@@ -25,7 +25,9 @@ require_once CFLOW_DIR . 'includes/class-cflow-db.php';
 require_once CFLOW_DIR . 'includes/class-cflow-instagram-api.php';
 require_once CFLOW_DIR . 'includes/class-cflow-matcher.php';
 require_once CFLOW_DIR . 'includes/class-cflow-queue.php';
+require_once CFLOW_DIR . 'includes/class-cflow-leads.php';
 require_once CFLOW_DIR . 'includes/class-cflow-processor.php';
+require_once CFLOW_DIR . 'includes/class-cflow-conversation.php';
 require_once CFLOW_DIR . 'includes/class-cflow-webhook.php';
 require_once CFLOW_DIR . 'includes/class-cflow-oauth.php';
 require_once CFLOW_DIR . 'includes/class-cflow-token-refresher.php';

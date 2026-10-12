@@ -10,6 +10,7 @@ defined( 'ABSPATH' ) || exit;
 $media_ids     = is_array( $media ) ? wp_list_pluck( $media, 'id' ) : array();
 $is_manual     = '' !== $automation['media_id'] && ! in_array( $automation['media_id'], $media_ids, true );
 $selected_kind = '' === $automation['media_id'] ? 'any' : ( $is_manual ? 'manual' : $automation['media_id'] );
+$defaults      = CFlow_Conversation::defaults();
 ?>
 <div class="wrap cflow">
 	<h1><?php echo $id ? esc_html__( 'Editar automação', 'comment-flow' ) : esc_html__( 'Nova automação', 'comment-flow' ); ?></h1>
@@ -100,9 +101,43 @@ $selected_kind = '' === $automation['media_id'] ? 'any' : ( $is_manual ? 'manual
 		</div>
 
 		<div class="cflow-card">
-			<h2><?php esc_html_e( '3. Mensagem no direct (Private Reply)', 'comment-flow' ); ?></h2>
+			<h2><?php esc_html_e( '3. Captura de e-mail e telefone (opcional)', 'comment-flow' ); ?></h2>
+			<p>
+				<label><input type="checkbox" name="capture_email" value="1" <?php checked( 1, (int) $automation['capture_email'] ); ?>> <?php esc_html_e( 'Pedir e-mail', 'comment-flow' ); ?></label>
+				&nbsp;&nbsp;
+				<label><input type="checkbox" name="capture_phone" value="1" <?php checked( 1, (int) $automation['capture_phone'] ); ?>> <?php esc_html_e( 'Pedir telefone (WhatsApp)', 'comment-flow' ); ?></label>
+			</p>
+			<p class="description"><?php esc_html_e( 'Com a captura ligada, a primeira DM é o convite abaixo. Quando a pessoa responde, o plugin pede os dados e só então envia a mensagem final (passo 4). Os dados aparecem em Comment Flow > Leads.', 'comment-flow' ); ?></p>
+			<table class="form-table" role="presentation">
+				<tr>
+					<th><label for="cflow-optin"><?php esc_html_e( 'Convite (primeira DM)', 'comment-flow' ); ?></label></th>
+					<td><textarea id="cflow-optin" name="optin_text" rows="3" class="large-text" placeholder="<?php echo esc_attr( $defaults['optin_text'] ); ?>"><?php echo esc_textarea( (string) $automation['optin_text'] ); ?></textarea></td>
+				</tr>
+				<tr>
+					<th><label for="cflow-optin-btn"><?php esc_html_e( 'Botão de resposta', 'comment-flow' ); ?></label></th>
+					<td><input type="text" id="cflow-optin-btn" name="optin_button" maxlength="20" class="regular-text" value="<?php echo esc_attr( (string) $automation['optin_button'] ); ?>" placeholder="<?php echo esc_attr( $defaults['optin_button'] ); ?>"></td>
+				</tr>
+				<tr>
+					<th><label for="cflow-email-q"><?php esc_html_e( 'Pergunta do e-mail', 'comment-flow' ); ?></label></th>
+					<td>
+						<textarea id="cflow-email-q" name="email_question" rows="2" class="large-text" placeholder="<?php echo esc_attr( $defaults['email_question'] ); ?>"><?php echo esc_textarea( (string) $automation['email_question'] ); ?></textarea>
+						<p class="description"><?php esc_html_e( 'Deixe claro para que o e-mail será usado: o consentimento é registrado junto com o lead (LGPD).', 'comment-flow' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="cflow-phone-q"><?php esc_html_e( 'Pergunta do telefone', 'comment-flow' ); ?></label></th>
+					<td>
+						<textarea id="cflow-phone-q" name="phone_question" rows="2" class="large-text" placeholder="<?php echo esc_attr( $defaults['phone_question'] ); ?>"><?php echo esc_textarea( (string) $automation['phone_question'] ); ?></textarea>
+						<p class="description"><?php esc_html_e( 'Quem responder PULAR segue sem informar o telefone.', 'comment-flow' ); ?></p>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="cflow-card">
+			<h2><?php esc_html_e( '4. Mensagem no direct', 'comment-flow' ); ?></h2>
 			<textarea name="dm_text" rows="5" class="large-text"><?php echo esc_textarea( $automation['dm_text'] ); ?></textarea>
-			<p class="description"><?php esc_html_e( 'Enviada uma única vez por comentário. Use {username} para mencionar a pessoa.', 'comment-flow' ); ?></p>
+			<p class="description"><?php esc_html_e( 'Sem captura, é a Private Reply enviada uma única vez por comentário. Com captura, é a entrega final, enviada depois que a pessoa informa os dados. Use {username} para mencionar a pessoa.', 'comment-flow' ); ?></p>
 			<table class="form-table" role="presentation">
 				<tr>
 					<th><label for="cflow-btn-label"><?php esc_html_e( 'Texto do botão', 'comment-flow' ); ?></label></th>

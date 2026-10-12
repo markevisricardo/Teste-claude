@@ -163,9 +163,37 @@ class CFlow_Instagram_API {
 	 * Envia uma Private Reply: DM para quem comentou, vinculada ao comentário.
 	 * Só é permitida uma por comentário e em até 7 dias após o comentário.
 	 */
-	public function send_private_reply( $ig_user_id, $comment_id, $text, $button_label = '', $button_url = '' ) {
+	public function send_private_reply( $ig_user_id, $comment_id, $text, $button_label = '', $button_url = '', $quick_reply = '' ) {
+		return $this->post_json(
+			$ig_user_id . '/messages',
+			array(
+				'recipient' => array( 'comment_id' => $comment_id ),
+				'message'   => self::build_message( $text, $button_label, $button_url, $quick_reply ),
+			)
+		);
+	}
+
+	/**
+	 * Envia uma DM comum para um usuário (IGSID). Só funciona dentro da janela
+	 * de 24h aberta pela última mensagem da pessoa.
+	 */
+	public function send_message( $ig_user_id, $recipient_id, $text, $button_label = '', $button_url = '' ) {
+		return $this->post_json(
+			$ig_user_id . '/messages',
+			array(
+				'recipient' => array( 'id' => $recipient_id ),
+				'message'   => self::build_message( $text, $button_label, $button_url ),
+			)
+		);
+	}
+
+	/**
+	 * Monta a mensagem: texto puro, texto com botão de link (button template)
+	 * ou texto com um botão de resposta rápida (quick reply).
+	 */
+	public static function build_message( $text, $button_label = '', $button_url = '', $quick_reply = '' ) {
 		if ( '' !== $button_label && '' !== $button_url ) {
-			$message = array(
+			return array(
 				'attachment' => array(
 					'type'    => 'template',
 					'payload' => array(
@@ -181,17 +209,19 @@ class CFlow_Instagram_API {
 					),
 				),
 			);
-		} else {
-			$message = array( 'text' => $text );
 		}
 
-		return $this->post_json(
-			$ig_user_id . '/messages',
-			array(
-				'recipient' => array( 'comment_id' => $comment_id ),
-				'message'   => $message,
-			)
-		);
+		$message = array( 'text' => $text );
+		if ( '' !== $quick_reply ) {
+			$message['quick_replies'] = array(
+				array(
+					'content_type' => 'text',
+					'title'        => $quick_reply,
+					'payload'      => 'CFLOW_OPTIN',
+				),
+			);
+		}
+		return $message;
 	}
 
 	/* ---------------------------------------------------------------------

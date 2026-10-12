@@ -45,6 +45,11 @@ class CFlow_Processor {
 
 		CFlow_DB::update_log( $log_id, array( 'automation_id' => (int) $automation['id'] ) );
 
+		// Em novas tentativas o lead já existe; não contar o comentário de novo.
+		$lead_id = $log['automation_id']
+			? CFlow_Leads::find_id( (int) $automation['id'], $log['from_id'] )
+			: CFlow_Leads::upsert_from_comment( (int) $automation['id'], $log );
+
 		$api   = new CFlow_Instagram_API( $settings['access_token'] );
 		$error = null;
 
@@ -60,18 +65,48 @@ class CFlow_Processor {
 			}
 		}
 
-		if ( ! $log['dm_sent'] && '' !== trim( $automation['dm_text'] ) ) {
-			$result = $api->send_private_reply(
-				$settings['ig_user_id'],
-				$log['comment_id'],
-				CFlow_Matcher::render( $automation['dm_text'], $log['from_username'] ),
-				$automation['dm_button_label'],
-				$automation['dm_button_url']
-			);
+		// Quem já concluiu a captura nesta automação recebe direto a entrega.
+		$lead    = $lead_id ? CFlow_Leads::get( $lead_id ) : null;
+		$capture = self::captures( $automation ) && ! ( $lead && 'done' === $lead['capture_step'] );
+		$texts   = CFlow_Conversation::texts( $automation );
+		$dm_text = $capture ? $texts['optin_text'] : $automation['dm_text'];
+
+		if ( ! $log['dm_sent'] && '' !== trim( (string) $dm_text ) ) {
+			$text = CFlow_Matcher::render( $dm_text, $log['from_username'] );
+			if ( $capture ) {
+				// Abre a conversa com um botão de resposta rápida: a resposta da
+				// pessoa libera a janela de 24h para pedir e-mail/telefone.
+				$result = $api->send_private_reply( $settings['ig_user_id'], $log['comment_id'], $text, '', '', $texts['optin_button'] );
+				if ( is_wp_error( $result ) && ! self::is_retryable( $result ) ) {
+					// Se a resposta rápida for recusada, tenta só com o texto.
+					$result = $api->send_private_reply( $settings['ig_user_id'], $log['comment_id'], $text );
+				}
+			} else {
+				$result = $api->send_private_reply(
+					$settings['ig_user_id'],
+					$log['comment_id'],
+					$text,
+					$automation['dm_button_label'],
+					$automation['dm_button_url']
+				);
+			}
+
 			if ( is_wp_error( $result ) ) {
 				$error = $result;
 			} else {
 				CFlow_DB::update_log( $log_id, array( 'dm_sent' => 1 ) );
+				if ( $lead_id ) {
+					$lead_data = array(
+						'dm_sent'      => 1,
+						// O recipient_id é o ID que chega nas mensagens (webhook "messages").
+						'ig_scoped_id' => ! empty( $result['recipient_id'] ) ? (string) $result['recipient_id'] : $log['from_id'],
+					);
+					if ( $capture ) {
+						$lead_data['capture_step']     = 'awaiting_optin';
+						$lead_data['capture_attempts'] = 0;
+					}
+					CFlow_Leads::update( $lead_id, $lead_data );
+				}
 			}
 		}
 
@@ -80,11 +115,9 @@ class CFlow_Processor {
 			return;
 		}
 
-		$data      = $error->get_error_data();
-		$retryable = is_array( $data ) && ! empty( $data['retryable'] );
-		$attempts  = (int) $log['attempts'];
+		$attempts = (int) $log['attempts'];
 
-		if ( $retryable && $attempts < self::MAX_ATTEMPTS ) {
+		if ( self::is_retryable( $error ) && $attempts < self::MAX_ATTEMPTS ) {
 			CFlow_DB::update_log( $log_id, array( 'status' => 'retry', 'error' => $error->get_error_message() ) );
 			// Backoff exponencial: 2, 4, 8 minutos.
 			CFlow_Queue::push( $log_id, MINUTE_IN_SECONDS * ( 2 ** $attempts ) );
@@ -92,5 +125,14 @@ class CFlow_Processor {
 		}
 
 		CFlow_DB::update_log( $log_id, array( 'status' => 'failed', 'error' => $error->get_error_message() ) );
+	}
+
+	public static function captures( array $automation ) {
+		return ! empty( $automation['capture_email'] ) || ! empty( $automation['capture_phone'] );
+	}
+
+	public static function is_retryable( WP_Error $error ) {
+		$data = $error->get_error_data();
+		return is_array( $data ) && ! empty( $data['retryable'] );
 	}
 }

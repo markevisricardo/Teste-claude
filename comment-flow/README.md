@@ -3,7 +3,8 @@
 Plugin no estilo ManyChat: quando alguém comenta uma palavra-chave num post ou reel, o plugin
 
 1. **responde publicamente** ao comentário (sorteando uma entre várias variações) e
-2. **envia uma DM** (Private Reply) com texto e, se você quiser, um botão com link.
+2. **envia uma DM** (Private Reply) com texto e, se você quiser, um botão com link;
+3. opcionalmente, **pede o e-mail e o telefone** na DM antes de entregar o material. Os leads ficam no painel e podem ser exportados em CSV.
 
 Ele usa somente a **API oficial da Meta** (Instagram API with Instagram Login). Não há scraping nem login com senha.
 
@@ -52,6 +53,28 @@ Para atender contas que não têm função no app, você precisa de:
 | DM | Texto da Private Reply, com botão opcional (título de até 20 caracteres + URL) |
 | Prioridade | Quando mais de uma automação casa, vale a de menor número |
 
+## Captura de e-mail e telefone (leads)
+
+Ligue **Pedir e-mail** e/ou **Pedir telefone** no passo 3 da automação. O fluxo fica assim:
+
+```
+Comentário "QUERO"
+  → DM convite: "Quer receber o e-book? Toca no botão 👇"  [Sim, quero!]
+  → pessoa responde (isso abre a janela de 24h para conversar)
+  → "Qual é o seu melhor e-mail?"     → valida; até 3 tentativas
+  → "E qual é o seu WhatsApp com DDD?" → valida; "PULAR" pula
+  → mensagem final (passo 4) com o botão/link
+```
+
+- O e-mail é encontrado mesmo no meio de uma frase ("é ana@x.com, valeu"). O telefone é normalizado para `+55DDNÚMERO`.
+- Depois de 3 respostas inválidas, o plugin pula aquele dado e segue com a entrega, para a conversa não travar.
+- Quem já concluiu a captura e comenta de novo recebe a entrega direto, sem responder às perguntas outra vez.
+- A data do consentimento fica registrada no lead. Deixe claro na pergunta para que o dado será usado (LGPD).
+
+**Comment Flow > Leads** mostra @usuário, e-mail, telefone (com link para o WhatsApp), automação, último comentário e etapa da captura, com filtro por automação e busca. O botão **Exportar CSV** respeita o filtro, e na lista de automações cada uma tem o seu link **Exportar CSV**. O arquivo usa `;` como separador e BOM UTF-8, então abre direto no Excel em português. Para atender um pedido de exclusão de dados, use **Excluir** no lead.
+
+Ao contrário dos logs, os leads **não** são apagados automaticamente.
+
 Em *Comment Flow > Logs* aparecem cada comentário recebido, a automação aplicada, o que foi enviado e os erros da API.
 
 ## Como funciona
@@ -83,7 +106,7 @@ comment-flow/
 ├── comment-flow.php                  # bootstrap
 ├── uninstall.php                     # remove tabelas e opções
 ├── includes/
-│   ├── class-cflow-db.php            # tabelas de automações e logs
+│   ├── class-cflow-db.php            # tabelas de automações, logs e leads
 │   ├── class-cflow-settings.php      # opções (segredos criptografados)
 │   ├── class-cflow-crypto.php        # AES-256-GCM
 │   ├── class-cflow-instagram-api.php # cliente da Graph API
@@ -92,6 +115,8 @@ comment-flow/
 │   ├── class-cflow-matcher.php       # regras de palavra-chave
 │   ├── class-cflow-queue.php         # Action Scheduler / WP-Cron
 │   ├── class-cflow-processor.php     # executa a automação
+│   ├── class-cflow-conversation.php  # captura de e-mail/telefone na DM
+│   ├── class-cflow-leads.php         # leads, validação e CSV
 │   └── class-cflow-token-refresher.php
 ├── admin/                            # telas do painel
 └── assets/admin.css
@@ -99,7 +124,6 @@ comment-flow/
 
 ## Próximos passos sugeridos
 
-- Fluxos de conversa com botões (quick replies), tratando o webhook `messages`
-- Captura de e-mail na DM e integração com CRM/e-mail marketing
+- Integração direta com CRM/e-mail marketing (RD Station, Mailchimp, ActiveCampaign) ou webhook para Zapier/Make/n8n
 - Exigir que a pessoa siga o perfil antes de liberar o link
 - Várias contas do Instagram por site

@@ -88,7 +88,10 @@
 
 .cflow .cflow-badge--retry,
 .cflow .cflow-badge--processing,
-.cflow .cflow-badge--queued {
+.cflow .cflow-badge--queued,
+.cflow .cflow-badge--awaiting_optin,
+.cflow .cflow-badge--awaiting_email,
+.cflow .cflow-badge--awaiting_phone {
 	background: #fcf9e8;
 	color: #6e5600;
 }
@@ -105,4 +108,21 @@
 
 .cflow .cflow-delete {
 	color: #b32d2e;
+}
+
+.cflow .cflow-filters {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin: 12px 0 0;
+}
+
+.cflow .cflow-filters input[type="search"] {
+	width: 260px;
+}
+
+.cflow .cflow-count {
+	color: #646970;
+	margin-left: 4px;
 }

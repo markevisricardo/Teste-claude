@@ -17,6 +17,11 @@ class CFlow_DB {
 		return $wpdb->prefix . 'cflow_logs';
 	}
 
+	public static function leads_table() {
+		global $wpdb;
+		return $wpdb->prefix . 'cflow_leads';
+	}
+
 	public static function install() {
 		global $wpdb;
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -24,6 +29,7 @@ class CFlow_DB {
 		$charset     = $wpdb->get_charset_collate();
 		$automations = self::automations_table();
 		$logs        = self::logs_table();
+		$leads       = self::leads_table();
 
 		dbDelta(
 			"CREATE TABLE {$automations} (
@@ -37,6 +43,12 @@ class CFlow_DB {
 				dm_text text NOT NULL,
 				dm_button_label varchar(80) NOT NULL DEFAULT '',
 				dm_button_url varchar(2048) NOT NULL DEFAULT '',
+				capture_email tinyint(1) NOT NULL DEFAULT 0,
+				capture_phone tinyint(1) NOT NULL DEFAULT 0,
+				optin_text text NULL,
+				optin_button varchar(20) NOT NULL DEFAULT '',
+				email_question text NULL,
+				phone_question text NULL,
 				priority int(11) NOT NULL DEFAULT 10,
 				created_at datetime NOT NULL,
 				updated_at datetime NOT NULL,
@@ -64,6 +76,34 @@ class CFlow_DB {
 				PRIMARY KEY  (id),
 				UNIQUE KEY comment_id (comment_id),
 				KEY automation_status (automation_id,status),
+				KEY created_at (created_at)
+			) {$charset};"
+		);
+
+		dbDelta(
+			"CREATE TABLE {$leads} (
+				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+				automation_id bigint(20) unsigned NOT NULL,
+				comment_from_id varchar(64) NOT NULL,
+				ig_scoped_id varchar(64) NOT NULL DEFAULT '',
+				username varchar(191) NOT NULL DEFAULT '',
+				last_comment text NULL,
+				comments_count int(10) unsigned NOT NULL DEFAULT 1,
+				dm_sent tinyint(1) NOT NULL DEFAULT 0,
+				email varchar(191) NOT NULL DEFAULT '',
+				phone varchar(32) NOT NULL DEFAULT '',
+				consent_at datetime NULL,
+				capture_step varchar(20) NOT NULL DEFAULT 'none',
+				capture_attempts tinyint(3) unsigned NOT NULL DEFAULT 0,
+				last_mid varchar(191) NOT NULL DEFAULT '',
+				locked_until datetime NULL,
+				last_error text NULL,
+				created_at datetime NOT NULL,
+				updated_at datetime NOT NULL,
+				PRIMARY KEY  (id),
+				UNIQUE KEY automation_person (automation_id,comment_from_id),
+				KEY ig_scoped_id (ig_scoped_id),
+				KEY comment_from_id (comment_from_id),
 				KEY created_at (created_at)
 			) {$charset};"
 		);
@@ -198,7 +238,7 @@ class CFlow_DB {
 	}
 
 	/**
-	 * Estatísticas por automação: [automation_id => [matched, dms]].
+	 * Estatísticas por automação: [automation_id => [matched, dms, leads, emails]].
 	 */
 	public static function automation_stats() {
 		global $wpdb;
@@ -211,7 +251,22 @@ class CFlow_DB {
 			$stats[ (int) $row['automation_id'] ] = array(
 				'matched' => (int) $row['matched'],
 				'dms'     => (int) $row['dms'],
+				'leads'   => 0,
+				'emails'  => 0,
 			);
+		}
+
+		$leads = $wpdb->get_results(
+			"SELECT automation_id, COUNT(*) AS leads, SUM(email <> '') AS emails FROM " . self::leads_table() . ' GROUP BY automation_id',
+			ARRAY_A
+		);
+		foreach ( $leads as $row ) {
+			$id = (int) $row['automation_id'];
+			if ( ! isset( $stats[ $id ] ) ) {
+				$stats[ $id ] = array( 'matched' => 0, 'dms' => 0 );
+			}
+			$stats[ $id ]['leads']  = (int) $row['leads'];
+			$stats[ $id ]['emails'] = (int) $row['emails'];
 		}
 		return $stats;
 	}
