@@ -4,7 +4,9 @@
   "description": "Build do CSS (Tailwind) do plugin Comment Flow",
   "scripts": {
     "build:css": "tailwindcss -c tailwind.config.js -i comment-flow/assets/src/admin.css -o comment-flow/assets/admin.css --minify",
-    "watch:css": "tailwindcss -c tailwind.config.js -i comment-flow/assets/src/admin.css -o comment-flow/assets/admin.css --watch"
+    "watch:css": "tailwindcss -c tailwind.config.js -i comment-flow/assets/src/admin.css -o comment-flow/assets/admin.css --watch",
+    "build:landing": "tailwindcss -c landing-dra-lidiane/tailwind.config.js -i landing-dra-lidiane/src/styles.css -o landing-dra-lidiane/assets/styles.css --minify",
+    "watch:landing": "tailwindcss -c landing-dra-lidiane/tailwind.config.js -i landing-dra-lidiane/src/styles.css -o landing-dra-lidiane/assets/styles.css --watch"
   },
   "devDependencies": {
     "tailwindcss": "3.4.17"

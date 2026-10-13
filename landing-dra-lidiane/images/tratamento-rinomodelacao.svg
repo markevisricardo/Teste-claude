@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" preserveAspectRatio="xMidYMid slice"><defs>
+<radialGradient id="rin_blush" cx="50%" cy="50%" r="50%">
+  <stop offset="0" stop-color="#E79A8E" stop-opacity=".55"/>
+  <stop offset="1" stop-color="#E79A8E" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="rin_face" x1="0" y1="0" x2="1" y2="0">
+  <stop offset="0" stop-color="#E2B9A3"/>
+  <stop offset=".22" stop-color="#F2D5C4"/>
+  <stop offset=".78" stop-color="#F2D5C4"/>
+  <stop offset="1" stop-color="#E2B9A3"/>
+</linearGradient>
+<linearGradient id="rin_neck" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#C9927A"/>
+  <stop offset=".35" stop-color="#E2B9A3"/>
+  <stop offset="1" stop-color="#F2D5C4"/>
+</linearGradient>
+<linearGradient id="rin_blonde" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#A9845A"/>
+  <stop offset=".25" stop-color="#DDBE8F"/>
+  <stop offset="1" stop-color="#EED7AE"/>
+</linearGradient>
+<linearGradient id="rin_brown" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#4A3127"/>
+  <stop offset="1" stop-color="#6E4A39"/>
+</linearGradient>
+<linearGradient id="rin_bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F5EFEB"/><stop offset="1" stop-color="#E8DCD3"/></linearGradient></defs>
+<rect width="400" height="300" fill="url(#rin_bg)"/>
+<g transform="translate(40 -40) scale(.8)">
+<circle cx="150" cy="108" r="44" fill="url(#rin_brown)"/>
+<path d="M60 520 C70 450 110 420 150 410 L225 405 C260 420 300 450 320 520 Z" fill="#F2D5C4"/>
+<path d="M150 300 L150 420 Q190 440 228 415 L222 345 Z" fill="url(#rin_neck)"/>
+<path d="M155 112 C210 96 262 122 272 175 C275 195 272 205 276 215 C280 226 286 242 298 262 C302 270 297 276 287 276 C285 282 287 288 283 292 C291 297 291 303 285 306 C289 312 287 318 281 320 C276 330 281 343 270 352 C255 362 235 362 220 358 C200 352 175 335 160 310 C130 270 110 160 155 112 Z" fill="#F2D5C4"/>
+<path d="M286 276 C280 279 276 279 272 276" stroke="#C9927A" stroke-width="2" fill="none" stroke-linecap="round"/>
+<path d="M282 292 Q290 298 285 306 Q280 302 275 302 Z" fill="#C9786E"/>
+<path d="M284 307 Q288 313 281 320 Q276 314 276 309 Z" fill="#D88A80"/>
+<circle cx="250" cy="282" r="24" fill="url(#rin_blush)"/>
+<path d="M238 216 Q252 226 264 218" stroke="#3A2620" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+<path d="M244 222 l-2 5 M251 224 l0 5 M258 222 l2 5" stroke="#3A2620" stroke-width="1.2" stroke-linecap="round"/>
+<path d="M234 198 Q252 190 268 196" stroke="#4A3127" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+<ellipse cx="180" cy="238" rx="13" ry="22" fill="#E2B9A3"/>
+<circle cx="180" cy="266" r="4" fill="#D9B77C"/>
+<path d="M155 112 C210 96 255 115 262 158 C240 150 215 160 196 190 C186 205 175 215 168 240 C150 230 140 210 136 185 C130 150 135 125 155 112 Z" fill="url(#rin_brown)"/>
+<path d="M165 120 C200 112 235 120 252 146 M150 140 C160 170 165 200 168 232" stroke="#fff" stroke-opacity=".18" stroke-width="2" fill="none"/></g>
+
+<g transform="translate(40 -40) scale(.8)">
+  <path d="M275 214 C279 226 286 242 296 260" stroke="#fff" stroke-width="3" fill="none" stroke-dasharray="4 5"/>
+  <circle cx="275" cy="214" r="4" fill="#fff" stroke="#C99A7E" stroke-width="2"/>
+  <circle cx="284" cy="238" r="4" fill="#fff" stroke="#C99A7E" stroke-width="2"/>
+  <circle cx="296" cy="260" r="4" fill="#fff" stroke="#C99A7E" stroke-width="2"/>
+</g>
+</svg>
