@@ -1,6 +1,8 @@
 # Post Flow – agendamento de posts em redes sociais (SaaS em WordPress)
 
 > Facebook, Instagram, LinkedIn, X, Threads, Google Meu Negócio, Pinterest e WhatsApp (Status e grupos por QR Code, grátis; ou API oficial).
+>
+> 📘 **Manual completo em PDF** (instalação, configuração de cada rede, tutorial do usuário, manual das telas e solução de problemas): [`docs/Post-Flow-Manual.pdf`](../docs/Post-Flow-Manual.pdf). Para gerar de novo: `npm run manual:postflow`.
 
 Um plugin WordPress que vira uma plataforma de agendamento de posts, no estilo das ferramentas de "fila de publicação":
 

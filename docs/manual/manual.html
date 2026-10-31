@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Post Flow — Manual e Tutorial</title>
+<style>
+	@page { size: A4; margin: 22mm 18mm 20mm 18mm; }
+	@page :first { margin: 0; }
+
+	:root {
+		--ink: #16131f;
+		--muted: #5b5670;
+		--line: #e6e3ef;
+		--soft: #f6f4fb;
+		--violet: #6d28d9;
+		--violet-2: #7c3aed;
+		--violet-soft: #ede9fe;
+		--amber-soft: #fef3c7;
+		--amber: #92400e;
+		--green-soft: #dcfce7;
+		--green: #166534;
+		--red-soft: #fee2e2;
+		--red: #991b1b;
+	}
+
+	* { box-sizing: border-box; }
+	html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+	body { margin: 0; font-family: Inter, "Liberation Sans", Arial, sans-serif; color: var(--ink); font-size: 10.5pt; line-height: 1.55; }
+
+	/* Capa */
+	.cover { height: 297mm; width: 210mm; position: relative; overflow: hidden; color: #fff; page-break-after: always;
+		background: radial-gradient(ellipse 80% 55% at 85% 0%, rgba(255,255,255,.22), transparent 60%), linear-gradient(150deg, #7c3aed 0%, #5b21b6 45%, #312e81 100%); }
+	.cover::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,.14) 1px, transparent 0); background-size: 18px 18px; }
+	.cover-inner { position: relative; padding: 34mm 22mm 0; }
+	.logo { width: 64px; height: 64px; border-radius: 18px; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 16px 40px rgba(30,10,80,.35); }
+	.cover h1 { font-size: 46pt; line-height: 1.02; letter-spacing: -0.03em; margin: 22mm 0 6mm; font-weight: 700; }
+	.cover .sub { font-size: 15pt; color: #ede9fe; max-width: 140mm; margin: 0; }
+	.cover .chips { margin-top: 12mm; display: flex; flex-wrap: wrap; gap: 8px; max-width: 160mm; }
+	.cover .chip { border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.12); border-radius: 999px; padding: 5px 12px; font-size: 9.5pt; }
+	.cover-shot { position: absolute; left: 22mm; width: 210mm; height: 108mm; object-fit: cover; object-position: left top; bottom: -10mm; border-radius: 14px; box-shadow: 0 30px 80px rgba(10,0,40,.55); border: 1px solid rgba(255,255,255,.25); }
+	.cover-meta { position: absolute; right: 22mm; top: 34mm; text-align: right; font-size: 9.5pt; color: #ddd6fe; }
+
+	/* Estrutura */
+	h1, h2, h3, h4 { letter-spacing: -0.015em; line-height: 1.25; }
+	h2, h3, .part-head { break-after: avoid; page-break-after: avoid; }
+	h2 + *, h3 + * { break-before: avoid; page-break-before: avoid; }
+	.part { page-break-before: always; }
+	.part-head { border-bottom: 3px solid var(--violet); padding-bottom: 5mm; margin-bottom: 7mm; }
+	.part-head .num { font-size: 10pt; font-weight: 700; color: var(--violet); text-transform: uppercase; letter-spacing: .12em; }
+	.part-head h1 { font-size: 26pt; margin: 2mm 0 0; }
+	.part-head p { margin: 2mm 0 0; color: var(--muted); font-size: 11.5pt; }
+	h2 { font-size: 15pt; margin: 9mm 0 3mm; color: var(--ink); }
+	h2 .n { color: var(--violet); margin-right: 6px; }
+	h3 { font-size: 12pt; margin: 6mm 0 2mm; }
+	p { margin: 0 0 3mm; }
+	ul, ol { margin: 0 0 3mm; padding-left: 6mm; }
+	li { margin-bottom: 1.2mm; }
+	a { color: var(--violet); text-decoration: none; }
+	code, .mono { font-family: "JetBrains Mono", "DejaVu Sans Mono", monospace; font-size: 8.8pt; background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; word-break: break-all; }
+	pre { font-family: "JetBrains Mono", monospace; font-size: 8.6pt; background: #17131f; color: #ede9fe; border-radius: 8px; padding: 4mm; white-space: pre-wrap; word-break: break-all; margin: 0 0 4mm; }
+	strong { font-weight: 650; }
+	.avoid { break-inside: avoid; }
+
+	/* Passos numerados */
+	ol.steps { list-style: none; padding: 0; counter-reset: step; }
+	ol.steps > li { counter-increment: step; position: relative; padding-left: 11mm; margin-bottom: 3mm; break-inside: avoid; }
+	ol.steps > li::before { content: counter(step); position: absolute; left: 0; top: -1px; width: 7mm; height: 7mm; border-radius: 50%; background: var(--violet); color: #fff; font-weight: 700; font-size: 9pt; display: flex; align-items: center; justify-content: center; }
+
+	/* Caixas */
+	.box { border-radius: 10px; padding: 3.5mm 4.5mm; margin: 0 0 4mm; border: 1px solid; break-inside: avoid; }
+	.box p:last-child, .box ul:last-child { margin-bottom: 0; }
+	.box .t { font-weight: 700; display: block; margin-bottom: 1mm; }
+	.tip { background: var(--violet-soft); border-color: #ddd6fe; }
+	.tip .t { color: var(--violet); }
+	.warn { background: var(--amber-soft); border-color: #fde68a; }
+	.warn .t { color: var(--amber); }
+	.ok { background: var(--green-soft); border-color: #bbf7d0; }
+	.ok .t { color: var(--green); }
+	.danger { background: var(--red-soft); border-color: #fecaca; }
+	.danger .t { color: var(--red); }
+
+	/* Imagens */
+	figure { margin: 2mm 0 5mm; break-inside: avoid; }
+	figure img { width: 100%; display: block; border-radius: 10px; border: 1px solid #2b2540; box-shadow: 0 6px 18px rgba(20,10,50,.18); }
+	figure.narrow img { width: 70%; margin: 0 auto; }
+	figure.half img { width: 55%; margin: 0 auto; }
+	figcaption { font-size: 8.8pt; color: var(--muted); margin-top: 2mm; text-align: center; }
+
+	/* Tabelas */
+	table { width: 100%; border-collapse: collapse; margin: 0 0 5mm; font-size: 9.2pt; }
+	thead { display: table-header-group; }
+	tr { break-inside: avoid; }
+	th { text-align: left; background: var(--soft); color: var(--muted); font-size: 8pt; text-transform: uppercase; letter-spacing: .06em; padding: 2.2mm 2.5mm; border-bottom: 1px solid var(--line); }
+	td { padding: 2.2mm 2.5mm; border-bottom: 1px solid var(--line); vertical-align: top; }
+	td:first-child { font-weight: 600; }
+
+	/* Sumário */
+	.toc { columns: 2; column-gap: 10mm; }
+	.toc .grp { break-inside: avoid; margin-bottom: 5mm; }
+	.toc .grp > a { font-weight: 700; font-size: 11pt; color: var(--ink); display: block; margin-bottom: 1.5mm; }
+	.toc .grp > a span { color: var(--violet); margin-right: 5px; }
+	.toc ul { list-style: none; padding: 0; margin: 0; }
+	.toc li { margin: 0 0 1mm; font-size: 9.5pt; }
+	.toc li a { color: var(--muted); }
+
+	/* Diagrama de fluxo */
+	.flow { display: flex; align-items: stretch; gap: 0; margin: 3mm 0 6mm; break-inside: avoid; }
+	.flow .node { flex: 1; border: 1px solid var(--line); background: var(--soft); border-radius: 10px; padding: 3mm; font-size: 8.8pt; }
+	.flow .node b { display: block; font-size: 9.5pt; margin-bottom: 1mm; color: var(--violet); }
+	.flow .arrow { width: 7mm; display: flex; align-items: center; justify-content: center; color: var(--violet); font-weight: 700; font-size: 13pt; }
+
+	.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; margin-bottom: 5mm; }
+	.card { border: 1px solid var(--line); border-radius: 10px; padding: 3.5mm 4mm; break-inside: avoid; }
+	.card h4 { margin: 0 0 1.5mm; font-size: 10.5pt; }
+	.card p { font-size: 9.3pt; color: var(--muted); margin: 0; }
+
+	.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+	.badge { display: inline-block; border-radius: 999px; padding: 0 8px; font-size: 8.5pt; font-weight: 600; }
+	.b-sch { background: #f1f0f5; color: #3f3a52; }
+	.b-sent { background: var(--green-soft); color: var(--green); }
+	.b-part { background: var(--amber-soft); color: var(--amber); }
+	.b-fail { background: var(--red-soft); color: var(--red); }
+	.b-draft { background: #f1f0f5; color: #6b6680; }
+</style>
+</head>
+<body>
+
+<!-- ============================== CAPA ============================== -->
+<section class="cover">
+	<div class="cover-inner">
+		<div class="logo">
+			<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+		</div>
+		<h1>Post Flow<br>Manual e Tutorial</h1>
+		<p class="sub">Agendamento de posts em redes sociais, multiusuário, num plugin WordPress. Guia completo para quem administra a plataforma e para quem publica.</p>
+		<div class="chips">
+			<span class="chip">Facebook</span><span class="chip">Instagram</span><span class="chip">LinkedIn</span><span class="chip">X</span><span class="chip">Threads</span><span class="chip">Google Meu Negócio</span><span class="chip">Pinterest</span><span class="chip">WhatsApp</span>
+		</div>
+	</div>
+	<div class="cover-meta">Versão 0.3.0<br>Outubro de 2026</div>
+	<img class="cover-shot" src="img/queue.png" alt="">
+</section>
+
+<!-- ============================== SUMÁRIO ============================== -->
+<section style="page-break-after: always;">
+	<div class="part-head"><div class="num">Sumário</div><h1>O que tem neste manual</h1>
+	<p>Os capítulos 2 e 3 são para quem administra a plataforma. Os capítulos 4 e 5 são para quem usa o painel no dia a dia. No PDF, clique num título para ir direto a ele.</p></div>
+	<div class="toc">
+		<div class="grp"><a href="#c1"><span>1</span>Visão geral</a><ul>
+			<li><a href="#c1-1">O que é o Post Flow</a></li><li><a href="#c1-2">Como funciona</a></li><li><a href="#c1-3">Redes suportadas</a></li><li><a href="#c1-4">Quanto custa cada rede</a></li></ul></div>
+		<div class="grp"><a href="#c2"><span>2</span>Instalação (administrador)</a><ul>
+			<li><a href="#c2-1">Requisitos</a></li><li><a href="#c2-2">Instalar o plugin</a></li><li><a href="#c2-3">Página do painel</a></li><li><a href="#c2-4">Cron do servidor</a></li><li><a href="#c2-5">Envio de e-mails</a></li></ul></div>
+		<div class="grp"><a href="#c3"><span>3</span>Configurar as redes (administrador)</a><ul>
+			<li><a href="#c3-0">Antes de começar</a></li><li><a href="#c3-1">Meta: Facebook e Instagram</a></li><li><a href="#c3-2">LinkedIn</a></li><li><a href="#c3-3">X (Twitter)</a></li><li><a href="#c3-4">Threads</a></li><li><a href="#c3-5">Google Meu Negócio</a></li><li><a href="#c3-6">Pinterest</a></li><li><a href="#c3-7">WhatsApp por QR Code (grátis)</a></li><li><a href="#c3-8">WhatsApp API oficial (paga)</a></li><li><a href="#c3-9">Regras da plataforma e planos</a></li><li><a href="#c3-10">Publicador e usuários</a></li></ul></div>
+		<div class="grp"><a href="#c4"><span>4</span>Tutorial do usuário</a><ul>
+			<li><a href="#c4-1">Criar a conta</a></li><li><a href="#c4-2">Conectar os canais</a></li><li><a href="#c4-3">Definir os horários</a></li><li><a href="#c4-4">Criar o primeiro post</a></li><li><a href="#c4-5">Acompanhar as publicações</a></li></ul></div>
+		<div class="grp"><a href="#c5"><span>5</span>Manual das telas</a><ul>
+			<li><a href="#c5-1">Fila</a></li><li><a href="#c5-2">Criar post</a></li><li><a href="#c5-3">Calendário</a></li><li><a href="#c5-4">Publicados</a></li><li><a href="#c5-5">Canais</a></li><li><a href="#c5-6">Horários</a></li><li><a href="#c5-7">Conta</a></li></ul></div>
+		<div class="grp"><a href="#c6"><span>6</span>Regras e funcionamento</a><ul>
+			<li><a href="#c6-1">Regras de cada rede</a></li><li><a href="#c6-2">Status dos posts</a></li><li><a href="#c6-3">Falhas e novas tentativas</a></li><li><a href="#c6-4">Renovação das conexões</a></li></ul></div>
+		<div class="grp"><a href="#c7"><span>7</span>Solução de problemas</a></div>
+		<div class="grp"><a href="#c8"><span>8</span>Segurança, privacidade e LGPD</a></div>
+		<div class="grp"><a href="#c9"><span>9</span>Limitações conhecidas</a></div>
+		<div class="grp"><a href="#ca"><span>A</span>Apêndices</a><ul>
+			<li><a href="#ca-1">Endereços do plugin</a></li><li><a href="#ca-2">Glossário</a></li><li><a href="#ca-3">Para desenvolvedores</a></li></ul></div>
+	</div>
+</section>
+
+<!-- ============================== 1. VISÃO GERAL ============================== -->
+<section class="part" id="c1" style="page-break-before: auto;">
+	<div class="part-head"><div class="num">Capítulo 1</div><h1>Visão geral</h1><p>O que o Post Flow faz e o que você precisa saber antes de começar.</p></div>
+
+	<h2 id="c1-1"><span class="n">1.1</span>O que é o Post Flow</h2>
+	<p>O Post Flow é um <strong>plugin WordPress</strong> que transforma um site numa <strong>plataforma de agendamento de posts</strong> para redes sociais, no modelo SaaS:</p>
+	<ul>
+		<li><strong>Cada pessoa cria a própria conta</strong> (e-mail e senha) e <strong>conecta os próprios canais</strong>.</li>
+		<li><strong>Cada pessoa vê só os seus dados</strong>: canais, fila, calendário e histórico.</li>
+		<li>O painel fica no <strong>site</strong>, na página com o shortcode <code>[post_flow]</code>, e não no wp-admin.</li>
+		<li>O <strong>administrador</strong> cadastra no wp-admin <strong>um app por rede</strong>, uma vez só, e ele serve para todos os usuários.</li>
+	</ul>
+	<p>Tudo é publicado pelas <strong>APIs oficiais</strong> de cada rede, sem pedir senha de rede social. A única exceção é o WhatsApp por QR Code, que é opcional e está explicado na seção <a href="#c3-7">3.7</a>.</p>
+
+	<h2 id="c1-2"><span class="n">1.2</span>Como funciona</h2>
+	<div class="flow">
+		<div class="node"><b>1. Conectar</b>O usuário autoriza cada rede (ou lê o QR Code do WhatsApp).</div><div class="arrow">→</div>
+		<div class="node"><b>2. Escrever</b>Texto, link e imagens; escolhe os canais.</div><div class="arrow">→</div>
+		<div class="node"><b>3. Agendar</b>Fila de horários, data e hora, ou agora.</div><div class="arrow">→</div>
+		<div class="node"><b>4. Publicar</b>O publicador roda a cada minuto e envia a cada rede.</div><div class="arrow">→</div>
+		<div class="node"><b>5. Acompanhar</b>Histórico com o link de cada post e o motivo das falhas.</div>
+	</div>
+	<p>Cada post gera <strong>um envio por canal</strong>. Se um canal falhar, os outros não são afetados, e dá para tentar de novo só o que falhou.</p>
+
+	<h2 id="c1-3"><span class="n">1.3</span>Redes suportadas</h2>
+	<table>
+		<thead><tr><th>Rede</th><th>O que é conectado</th><th>Como conecta</th></tr></thead>
+		<tbody>
+			<tr><td><span class="dot" style="background:#1877F2"></span>Facebook</td><td>Páginas</td><td>Login com o Facebook</td></tr>
+			<tr><td><span class="dot" style="background:#E1306C"></span>Instagram</td><td>Perfis profissionais ligados a uma página do Facebook</td><td>Mesmo login do Facebook</td></tr>
+			<tr><td><span class="dot" style="background:#0A66C2"></span>LinkedIn</td><td>Perfil pessoal</td><td>Login com o LinkedIn</td></tr>
+			<tr><td><span class="dot" style="background:#000"></span>X (Twitter)</td><td>Perfil</td><td>Login com o X</td></tr>
+			<tr><td><span class="dot" style="background:#101010"></span>Threads</td><td>Perfil</td><td>Login com o Threads</td></tr>
+			<tr><td><span class="dot" style="background:#4285F4"></span>Google Meu Negócio</td><td>Perfis da empresa (cada local é um canal)</td><td>Login com o Google</td></tr>
+			<tr><td><span class="dot" style="background:#E60023"></span>Pinterest</td><td>Pastas (cada pasta é um canal)</td><td>Login com o Pinterest</td></tr>
+			<tr><td><span class="dot" style="background:#25D366"></span>WhatsApp (QR Code)</td><td>O Status e os grupos do número</td><td>Leitura de QR Code pelo celular</td></tr>
+			<tr><td><span class="dot" style="background:#25D366"></span>WhatsApp (API oficial)</td><td>Uma lista de contatos que autorizaram receber</td><td>Formulário com as credenciais da Meta</td></tr>
+		</tbody>
+	</table>
+
+	<h2 id="c1-4"><span class="n">1.4</span>Quanto custa cada rede</h2>
+	<div class="cards">
+		<div class="card"><h4>Gratuitas</h4><p>Facebook, Instagram, LinkedIn, Threads, Google Meu Negócio e Pinterest. É preciso criar o app em cada rede e, para liberar a qualquer pessoa, passar pela aprovação da rede.</p></div>
+		<div class="card"><h4>X (Twitter)</h4><p>Tem plano gratuito com limite baixo de posts por mês. Acima disso, é preciso um plano pago da API do X.</p></div>
+		<div class="card"><h4>WhatsApp por QR Code</h4><p>Sem custo por mensagem. Exige um servidor próprio com a Evolution API (código aberto). É uma conexão <strong>não oficial</strong>, com risco de bloqueio do número.</p></div>
+		<div class="card"><h4>WhatsApp API oficial</h4><p>A Meta cobra por mensagem de marketing. É a opção oficial, que exige modelos de mensagem aprovados.</p></div>
+	</div>
+	<div class="box tip"><span class="t">Dá para lançar aos poucos</span><p>Redes sem credenciais aparecem para os usuários como “Indisponível no momento”. Você pode começar com uma ou duas redes e ativar as outras depois.</p></div>
+</section>
+
+<!-- ============================== 2. INSTALAÇÃO ============================== -->
+<section class="part" id="c2">
+	<div class="part-head"><div class="num">Capítulo 2 · Administrador</div><h1>Instalação</h1><p>Do servidor ao painel no ar, em cerca de 15 minutos (sem contar a criação dos apps das redes).</p></div>
+
+	<h2 id="c2-1"><span class="n">2.1</span>Requisitos</h2>
+	<table>
+		<thead><tr><th>Item</th><th>Exigência</th><th>Por quê</th></tr></thead>
+		<tbody>
+			<tr><td>WordPress</td><td>6.2 ou mais novo</td><td>Base do plugin</td></tr>
+			<tr><td>PHP</td><td>7.4 ou mais novo, com <code>openssl</code> e GD ou Imagick</td><td>Criptografia dos tokens e conversão das imagens para JPG</td></tr>
+			<tr><td>HTTPS</td><td>Obrigatório</td><td>As redes só aceitam URLs de retorno em HTTPS, e o Instagram e o Threads só baixam imagens de endereços HTTPS</td></tr>
+			<tr><td>Links permanentes</td><td>Qualquer opção diferente de “Simples”</td><td>As URLs de retorno usam <code>/wp-json/</code></td></tr>
+			<tr><td>Cron</td><td>Chamada ao <code>wp-cron.php</code> a cada minuto</td><td>Para os posts saírem no horário (veja <a href="#c2-4">2.4</a>)</td></tr>
+			<tr><td>E-mail</td><td>Plugin de SMTP recomendado</td><td>“Esqueci a senha” e troca de senha</td></tr>
+		</tbody>
+	</table>
+	<div class="box tip"><span class="t">Recomendação</span><p>Use um WordPress <strong>dedicado</strong> à plataforma, por exemplo num subdomínio como <code>app.suaempresa.com.br</code>. Assim o painel pode ser a página inicial, e o tema do site principal não interfere.</p></div>
+
+	<h2 id="c2-2"><span class="n">2.2</span>Instalar o plugin</h2>
+	<ol class="steps">
+		<li>No wp-admin, abra <strong>Plugins › Adicionar novo › Enviar plugin</strong>.</li>
+		<li>Escolha o arquivo <code>post-flow.zip</code> e clique em <strong>Instalar agora</strong>.</li>
+		<li>Clique em <strong>Ativar</strong>. Na ativação, o plugin:
+			<ul>
+				<li>cria as tabelas próprias no banco;</li>
+				<li>cria a função de usuário <strong>Membro Post Flow</strong>;</li>
+				<li>cria a página “Post Flow” com o shortcode <code>[post_flow]</code>;</li>
+				<li>agenda o publicador para rodar a cada minuto.</li>
+			</ul>
+		</li>
+		<li>Um menu novo, <strong>Post Flow</strong>, aparece no wp-admin, com as telas <strong>Configurações</strong> e <strong>Usuários</strong>.</li>
+	</ol>
+
+	<h2 id="c2-3"><span class="n">2.3</span>Página do painel</h2>
+	<p>Se o site ainda mostra os posts do blog na home, a página “Post Flow” vira automaticamente a página inicial. Se não, abra <strong>Post Flow › Configurações</strong> e clique em <strong>Usar como página inicial</strong>.</p>
+	<figure><img src="img/admin-top.png" alt=""><figcaption>Post Flow › Configurações: o bloco 1 mostra se o painel já é a página inicial; o bloco 2 traz os apps de cada rede.</figcaption></figure>
+	<ul>
+		<li>O painel abre em <strong>tela cheia</strong>, sem o tema do site, para ficar igual em qualquer tema. Dá para desligar isso em <a href="#c3-9">Regras da plataforma</a>.</li>
+		<li>Também funciona com Elementor e outros construtores: basta pôr o shortcode <code>[post_flow]</code> na página.</li>
+		<li>Logado como administrador, você vê o painel, e não o cadastro. Para conferir a tela de cadastro, abra o site numa janela anônima.</li>
+		<li>Se usar plugin de cache, <strong>exclua a página do painel do cache</strong>.</li>
+	</ul>
+
+	<h2 id="c2-4"><span class="n">2.4</span>Cron do servidor</h2>
+	<p>O WordPress só executa as tarefas agendadas (WP-Cron) quando alguém visita o site. Para os posts saírem no minuto certo, crie uma tarefa no servidor (no cPanel, em <strong>Tarefas Cron</strong>) que chame o cron a cada minuto:</p>
+	<pre>*/1 * * * * curl -s https://SEU-SITE/wp-cron.php?doing_wp_cron &gt; /dev/null</pre>
+	<p>Opcionalmente, adicione ao <code>wp-config.php</code> a linha <code>define( 'DISABLE_WP_CRON', true );</code>, para o cron rodar só pela tarefa do servidor. O wp-admin avisa se o WP-Cron estiver desligado.</p>
+	<div class="box warn"><span class="t">Sem o cron, os posts atrasam</span><p>Em sites com pouca visita, sem a tarefa do servidor, um post agendado para as 9h pode sair só quando alguém abrir o site.</p></div>
+
+	<h2 id="c2-5"><span class="n">2.5</span>Envio de e-mails</h2>
+	<p>A recuperação de senha usa o fluxo padrão do WordPress, que envia um link por e-mail. Instale um plugin de SMTP (por exemplo, WP Mail SMTP) com um provedor de e-mail transacional, para as mensagens não caírem no spam.</p>
+</section>
+
+<!-- ============================== 3. REDES ============================== -->
+<section class="part" id="c3">
+	<div class="part-head"><div class="num">Capítulo 3 · Administrador</div><h1>Configurar as redes</h1><p>Um app por rede, criado uma vez e usado por todos os usuários da plataforma.</p></div>
+
+	<h2 id="c3-0"><span class="n">3.0</span>Antes de começar</h2>
+	<p>Para cada rede, o roteiro é sempre o mesmo:</p>
+	<ol class="steps">
+		<li>Criar um app no portal de desenvolvedores da rede. O link aparece em <strong>Abrir console</strong>, ao lado do nome da rede, no wp-admin.</li>
+		<li>Copiar a <strong>URL de retorno</strong> do wp-admin (botão <strong>Copiar</strong>) e cadastrá-la no app.</li>
+		<li>Copiar o <strong>ID</strong> e a <strong>chave secreta</strong> do app para o wp-admin e clicar em <strong>Salvar configurações</strong>.</li>
+	</ol>
+	<p>As URLs de retorno seguem o formato <code>https://SEU-SITE/wp-json/post-flow/v1/oauth/{rede}</code>. As chaves secretas ficam <strong>criptografadas</strong> no banco. Para manter uma chave salva, deixe o campo vazio.</p>
+	<div class="box warn"><span class="t">Modo de desenvolvimento</span><p>Enquanto um app não for aprovado pela rede, ele só funciona com as contas cadastradas nele (administradores, desenvolvedores e testadores). Teste com a sua conta e peça a aprovação antes de abrir para clientes.</p></div>
+
+	<h2 id="c3-1"><span class="n">3.1</span>Meta: Facebook e Instagram</h2>
+	<figure><img src="img/admin-provider-0.png" alt=""><figcaption>Bloco da Meta: URL de retorno, App ID, App Secret e as duas URLs exigidas na análise do app.</figcaption></figure>
+	<ol class="steps">
+		<li>Em <a href="https://developers.facebook.com/apps/">developers.facebook.com/apps</a>, crie um app do tipo <strong>Empresa</strong>.</li>
+		<li>Adicione o produto <strong>Login do Facebook para Empresas</strong>. Em <strong>Configurações</strong>, cadastre a URL de retorno em <strong>URIs de redirecionamento do OAuth válidos</strong>.</li>
+		<li>Em <strong>Configurações do app › Básico</strong>, preencha a política de privacidade, os termos, a <strong>URL de cancelamento de autorização</strong> e a <strong>URL de exclusão de dados</strong> (as duas estão no wp-admin, com botão de copiar).</li>
+		<li>Copie o <strong>App ID</strong> e o <strong>App Secret</strong> para o wp-admin.</li>
+		<li>Para liberar para qualquer pessoa: faça a <strong>verificação da empresa</strong> no Gerenciador de Negócios, peça <strong>Acesso Avançado</strong> às permissões abaixo no <strong>App Review</strong> (com um vídeo mostrando o fluxo) e coloque o app em modo <strong>Ao vivo</strong>.</li>
+	</ol>
+	<p><strong>Permissões:</strong> <code>pages_show_list</code>, <code>pages_read_engagement</code>, <code>pages_manage_posts</code>, <code>business_management</code>, <code>instagram_basic</code>, <code>instagram_content_publish</code>.</p>
+	<div class="box tip"><span class="t">Instagram</span><p>O perfil do Instagram precisa ser <strong>profissional</strong> (Empresa ou Criador de conteúdo) e estar <strong>ligado a uma página do Facebook</strong>. Ao conectar, o usuário deve marcar a página e o perfil na tela da Meta.</p></div>
+
+	<h2 id="c3-2"><span class="n">3.2</span>LinkedIn</h2>
+	<ol class="steps">
+		<li>Em <a href="https://www.linkedin.com/developers/apps">linkedin.com/developers/apps</a>, crie o app. É preciso associá-lo a uma página de empresa no LinkedIn.</li>
+		<li>Em <strong>Products</strong>, adicione <strong>Sign In with LinkedIn using OpenID Connect</strong> e <strong>Share on LinkedIn</strong>.</li>
+		<li>Em <strong>Auth</strong>, cadastre a URL de retorno em <strong>Authorized redirect URLs</strong>.</li>
+		<li>Copie o <strong>Client ID</strong> e o <strong>Client Secret</strong> para o wp-admin.</li>
+	</ol>
+	<p><strong>Permissões:</strong> <code>openid</code>, <code>profile</code>, <code>w_member_social</code>. A conexão vale <strong>60 dias</strong>. Sem o programa de parceiros do LinkedIn, ela não se renova sozinha: o painel avisa quando o canal precisa ser reconectado.</p>
+	<div class="box tip"><span class="t">Versão da API</span><p>O plugin usa a versão <code>202606</code> da API do LinkedIn, definida em <code>PFLOW_LINKEDIN_VERSION</code>. O LinkedIn aposenta cada versão depois de cerca de um ano. Para atualizar, defina a constante no <code>wp-config.php</code>, por exemplo <code>define( 'PFLOW_LINKEDIN_VERSION', '202706' );</code>.</p></div>
+
+	<h2 id="c3-3"><span class="n">3.3</span>X (Twitter)</h2>
+	<ol class="steps">
+		<li>Em <a href="https://developer.x.com/en/portal/dashboard">developer.x.com</a>, crie o projeto e o app.</li>
+		<li>Em <strong>User authentication settings</strong>, escolha as permissões <strong>Read and write</strong>, o tipo <strong>Web App (confidential client)</strong> e cadastre a URL de retorno em <strong>Callback URI</strong>.</li>
+		<li>Copie o <strong>OAuth 2.0 Client ID</strong> e o <strong>Client Secret</strong> para o wp-admin.</li>
+	</ol>
+	<p><strong>Permissões:</strong> <code>tweet.read</code>, <code>tweet.write</code>, <code>users.read</code>, <code>media.write</code>, <code>offline.access</code>. O token dura 2 horas e é renovado automaticamente antes de cada publicação.</p>
+	<div class="box warn"><span class="t">Limite do plano</span><p>O plano gratuito da API do X tem um limite baixo de posts por mês, somado entre todos os usuários da plataforma. Para volume maior, é preciso um plano pago.</p></div>
+
+	<h2 id="c3-4"><span class="n">3.4</span>Threads</h2>
+	<ol class="steps">
+		<li>Em <a href="https://developers.facebook.com/apps/">developers.facebook.com/apps</a>, crie um app com o caso de uso <strong>Acessar a API do Threads</strong>.</li>
+		<li>Cadastre a URL de retorno em <strong>URLs de callback de redirecionamento</strong>.</li>
+		<li>Copie o <strong>Threads App ID</strong> e o <strong>Threads App Secret</strong>. Eles são diferentes do ID e da chave do app da Meta.</li>
+	</ol>
+	<p><strong>Permissões:</strong> <code>threads_basic</code>, <code>threads_content_publish</code>. O token vale 60 dias e é renovado automaticamente.</p>
+
+	<h2 id="c3-5"><span class="n">3.5</span>Google Meu Negócio</h2>
+	<ol class="steps">
+		<li>No <a href="https://console.cloud.google.com/">Google Cloud Console</a>, crie um projeto e ative as APIs <strong>My Business Account Management</strong>, <strong>My Business Business Information</strong> e <strong>Google My Business</strong>.</li>
+		<li>Configure a <strong>tela de consentimento OAuth</strong> e crie um <strong>ID do cliente OAuth</strong> do tipo <strong>Aplicativo da Web</strong>, com a URL de retorno em <strong>URIs de redirecionamento autorizados</strong>.</li>
+		<li><strong>Peça o acesso à Business Profile API</strong> no formulário do Google. Sem a aprovação, as APIs têm cota zero e a conexão falha. A análise costuma levar alguns dias.</li>
+		<li>Copie o <strong>Client ID</strong> e o <strong>Client Secret</strong> para o wp-admin.</li>
+	</ol>
+	<p><strong>Permissão:</strong> <code>https://www.googleapis.com/auth/business.manage</code>. Cada local vira um canal. O post sai como <strong>Novidade</strong>, com foto opcional, e o link vira o botão <strong>Saiba mais</strong>.</p>
+
+	<h2 id="c3-6"><span class="n">3.6</span>Pinterest</h2>
+	<ol class="steps">
+		<li>Em <a href="https://developers.pinterest.com/apps/">developers.pinterest.com/apps</a>, crie o app. É preciso uma conta empresarial do Pinterest.</li>
+		<li>Cadastre a URL de retorno em <strong>Redirect URIs</strong>.</li>
+		<li>Copie o <strong>App ID</strong> e a <strong>App secret key</strong> para o wp-admin.</li>
+		<li>Peça o acesso <strong>Standard</strong>. No acesso <strong>Trial</strong>, os pins criados ficam visíveis só para o dono da conta.</li>
+	</ol>
+	<p><strong>Permissões:</strong> <code>boards:read</code>, <code>pins:read</code>, <code>pins:write</code>, <code>user_accounts:read</code>. Cada pasta vira um canal. O token vale 30 dias e é renovado automaticamente.</p>
+
+	<h2 id="c3-7"><span class="n">3.7</span>WhatsApp por QR Code (grátis)</h2>
+	<p>Sem custo por mensagem e sem aprovação da Meta. Cada usuário conecta o próprio número lendo um QR Code no painel, como no WhatsApp Web, e publica no <strong>Status</strong> e nos <strong>grupos</strong> do número. A conexão passa por um servidor <strong>Evolution API</strong>, que é de código aberto e instalado por você.</p>
+	<div class="box danger"><span class="t">Conexão não oficial: leia antes de usar</span>
+		<ul>
+			<li>Vai contra os termos de uso do WhatsApp. O número pode ser <strong>bloqueado</strong>, principalmente se publicar muito, entrar em muitos grupos ou receber denúncias.</li>
+			<li>Use um <strong>número dedicado</strong>, e não o número principal da empresa.</li>
+			<li>Publique só onde as pessoas querem receber. O painel mostra esse aviso ao usuário.</li>
+		</ul>
+	</div>
+	<figure><img src="img/admin-provider-6.png" alt=""><figcaption>Bloco do WhatsApp por QR Code: URL do servidor e chave global da Evolution API.</figcaption></figure>
+	<ol class="steps">
+		<li>Instale a <a href="https://doc.evolution-api.com/">Evolution API</a> num servidor seu com Docker, seguindo a documentação dela (ela usa um banco de dados próprio). Publique o servidor em HTTPS, por exemplo <code>https://whatsapp.suaempresa.com.br</code>.</li>
+		<li>Defina a chave global <code>AUTHENTICATION_API_KEY</code> na configuração do servidor.</li>
+		<li>No wp-admin, preencha a <strong>URL do servidor</strong> e a <strong>chave global (apikey)</strong> e salve.</li>
+	</ol>
+	<p>O plugin cria uma instância por usuário, que é apagada quando ele desconecta o número ou exclui a conta. O uso pelo usuário está na seção <a href="#c4-2">4.2</a>.</p>
+
+	<h2 id="c3-8"><span class="n">3.8</span>WhatsApp API oficial (paga)</h2>
+	<p>Não há nada para configurar no wp-admin: cada usuário conecta o próprio número da <strong>WhatsApp Cloud API</strong> em <strong>Canais</strong>. O WhatsApp não tem API oficial para Status nem Canais, então o post é enviado como <strong>mensagem de modelo</strong> para uma lista de contatos que autorizaram receber.</p>
+	<figure class="half"><img src="img/whatsapp-official.png" alt=""><figcaption>Formulário do WhatsApp (API oficial) na tela Canais.</figcaption></figure>
+	<table>
+		<thead><tr><th>Campo</th><th>Onde conseguir</th></tr></thead>
+		<tbody>
+			<tr><td>ID do número de telefone</td><td>No app da Meta, em <strong>WhatsApp › Configuração da API</strong></td></tr>
+			<tr><td>Token permanente</td><td>Gerenciador de Negócios › Usuários do sistema › Gerar token, com a permissão <code>whatsapp_business_messaging</code></td></tr>
+			<tr><td>Nome e idioma do modelo</td><td>WhatsApp Manager › Modelos de mensagem. Use a categoria <strong>Marketing</strong>, com a variável <code>{{1}}</code> no meio do texto</td></tr>
+			<tr><td>Imagem no cabeçalho</td><td>Marque se o modelo tiver cabeçalho de imagem. Nesse caso, vai a 1ª imagem do post</td></tr>
+			<tr><td>Contatos</td><td>Um número por linha, com DDI e DDD (até 250 por canal)</td></tr>
+		</tbody>
+	</table>
+	<p>Exemplo de modelo: <em>“Novidade da Clínica Sorriso: {{1}} — Responda SAIR para não receber mais.”</em> A Meta recusa modelos que começam ou terminam com a variável. As quebras de linha do post viram “ · ”, porque variáveis de modelo não aceitam quebra de linha.</p>
+
+	<h2 id="c3-9"><span class="n">3.9</span>Regras da plataforma e planos</h2>
+	<figure><img src="img/admin-rules.png" alt=""><figcaption>Regras da plataforma.</figcaption></figure>
+	<table>
+		<thead><tr><th>Opção</th><th>O que faz</th></tr></thead>
+		<tbody>
+			<tr><td>Permitir novos cadastros</td><td>Desligue para fechar a plataforma. Quem já tem conta continua entrando.</td></tr>
+			<tr><td>Tela cheia</td><td>Mostra o painel sem o tema do site. Desligue se quiser o painel dentro do layout do tema.</td></tr>
+			<tr><td>Limite de canais por usuário</td><td><code>0</code> significa sem limite. Use para montar planos, por exemplo 3 canais no gratuito.</td></tr>
+		</tbody>
+	</table>
+	<div class="box tip"><span class="t">Cobrança</span><p>O plugin não cobra assinaturas. Para vender planos, integre um sistema de pagamento (WooCommerce Subscriptions, Stripe etc.) e ajuste o limite de canais conforme o plano de cada cliente.</p></div>
+
+	<h2 id="c3-10"><span class="n">3.10</span>Publicador e usuários</h2>
+	<figure><img src="img/admin-publisher.png" alt=""><figcaption>Bloco 4: estado do publicador e o botão “Rodar agora”.</figcaption></figure>
+	<p>O bloco <strong>Publicador</strong> mostra a próxima execução. <strong>Rodar agora</strong> processa na hora os posts vencidos, o que é útil para conferir sem esperar o cron.</p>
+	<p>A tela <strong>Post Flow › Usuários</strong> lista cada pessoa cadastrada, com os canais por rede e os posts agendados, publicados e com falha. Para bloquear alguém, edite o usuário e troque a função ou exclua a conta. Excluir pelo wp-admin também apaga os canais, os tokens, os posts e as imagens da pessoa.</p>
+</section>
+
+<!-- ============================== 4. TUTORIAL USUÁRIO ============================== -->
+<section class="part" id="c4">
+	<div class="part-head"><div class="num">Capítulo 4 · Usuário</div><h1>Tutorial: do cadastro ao primeiro post</h1><p>Cinco passos para começar a publicar.</p></div>
+
+	<h2 id="c4-1"><span class="n">4.1</span>Criar a conta</h2>
+	<figure><img src="img/auth.png" alt=""><figcaption>Tela de entrada: abas “Entrar” e “Criar conta”.</figcaption></figure>
+	<ol class="steps">
+		<li>Abra o endereço da plataforma e clique em <strong>Criar conta</strong>.</li>
+		<li>Informe nome, e-mail e uma senha de pelo menos 8 caracteres.</li>
+		<li>Clique em <strong>Criar conta grátis</strong>. Você entra direto na tela <strong>Canais</strong>.</li>
+	</ol>
+	<p>Esqueceu a senha? Na aba <strong>Entrar</strong>, clique em <strong>Esqueci a senha</strong> para receber um link por e-mail.</p>
+
+	<h2 id="c4-2"><span class="n">4.2</span>Conectar os canais</h2>
+	<figure><img src="img/channels-connect.png" alt=""><figcaption>Canais › Conectar nova rede.</figcaption></figure>
+	<ol class="steps">
+		<li>Em <strong>Canais</strong>, clique em <strong>Conectar</strong> na rede desejada.</li>
+		<li>Você vai para o site da rede. Entre com a sua conta e autorize o Post Flow. Não guardamos a sua senha.</li>
+		<li>Se a rede trouxer várias contas (várias páginas do Facebook, várias pastas do Pinterest, vários locais no Google), escolha quais quer usar e clique em <strong>Conectar selecionados</strong>.</li>
+	</ol>
+	<figure><img src="img/channels-pick.png" alt=""><figcaption>Escolha das contas depois de autorizar.</figcaption></figure>
+	<h3>WhatsApp por QR Code</h3>
+	<ol class="steps">
+		<li>No cartão <strong>WhatsApp (QR Code)</strong>, clique em <strong>Gerar QR Code</strong>.</li>
+		<li>No celular do número que vai publicar, abra o WhatsApp › <strong>Dispositivos conectados</strong> › <strong>Conectar dispositivo</strong> e aponte a câmera para o QR Code.</li>
+		<li>A tela percebe a conexão sozinha e troca o QR quando ele expira. Depois, escolha <strong>Meu Status</strong> e os grupos onde quer publicar.</li>
+	</ol>
+	<figure><img src="img/whatsapp-qr.png" alt=""><figcaption>Tela do QR Code. Ela é atualizada sozinha.</figcaption></figure>
+
+	<h2 id="c4-3"><span class="n">4.3</span>Definir os horários</h2>
+	<p>Em <strong>Horários</strong>, marque os dias da semana, adicione os horários em que quer publicar e confira o fuso horário. O botão <strong>Adicionar à fila</strong> usa sempre o próximo desses horários que estiver livre. Os horários vêm de fábrica como seg. a sex., às 09:00, 12:30 e 18:00.</p>
+	<figure><img src="img/schedule.png" alt=""><figcaption>Horários de publicação, com a prévia dos próximos horários livres.</figcaption></figure>
+
+	<h2 id="c4-4"><span class="n">4.4</span>Criar o primeiro post</h2>
+	<figure><img src="img/compose.png" alt=""><figcaption>Criar post: canais, texto com contador por rede, link, imagens e quando publicar.</figcaption></figure>
+	<ol class="steps">
+		<li>Clique em <strong>Criar post</strong>, no topo de qualquer tela.</li>
+		<li>Em <strong>Publicar em</strong>, marque os canais. Todos os canais ativos já vêm marcados.</li>
+		<li>Escreva o texto. Os contadores mostram o limite de cada rede marcada e ficam vermelhos quando o texto passa do limite.</li>
+		<li>Se quiser, informe um link e adicione imagens. Várias imagens viram carrossel nas redes que aceitam.</li>
+		<li>Escolha quando publicar: <strong>Adicionar à fila</strong>, <strong>Escolher data e hora</strong> ou <strong>Publicar agora</strong>.</li>
+		<li>Confira os avisos em amarelo (por exemplo, “Instagram exige ao menos uma imagem”) e clique no botão principal. Para terminar depois, use <strong>Salvar rascunho</strong>.</li>
+	</ol>
+	<div class="box ok"><span class="t">Nada se perde</span><p>Se faltar algo (um canal, uma imagem, um horário), o post é guardado como <strong>rascunho</strong> e o editor mostra o que ajustar.</p></div>
+
+	<h2 id="c4-5"><span class="n">4.5</span>Acompanhar as publicações</h2>
+	<ul>
+		<li><strong>Fila</strong>: os próximos posts, por dia. Dá para editar, publicar agora, duplicar ou excluir.</li>
+		<li><strong>Calendário</strong>: a semana inteira, com os posts agendados e os já publicados.</li>
+		<li><strong>Publicados</strong>: o histórico, com o link de cada post em cada rede e o motivo das falhas.</li>
+	</ul>
+</section>
+
+<!-- ============================== 5. MANUAL DAS TELAS ============================== -->
+<section class="part" id="c5">
+	<div class="part-head"><div class="num">Capítulo 5 · Usuário</div><h1>Manual das telas</h1><p>Referência de cada tela do painel e de cada botão.</p></div>
+
+	<p>O topo de todas as telas tem a marca, o resumo dos canais (com aviso quando algum precisa ser reconectado), o seu nome, <strong>Sair</strong>, o menu (Fila, Calendário, Publicados, Canais, Horários, Conta) e o botão <strong>Criar post</strong>.</p>
+
+	<h2 id="c5-1"><span class="n">5.1</span>Fila</h2>
+	<figure><img src="img/queue.png" alt=""><figcaption>Fila: canais à esquerda, posts agrupados por dia e rascunhos no fim.</figcaption></figure>
+	<table>
+		<thead><tr><th>Elemento</th><th>Função</th></tr></thead>
+		<tbody>
+			<tr><td>Próximo horário livre</td><td>Abaixo do título: quando sai o próximo post que for para a fila.</td></tr>
+			<tr><td>Lista de canais</td><td>Filtra a fila por canal. O número ao lado é a quantidade de posts agendados. “Reconectar” em vermelho indica um canal desconectado.</td></tr>
+			<tr><td>Horário do post</td><td>“na fila” = ocupa um horário da fila; “horário fixo” = data e hora escolhidas.</td></tr>
+			<tr><td>Editar</td><td>Abre o post no editor. Não aparece enquanto o post está sendo publicado.</td></tr>
+			<tr><td>Publicar agora</td><td>Publica na hora, em todos os canais do post.</td></tr>
+			<tr><td>Duplicar</td><td>Cria um rascunho com o mesmo conteúdo.</td></tr>
+			<tr><td>Excluir</td><td>Remove o post (pede confirmação).</td></tr>
+			<tr><td>Rascunhos</td><td>Posts guardados sem data. Ficam no fim da fila.</td></tr>
+		</tbody>
+	</table>
+
+	<h2 id="c5-2"><span class="n">5.2</span>Criar post</h2>
+	<table>
+		<thead><tr><th>Campo</th><th>Detalhes</th></tr></thead>
+		<tbody>
+			<tr><td>Publicar em</td><td>Canais do post. Canais desconectados aparecem apagados e não podem ser marcados. <strong>Marcar todos</strong> seleciona todos os ativos.</td></tr>
+			<tr><td>Texto</td><td>Um texto para todas as redes. Os contadores mostram o uso de cada rede marcada (veja <a href="#c6-1">6.1</a>).</td></tr>
+			<tr><td>Link (opcional)</td><td>No Facebook sem imagem, vira a prévia do link. No Google, vira o botão “Saiba mais”. No Pinterest, é o destino do pin. Nas outras redes, vai no fim do texto.</td></tr>
+			<tr><td>Imagens</td><td>JPG, PNG, WebP ou GIF, até 8 MB cada. São convertidas para JPG, o formato que todas as redes aceitam. Clique numa imagem já enviada para removê-la.</td></tr>
+			<tr><td>Adicionar à fila</td><td>Usa o próximo horário livre. Ao editar um post que já estava na fila, mantém o horário dele.</td></tr>
+			<tr><td>Escolher data e hora</td><td>Data e hora no seu fuso horário (mostrado abaixo dos campos).</td></tr>
+			<tr><td>Publicar agora</td><td>Pede confirmação e publica na hora. Você vai para Publicados, com o resultado.</td></tr>
+			<tr><td>Prévia</td><td>Mostra o texto e as imagens como vão sair.</td></tr>
+			<tr><td>Salvar rascunho</td><td>Guarda sem agendar, lembrando os canais escolhidos.</td></tr>
+		</tbody>
+	</table>
+	<div class="box tip"><span class="t">Dica</span><p>Para usar textos diferentes por rede, crie o post, clique em <strong>Duplicar</strong>, ajuste o texto da cópia e troque os canais.</p></div>
+
+	<h2 id="c5-3"><span class="n">5.3</span>Calendário</h2>
+	<figure><img src="img/calendar.png" alt=""><figcaption>Calendário semanal, de segunda a domingo.</figcaption></figure>
+	<p>Use <strong>Anterior</strong>, <strong>Hoje</strong> e <strong>Próxima</strong> para navegar entre as semanas. As cores indicam o status: <span class="badge b-sch">roxo: agendado</span> <span class="badge b-sent">verde: publicado</span> <span class="badge b-part">amarelo: em parte</span> <span class="badge b-fail">vermelho: falhou</span>. Clique num post agendado para editá-lo; nos já publicados, o clique abre o histórico. O botão <strong>+ Post</strong> aparece nos dias de hoje em diante.</p>
+
+	<h2 id="c5-4"><span class="n">5.4</span>Publicados</h2>
+	<figure><img src="img/sent.png" alt=""><figcaption>Histórico: o resultado de cada canal, com link ou motivo da falha.</figcaption></figure>
+	<ul>
+		<li><strong>Ver post ↗</strong> abre a publicação na rede. No WhatsApp com API oficial, aparece “Enviado a X de Y contatos”.</li>
+		<li>Quando um canal falha, a mensagem da própria rede aparece em vermelho, e o botão <strong>Tentar de novo</strong> reenvia só os canais que falharam.</li>
+		<li><strong>Excluir</strong> tira o post do histórico, mas ele continua publicado nas redes.</li>
+	</ul>
+
+	<h2 id="c5-5"><span class="n">5.5</span>Canais</h2>
+	<figure><img src="img/channels-list.png" alt=""><figcaption>Canais conectados: status, reconexão e remoção.</figcaption></figure>
+	<table>
+		<thead><tr><th>Elemento</th><th>Função</th></tr></thead>
+		<tbody>
+			<tr><td>Conectado / Desconectado</td><td>“Desconectado” significa que a autorização venceu ou foi revogada. A mensagem em vermelho explica o motivo.</td></tr>
+			<tr><td>Conexão vale mais N dias</td><td>Aparece no LinkedIn, Threads e Pinterest. Threads e Pinterest renovam sozinhos; no LinkedIn, reconecte antes do fim do prazo.</td></tr>
+			<tr><td>Reconectar</td><td>Refaz a autorização. No WhatsApp por QR, gera um novo QR Code.</td></tr>
+			<tr><td>Editar (WhatsApp oficial)</td><td>Altera o modelo, o idioma e a lista de contatos. Para manter o token, deixe o campo vazio.</td></tr>
+			<tr><td>Remover</td><td>Desconecta o canal. Ele sai dos posts que ainda não foram publicados; o histórico fica.</td></tr>
+			<tr><td>Desconectar número</td><td>No WhatsApp por QR: desliga o número e apaga a conexão do servidor.</td></tr>
+		</tbody>
+	</table>
+
+	<h2 id="c5-6"><span class="n">5.6</span>Horários</h2>
+	<p>Dias da semana, horários (botão <strong>+ Horário</strong> para adicionar e <strong>×</strong> para remover) e fuso horário. Todas as datas do painel aparecem no fuso escolhido. A coluna da direita mostra os cinco próximos horários livres. Mudar os horários não muda o horário dos posts que já estão na fila.</p>
+
+	<h2 id="c5-7"><span class="n">5.7</span>Conta</h2>
+	<figure><img src="img/account.png" alt=""><figcaption>Conta: perfil, troca de senha e exclusão.</figcaption></figure>
+	<p>Altere o nome, peça o link de troca de senha por e-mail ou <strong>exclua a conta</strong>, digitando <code>EXCLUIR</code> para confirmar. A exclusão apaga a conta, os canais e tokens, os posts agendados, o histórico e as imagens. Os posts já publicados continuam nas redes.</p>
+</section>
+
+<!-- ============================== 6. REGRAS ============================== -->
+<section class="part" id="c6">
+	<div class="part-head"><div class="num">Capítulo 6</div><h1>Regras e funcionamento</h1><p>Limites de cada rede e o que acontece por trás da fila.</p></div>
+
+	<h2 id="c6-1"><span class="n">6.1</span>Regras de cada rede</h2>
+	<table>
+		<thead><tr><th>Rede</th><th>Texto</th><th>Imagens</th><th>Link</th><th>Exige</th></tr></thead>
+		<tbody>
+			<tr><td>Facebook</td><td>63.206</td><td>até 10 (álbum)</td><td>Prévia (sem imagem) ou no texto</td><td>Texto ou imagem</td></tr>
+			<tr><td>Instagram</td><td>2.200</td><td>1 a 10 (carrossel)</td><td>No texto (não clicável)</td><td><strong>Imagem</strong></td></tr>
+			<tr><td>LinkedIn</td><td>3.000</td><td>até 9</td><td>No texto</td><td>Texto ou imagem</td></tr>
+			<tr><td>X</td><td>280</td><td>até 4</td><td>No texto</td><td>Texto ou imagem</td></tr>
+			<tr><td>Threads</td><td>500</td><td>até 10 (carrossel)</td><td>No texto</td><td>Texto ou imagem</td></tr>
+			<tr><td>Google Meu Negócio</td><td>1.500</td><td>0 ou 1</td><td>Botão “Saiba mais”</td><td><strong>Texto</strong></td></tr>
+			<tr><td>Pinterest</td><td>500</td><td>1 a 5</td><td>Destino do pin</td><td><strong>Imagem</strong></td></tr>
+			<tr><td>WhatsApp (QR Code)</td><td>4.096</td><td>0 ou 1</td><td>No texto</td><td>Texto ou imagem</td></tr>
+			<tr><td>WhatsApp (API oficial)</td><td>1.000</td><td>0 ou 1</td><td>No texto</td><td><strong>Texto</strong></td></tr>
+		</tbody>
+	</table>
+	<ul>
+		<li>Os caracteres são contados como letras e símbolos (um emoji conta como 1). O X conta alguns caracteres de outra forma, então deixe uma folga.</li>
+		<li><strong>Instagram:</strong> use imagens com proporção entre 4:5 (vertical) e 1,91:1 (horizontal). Fora disso, a Meta recusa.</li>
+		<li><strong>Pinterest:</strong> a primeira linha do texto vira o título do pin (até 100 caracteres).</li>
+		<li><strong>WhatsApp por QR:</strong> no Status, um post só de texto sai com fundo roxo; com imagem, o texto vira a legenda. Nos grupos, sai como mensagem ou imagem com legenda.</li>
+	</ul>
+
+	<h2 id="c6-2"><span class="n">6.2</span>Status dos posts</h2>
+	<table>
+		<thead><tr><th>Status</th><th>Significado</th></tr></thead>
+		<tbody>
+			<tr><td><span class="badge b-draft">Rascunho</span></td><td>Guardado sem data. Não será publicado até ser agendado.</td></tr>
+			<tr><td><span class="badge b-sch">Agendado</span></td><td>Algum canal ainda vai receber o post (inclusive quando há nova tentativa marcada).</td></tr>
+			<tr><td><span class="badge b-sent">Publicado</span></td><td>Saiu em todos os canais.</td></tr>
+			<tr><td><span class="badge b-part">Em parte</span></td><td>Saiu em alguns canais e falhou em outros.</td></tr>
+			<tr><td><span class="badge b-fail">Falhou</span></td><td>Não saiu em nenhum canal. O motivo aparece em Publicados.</td></tr>
+		</tbody>
+	</table>
+
+	<h2 id="c6-3"><span class="n">6.3</span>Falhas e novas tentativas</h2>
+	<ul>
+		<li><strong>Falhas temporárias</strong> (rede fora do ar, excesso de chamadas, erro interno da rede) tentam de novo sozinhas <strong>em 5 minutos</strong> e depois <strong>em 20 minutos</strong>. Enquanto isso, o post mostra “Vamos tentar de novo” e o último erro.</li>
+		<li><strong>Falhas definitivas</strong> (texto recusado, imagem fora do padrão, conexão vencida) param na hora, com a mensagem da rede.</li>
+		<li>Se a rede responder que a autorização não vale mais, o canal fica <strong>Desconectado</strong> até ser reconectado.</li>
+		<li>Um envio interrompido no meio (servidor reiniciado, por exemplo) vira falha depois de 15 minutos, e o sistema <strong>não reenvia sozinho</strong>, para não arriscar post duplicado. Confira na rede antes de clicar em <strong>Tentar de novo</strong>.</li>
+		<li>Cada envio é reservado por um único processo, então o mesmo post nunca é publicado duas vezes no mesmo canal pelo agendador.</li>
+	</ul>
+
+	<h2 id="c6-4"><span class="n">6.4</span>Renovação das conexões</h2>
+	<table>
+		<thead><tr><th>Rede</th><th>Duração</th><th>Renovação</th></tr></thead>
+		<tbody>
+			<tr><td>Facebook / Instagram</td><td>Não expira</td><td>Não precisa</td></tr>
+			<tr><td>X</td><td>2 horas</td><td>Automática, antes de cada publicação</td></tr>
+			<tr><td>Google Meu Negócio</td><td>1 hora</td><td>Automática, antes de cada publicação</td></tr>
+			<tr><td>Threads</td><td>60 dias</td><td>Automática (manutenção diária)</td></tr>
+			<tr><td>Pinterest</td><td>30 dias</td><td>Automática (manutenção diária)</td></tr>
+			<tr><td>LinkedIn</td><td>60 dias</td><td>Manual: reconecte no painel (exceto apps parceiros do LinkedIn)</td></tr>
+			<tr><td>WhatsApp (QR Code)</td><td>Enquanto o celular estiver conectado</td><td>Se desconectar, gere um novo QR Code</td></tr>
+			<tr><td>WhatsApp (API oficial)</td><td>Token permanente</td><td>Não precisa</td></tr>
+		</tbody>
+	</table>
+</section>
+
+<!-- ============================== 7. PROBLEMAS ============================== -->
+<section class="part" id="c7">
+	<div class="part-head"><div class="num">Capítulo 7</div><h1>Solução de problemas</h1><p>As situações mais comuns e o que fazer.</p></div>
+	<table>
+		<thead><tr><th style="width:30%">Problema</th><th style="width:30%">Causa provável</th><th>O que fazer</th></tr></thead>
+		<tbody>
+			<tr><td>A rede aparece como “Indisponível no momento”</td><td>O administrador ainda não cadastrou o app dessa rede</td><td>Administrador: preencher o ID e a chave em Post Flow › Configurações (capítulo 3).</td></tr>
+			<tr><td>Erro de “URL de redirecionamento” ao conectar</td><td>A URL de retorno cadastrada no app é diferente da do wp-admin</td><td>Copiar a URL com o botão <strong>Copiar</strong> e colar no app da rede, sem mudar nada (inclusive o <code>https://</code>).</td></tr>
+			<tr><td>“A conexão com a rede social expirou”</td><td>Demorou mais de 15 minutos para autorizar, ou abriu o link em outro navegador</td><td>Clicar em Conectar de novo e autorizar no mesmo navegador.</td></tr>
+			<tr><td>“Nenhuma página do Facebook foi liberada”</td><td>As páginas não foram marcadas na tela da Meta</td><td>Conectar de novo e marcar as páginas (e os perfis do Instagram).</td></tr>
+			<tr><td>O Instagram não aparece depois de conectar a Meta</td><td>O perfil não é profissional ou não está ligado a uma página</td><td>No Instagram, mudar para conta profissional e ligar à página do Facebook; depois, reconectar.</td></tr>
+			<tr><td>Funciona com a minha conta, mas não com a dos clientes</td><td>App em modo de desenvolvimento</td><td>Pedir a aprovação da rede (App Review, acesso Standard etc.) ou adicionar a pessoa como testadora no app.</td></tr>
+			<tr><td>Post agendado saiu atrasado</td><td>Sem a tarefa do cron no servidor</td><td>Criar a tarefa da seção <a href="#c2-4">2.4</a>.</td></tr>
+			<tr><td>“Instagram exige ao menos uma imagem” / “Pinterest exige…”</td><td>Regras da rede</td><td>Adicionar uma imagem ou desmarcar a rede.</td></tr>
+			<tr><td>Instagram recusou a imagem</td><td>Proporção fora do padrão ou imagem grande demais</td><td>Usar proporção entre 4:5 e 1,91:1 e até 8 MB.</td></tr>
+			<tr><td>X: “duplicate content”</td><td>O X não aceita o mesmo texto repetido</td><td>Mudar o texto e tentar de novo.</td></tr>
+			<tr><td>X: erro de permissão ou limite</td><td>Plano da API do X sem escrita, ou limite mensal atingido</td><td>Administrador: conferir o plano no portal do X.</td></tr>
+			<tr><td>LinkedIn ficou “Desconectado”</td><td>Os 60 dias da conexão terminaram</td><td>Clicar em Reconectar.</td></tr>
+			<tr><td>Google: erro ao conectar ou cota excedida</td><td>Acesso à Business Profile API não aprovado</td><td>Administrador: pedir o acesso no formulário do Google (seção <a href="#c3-5">3.5</a>).</td></tr>
+			<tr><td>Google: “não liberou o acesso contínuo”</td><td>O Google não enviou a autorização permanente</td><td>Remover o app em myaccount.google.com/permissions e conectar de novo.</td></tr>
+			<tr><td>Pinterest: pin não aparece para os outros</td><td>App no acesso Trial</td><td>Administrador: pedir o acesso Standard.</td></tr>
+			<tr><td>WhatsApp (QR): “O WhatsApp está desconectado”</td><td>O celular desconectou o aparelho, ficou sem internet por muito tempo ou o número foi bloqueado</td><td>Em Canais, clicar em <strong>Conectar / atualizar grupos</strong> e ler o novo QR Code.</td></tr>
+			<tr><td>WhatsApp (QR): o QR Code não aparece</td><td>Servidor Evolution API fora do ar ou URL/chave erradas</td><td>Administrador: conferir o servidor e os dados em Configurações.</td></tr>
+			<tr><td>WhatsApp (QR): um grupo novo não aparece</td><td>A lista de grupos é carregada na conexão</td><td>Clicar em <strong>Conectar / atualizar grupos</strong>.</td></tr>
+			<tr><td>WhatsApp (oficial): “Não foi possível validar o número”</td><td>ID do número ou token errados</td><td>Conferir os dados no app da Meta e gerar um token permanente novo.</td></tr>
+			<tr><td>WhatsApp (oficial): mensagem não chega</td><td>Modelo não aprovado, nome ou idioma errados, ou número sem DDI</td><td>Conferir o modelo no WhatsApp Manager e usar o formato 5511999998888.</td></tr>
+			<tr><td>“Você atingiu o limite de canais do seu plano”</td><td>Limite definido pelo administrador</td><td>Remover um canal ou pedir um plano maior.</td></tr>
+			<tr><td>Não chega o e-mail de troca de senha</td><td>Site sem SMTP configurado</td><td>Administrador: configurar um plugin de SMTP (seção <a href="#c2-5">2.5</a>).</td></tr>
+		</tbody>
+	</table>
+</section>
+
+<!-- ============================== 8. SEGURANÇA ============================== -->
+<section class="part" id="c8">
+	<div class="part-head"><div class="num">Capítulo 8</div><h1>Segurança, privacidade e LGPD</h1><p>Como os dados são protegidos e separados entre os clientes.</p></div>
+	<h2><span class="n">8.1</span>Separação entre usuários</h2>
+	<ul>
+		<li>Todas as tabelas do plugin guardam o dono de cada registro, e toda leitura e gravação filtra pelo usuário logado. Um usuário não consegue ler, editar nem excluir dados de outro, e isso é coberto por testes automáticos.</li>
+		<li>Quem se cadastra pelo painel recebe a função <strong>Membro Post Flow</strong>: não entra no wp-admin e não vê a barra do WordPress.</li>
+		<li>Todas as ações do painel exigem login e um código de segurança (nonce) contra envios forjados.</li>
+		<li>As imagens enviadas ficam vinculadas ao usuário; ninguém consegue usar a imagem de outra pessoa num post.</li>
+	</ul>
+	<h2><span class="n">8.2</span>Tokens e chaves</h2>
+	<ul>
+		<li>Os tokens das redes e as chaves secretas dos apps ficam <strong>criptografados</strong> no banco (AES-256-GCM).</li>
+		<li>A chave de criptografia vem do <code>wp-config.php</code>. Para usar uma chave própria, adicione <code>define( 'PFLOW_ENCRYPTION_KEY', 'uma-frase-longa-e-aleatória' );</code>. Trocar essa chave exige reconectar todos os canais.</li>
+		<li>A conexão com cada rede usa OAuth com um código de uso único que vence em 15 minutos; no X, também PKCE. O Post Flow nunca recebe a senha das redes.</li>
+	</ul>
+	<h2><span class="n">8.3</span>LGPD e pedidos das redes</h2>
+	<ul>
+		<li>O usuário pode <strong>excluir a própria conta</strong> no painel, o que apaga canais, tokens, posts, histórico e imagens. A exclusão pelo wp-admin faz o mesmo.</li>
+		<li>Quando alguém remove o app nas configurações do Facebook, a Meta avisa a plataforma, e o plugin apaga na hora os canais e tokens daquela pessoa. O pedido de exclusão de dados da Meta é tratado do mesmo jeito e devolve um código de confirmação.</li>
+		<li>Na lista de contatos do WhatsApp (API oficial), inclua só números que <strong>autorizaram</strong> receber mensagens e ofereça uma forma de sair (por exemplo, “Responda SAIR”).</li>
+		<li>Mantenha uma <strong>política de privacidade</strong> no site explicando o uso dos dados. Ela é exigida pelas redes na aprovação dos apps.</li>
+	</ul>
+</section>
+
+<!-- ============================== 9. LIMITAÇÕES ============================== -->
+<section class="part" id="c9" style="page-break-before: auto;">
+	<div class="part-head" style="margin-top: 10mm;"><div class="num">Capítulo 9</div><h1>Limitações conhecidas</h1></div>
+	<ul>
+		<li><strong>Vídeo</strong> (Reels e vídeos nas outras redes) ainda não é suportado; só texto e imagens.</li>
+		<li>O mesmo texto vai para todas as redes do post. Para variar, use <strong>Duplicar</strong>.</li>
+		<li>LinkedIn: só perfil pessoal. Páginas de empresa exigem a Community Management API, que tem aprovação própria.</li>
+		<li>Google Meu Negócio: só posts do tipo “Novidade” (sem Evento nem Oferta).</li>
+		<li>WhatsApp por QR Code: depende do servidor Evolution API estar no ar e pode levar a bloqueio do número. Não publica em Canais do WhatsApp (newsletters) nem para contatos individuais.</li>
+		<li>WhatsApp oficial: a lista de contatos é digitada no canal (até 250). Não há importação de planilha nem descadastro automático por “SAIR”.</li>
+		<li>Não há métricas (curtidas, alcance), equipes (várias pessoas na mesma conta) nem cobrança de assinaturas.</li>
+		<li>A publicação foi testada com respostas simuladas das redes. Faça o primeiro teste real com as contas de desenvolvedor de cada rede antes de abrir para clientes.</li>
+	</ul>
+</section>
+
+<!-- ============================== APÊNDICES ============================== -->
+<section class="part" id="ca">
+	<div class="part-head"><div class="num">Apêndices</div><h1>Referência rápida</h1></div>
+
+	<h2 id="ca-1"><span class="n">A.1</span>Endereços do plugin</h2>
+	<table>
+		<thead><tr><th>Endereço</th><th>Uso</th></tr></thead>
+		<tbody>
+			<tr><td class="mono" style="font-weight:400">/wp-json/post-flow/v1/oauth/meta</td><td>Retorno do login da Meta (Facebook e Instagram)</td></tr>
+			<tr><td class="mono" style="font-weight:400">/wp-json/post-flow/v1/oauth/linkedin</td><td>Retorno do login do LinkedIn</td></tr>
+			<tr><td class="mono" style="font-weight:400">/wp-json/post-flow/v1/oauth/x</td><td>Retorno do login do X</td></tr>
+			<tr><td class="mono" style="font-weight:400">/wp-json/post-flow/v1/oauth/threads</td><td>Retorno do login do Threads</td></tr>
+			<tr><td class="mono" style="font-weight:400">/wp-json/post-flow/v1/oauth/google</td><td>Retorno do login do Google</td></tr>
+			<tr><td class="mono" style="font-weight:400">/wp-json/post-flow/v1/oauth/pinterest</td><td>Retorno do login do Pinterest</td></tr>
+			<tr><td class="mono" style="font-weight:400">/wp-json/post-flow/v1/meta/deauthorize</td><td>Aviso da Meta quando alguém remove o app</td></tr>
+			<tr><td class="mono" style="font-weight:400">/wp-json/post-flow/v1/meta/data-deletion</td><td>Pedido de exclusão de dados da Meta</td></tr>
+			<tr><td class="mono" style="font-weight:400">/wp-cron.php</td><td>Cron do WordPress (chamar a cada minuto)</td></tr>
+		</tbody>
+	</table>
+	<p>Shortcode do painel: <code>[post_flow]</code>. Constantes opcionais do <code>wp-config.php</code>: <code>PFLOW_ENCRYPTION_KEY</code>, <code>PFLOW_LINKEDIN_VERSION</code>, <code>PFLOW_GRAPH_VERSION</code> (versão da API da Meta, padrão <code>v23.0</code>).</p>
+
+	<h2 id="ca-2"><span class="n">A.2</span>Glossário</h2>
+	<table>
+		<tbody>
+			<tr><td>Canal</td><td>Um lugar onde se publica: uma página do Facebook, um perfil do Instagram, uma pasta do Pinterest, um local do Google, o Status ou um grupo do WhatsApp.</td></tr>
+			<tr><td>App da rede</td><td>Cadastro feito pelo administrador no portal de desenvolvedores de cada rede, que permite à plataforma publicar em nome dos usuários.</td></tr>
+			<tr><td>URL de retorno</td><td>Endereço para onde a rede devolve o usuário depois que ele autoriza a conexão (também chamada de redirect ou callback).</td></tr>
+			<tr><td>Token</td><td>A autorização que a rede entrega para publicar. Fica criptografado e pode ter prazo de validade.</td></tr>
+			<tr><td>Fila</td><td>A sequência de horários de publicação definida pelo usuário.</td></tr>
+			<tr><td>Publicador</td><td>A rotina que roda a cada minuto e envia os posts vencidos para as redes.</td></tr>
+			<tr><td>Evolution API</td><td>Servidor de código aberto que conecta números de WhatsApp por QR Code. Usado pelo canal gratuito, não oficial.</td></tr>
+			<tr><td>Modelo de mensagem</td><td>Texto pré-aprovado pela Meta, obrigatório para enviar mensagens pela API oficial do WhatsApp fora de uma conversa recente.</td></tr>
+			<tr><td>Opt-in</td><td>A autorização da pessoa para receber mensagens.</td></tr>
+		</tbody>
+	</table>
+
+	<h2 id="ca-3"><span class="n">A.3</span>Para desenvolvedores</h2>
+	<p>O código fica na pasta <code>post-flow/</code> do repositório. Para instalar no site, envie só essa pasta (ou um <code>.zip</code> dela).</p>
+	<pre>npm install
+npm run build:postflow    # gera post-flow/assets/app.css (Tailwind)
+npm run test:postflow     # testes de lógica e integração (PHP, sem WordPress)
+npm run preview:postflow  # gera as telas em HTML com dados de exemplo</pre>
+	<table>
+		<thead><tr><th>Parte</th><th>Arquivo</th></tr></thead>
+		<tbody>
+			<tr><td>Tabelas</td><td class="mono" style="font-weight:400">includes/class-pflow-db.php</td></tr>
+			<tr><td>Integração de cada rede</td><td class="mono" style="font-weight:400">includes/providers/</td></tr>
+			<tr><td>Conexão (OAuth e escolha de contas)</td><td class="mono" style="font-weight:400">includes/class-pflow-oauth.php</td></tr>
+			<tr><td>WhatsApp por QR Code</td><td class="mono" style="font-weight:400">includes/class-pflow-whatsapp-web.php</td></tr>
+			<tr><td>Fila e fuso horário</td><td class="mono" style="font-weight:400">includes/class-pflow-schedule.php</td></tr>
+			<tr><td>Publicador</td><td class="mono" style="font-weight:400">includes/class-pflow-publisher.php</td></tr>
+			<tr><td>Painel (telas e ações)</td><td class="mono" style="font-weight:400">app/</td></tr>
+			<tr><td>wp-admin</td><td class="mono" style="font-weight:400">admin/</td></tr>
+		</tbody>
+	</table>
+</section>
+
+</body>
+</html>

@@ -19,6 +19,8 @@ O que o plugin faz:
 
 ## Post Flow
 
+📘 [Manual e tutorial em PDF](docs/Post-Flow-Manual.pdf)
+
 Cada pessoa se cadastra, conecta os próprios canais e agenda posts por fila de horários, por data ou para agora. O painel fica no shortcode `[post_flow]`.
 
 | Fila | Criar post |
