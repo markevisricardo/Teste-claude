@@ -1,12 +1,16 @@
 {
   "name": "comment-flow-build",
   "private": true,
-  "description": "Build do CSS (Tailwind) do plugin Comment Flow",
+  "description": "Build do CSS (Tailwind) dos plugins Comment Flow e Post Flow",
   "scripts": {
     "build:css": "tailwindcss -c tailwind.config.js -i comment-flow/assets/src/admin.css -o comment-flow/assets/admin.css --minify",
     "watch:css": "tailwindcss -c tailwind.config.js -i comment-flow/assets/src/admin.css -o comment-flow/assets/admin.css --watch",
     "build:landing": "tailwindcss -c landing-dra-lidiane/tailwind.config.js -i landing-dra-lidiane/src/styles.css -o landing-dra-lidiane/assets/styles.css --minify",
-    "watch:landing": "tailwindcss -c landing-dra-lidiane/tailwind.config.js -i landing-dra-lidiane/src/styles.css -o landing-dra-lidiane/assets/styles.css --watch"
+    "watch:landing": "tailwindcss -c landing-dra-lidiane/tailwind.config.js -i landing-dra-lidiane/src/styles.css -o landing-dra-lidiane/assets/styles.css --watch",
+    "build:postflow": "tailwindcss -c tailwind.post-flow.config.js -i post-flow/assets/src/app.css -o post-flow/assets/app.css --minify",
+    "watch:postflow": "tailwindcss -c tailwind.post-flow.config.js -i post-flow/assets/src/app.css -o post-flow/assets/app.css --watch",
+    "test:postflow": "php tests/post-flow/run.php && php tests/post-flow/integration.php",
+    "preview:postflow": "php tests/post-flow/preview.php docs/preview-post-flow"
   },
   "devDependencies": {
     "tailwindcss": "3.4.17"

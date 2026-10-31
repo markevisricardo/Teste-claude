@@ -15,6 +15,23 @@ O que o plugin faz:
 | Pasta | O que é |
 |---|---|
 | [`comment-flow/`](comment-flow/) | O plugin ([README](comment-flow/README.md)) |
+| [`post-flow/`](post-flow/) | **Post Flow**: plataforma multiusuário para agendar posts no Facebook, Instagram, LinkedIn, X e Threads ([README](post-flow/README.md)) |
+
+## Post Flow
+
+Cada pessoa se cadastra, conecta os próprios canais e agenda posts por fila de horários, por data ou para agora. O painel fica no shortcode `[post_flow]`.
+
+| Fila | Criar post |
+|---|---|
+| ![Fila](docs/screenshots/post-flow/queue.png) | ![Criar post](docs/screenshots/post-flow/compose.png) |
+
+| Calendário | Canais |
+|---|---|
+| ![Calendário](docs/screenshots/post-flow/calendar.png) | ![Canais](docs/screenshots/post-flow/channels.png) |
+
+| Publicados | Entrar / criar conta |
+|---|---|
+| ![Publicados](docs/screenshots/post-flow/sent.png) | ![Entrar](docs/screenshots/post-flow/auth.png) |
 
 ## Telas
 
@@ -43,4 +60,6 @@ npm install
 npm run build:css
 ```
 
-Para instalar no WordPress, envie só a pasta `comment-flow/` (ou um `.zip` dela). `node_modules`, `package.json` e `docs/` não vão para o site.
+Post Flow: `npm run build:postflow` (CSS) e `npm run test:postflow` (testes).
+
+Para instalar no WordPress, envie só a pasta do plugin (`comment-flow/` ou `post-flow/`), ou um `.zip` dela. `node_modules`, `package.json` e `docs/` não vão para o site.
