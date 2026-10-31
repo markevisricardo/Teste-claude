@@ -5,6 +5,8 @@
  * @var array    $channels Canais conectados.
  * @var array    $pending  Contas aguardando escolha (após o OAuth).
  * @var int|null $left     Canais que ainda cabem no plano (null = sem limite).
+ * @var array|null $wa_qr       QR Code do WhatsApp (qr, error) quando a tela do QR está aberta.
+ * @var string     $wa_instance Instância do WhatsApp por QR do usuário ('' se não houver).
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -19,6 +21,31 @@ $pflow_actions  = '';
 ?>
 <div class="mx-auto max-w-5xl pb-16">
 	<?php require PFLOW_DIR . 'app/views/partials/header.php'; ?>
+
+	<?php if ( $wa_qr ) : ?>
+		<section class="<?php echo esc_attr( PFlow_App::CARD ); ?> mb-8 border-emerald-500/40" data-pflow-qr data-ajax="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'pflow_wa_state' ) ); ?>">
+			<div class="grid items-center gap-8 md:grid-cols-[260px_minmax(0,1fr)]">
+				<div class="flex h-[260px] w-[260px] items-center justify-center rounded-2xl bg-white p-3">
+					<?php if ( '' !== $wa_qr['qr'] ) : ?>
+						<img src="<?php echo esc_attr( $wa_qr['qr'] ); ?>" alt="<?php esc_attr_e( 'QR Code do WhatsApp', 'post-flow' ); ?>" class="h-full w-full" data-pflow-qr-img>
+					<?php else : ?>
+						<span class="text-center text-sm text-neutral-500" data-pflow-qr-img><?php esc_html_e( 'Gerando QR Code…', 'post-flow' ); ?></span>
+					<?php endif; ?>
+				</div>
+				<div>
+					<h2 class="m-0 p-0 text-lg font-semibold text-white"><?php esc_html_e( 'Leia o QR Code com o WhatsApp', 'post-flow' ); ?></h2>
+					<ol class="mt-4 list-decimal space-y-2 pl-5 text-sm leading-6 text-neutral-300">
+						<li><?php esc_html_e( 'Abra o WhatsApp no celular do número que vai publicar.', 'post-flow' ); ?></li>
+						<li><?php esc_html_e( 'Toque em Mais opções (⋮) ou Configurações → Dispositivos conectados → Conectar dispositivo.', 'post-flow' ); ?></li>
+						<li><?php esc_html_e( 'Aponte a câmera para o QR Code ao lado.', 'post-flow' ); ?></li>
+					</ol>
+					<p class="mt-4 text-xs text-neutral-500" data-pflow-qr-status>
+						<?php echo '' !== $wa_qr['error'] ? esc_html( $wa_qr['error'] ) : esc_html__( 'Aguardando a leitura… o QR Code é renovado sozinho.', 'post-flow' ); ?>
+					</p>
+				</div>
+			</div>
+		</section>
+	<?php endif; ?>
 
 	<?php if ( $pending ) : ?>
 		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="<?php echo esc_attr( PFlow_App::CARD ); ?> mb-8 border-violet-500/40">
@@ -81,6 +108,8 @@ $pflow_actions  = '';
 							<?php echo PFlow_App::badge( $pflow_channel['status'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 							<?php if ( 'whatsapp' === $pflow_channel['network'] ) : ?>
 								<button type="button" class="<?php echo esc_attr( PFlow_App::BTN_SMALL ); ?>" data-pflow-toggle="pflow-wa-edit-<?php echo (int) $pflow_channel['id']; ?>"><?php esc_html_e( 'Editar', 'post-flow' ); ?></button>
+							<?php elseif ( 'whatsapp_web' === $pflow_channel['network'] ) : ?>
+								<a href="<?php echo esc_url( PFlow_App::action_url( 'wa_start' ) ); ?>" class="<?php echo esc_attr( PFlow_App::BTN_SMALL ); ?>"><?php esc_html_e( 'Reconectar', 'post-flow' ); ?></a>
 							<?php else : ?>
 								<a href="<?php echo esc_url( PFlow_App::action_url( 'connect', array( 'provider' => $pflow_provider ) ) ); ?>" class="<?php echo esc_attr( PFlow_App::BTN_SMALL ); ?>"><?php esc_html_e( 'Reconectar', 'post-flow' ); ?></a>
 							<?php endif; ?>
@@ -136,6 +165,14 @@ $pflow_actions  = '';
 								include PFLOW_DIR . 'app/views/partials/whatsapp-form.php';
 								?>
 							</div>
+						<?php elseif ( 'qr' === $pflow_provider->connect_mode() && $pflow_ready ) : ?>
+							<div class="flex flex-wrap items-center gap-2">
+								<a href="<?php echo esc_url( PFlow_App::action_url( 'wa_start' ) ); ?>" class="<?php echo esc_attr( PFlow_App::BTN_PRIMARY ); ?>"><?php echo esc_html( '' !== $wa_instance ? __( 'Conectar / atualizar grupos', 'post-flow' ) : __( 'Gerar QR Code', 'post-flow' ) ); ?></a>
+								<?php if ( '' !== $wa_instance ) : ?>
+									<a href="<?php echo esc_url( PFlow_App::action_url( 'wa_disconnect' ) ); ?>" class="<?php echo esc_attr( PFlow_App::BTN_SECONDARY ); ?>" onclick="return confirm('<?php echo esc_js( __( 'Desconectar o número? O Status e os grupos saem dos posts que ainda não foram publicados.', 'post-flow' ) ); ?>');"><?php esc_html_e( 'Desconectar número', 'post-flow' ); ?></a>
+								<?php endif; ?>
+							</div>
+							<p class="mt-4 rounded-xl border border-solid border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs leading-5 text-amber-100/90"><?php esc_html_e( 'Conexão não oficial (como o WhatsApp Web): não tem custo por mensagem, mas vai contra os termos do WhatsApp e o número pode ser bloqueado. Use um número dedicado e publique só para quem quer receber.', 'post-flow' ); ?></p>
 						<?php elseif ( ! $pflow_ready ) : ?>
 							<span class="<?php echo esc_attr( PFlow_App::BTN_SECONDARY ); ?> cursor-not-allowed opacity-50"><?php esc_html_e( 'Indisponível no momento', 'post-flow' ); ?></span>
 						<?php elseif ( $pflow_full ) : ?>
@@ -156,6 +193,42 @@ $pflow_actions  = '';
 	</section>
 </div>
 <script>
+( function () {
+	var box = document.querySelector( '[data-pflow-qr]' );
+	if ( ! box ) { return; }
+	var status = box.querySelector( '[data-pflow-qr-status]' );
+	function poll() {
+		var body = new URLSearchParams( { action: 'pflow_wa_state', _ajax_nonce: box.getAttribute( 'data-nonce' ) } );
+		fetch( box.getAttribute( 'data-ajax' ), { method: 'POST', credentials: 'same-origin', body: body } )
+			.then( function ( r ) { return r.json(); } )
+			.then( function ( res ) {
+				if ( ! res.success ) {
+					status.textContent = ( res.data && res.data.message ) || '';
+					return setTimeout( poll, 8000 );
+				}
+				if ( res.data.state === 'open' ) {
+					status.textContent = <?php echo wp_json_encode( __( 'Conectado! Carregando o Status e os grupos…', 'post-flow' ) ); ?>;
+					window.location.href = res.data.next;
+					return;
+				}
+				if ( res.data.qr ) {
+					var img = box.querySelector( '[data-pflow-qr-img]' );
+					if ( img.tagName !== 'IMG' ) {
+						var el = document.createElement( 'img' );
+						el.className = 'h-full w-full';
+						el.alt = '';
+						el.setAttribute( 'data-pflow-qr-img', '' );
+						img.replaceWith( el );
+						img = el;
+					}
+					img.src = res.data.qr;
+				}
+				setTimeout( poll, 4000 );
+			} )
+			.catch( function () { setTimeout( poll, 8000 ); } );
+	}
+	setTimeout( poll, 3000 );
+} )();
 document.querySelectorAll( '[data-pflow-toggle]' ).forEach( function ( button ) {
 	button.addEventListener( 'click', function () {
 		var box = document.getElementById( button.getAttribute( 'data-pflow-toggle' ) );

@@ -118,6 +118,7 @@ require PFLOW_DIR . 'includes/providers/class-pflow-provider-threads.php';
 require PFLOW_DIR . 'includes/providers/class-pflow-provider-google.php';
 require PFLOW_DIR . 'includes/providers/class-pflow-provider-pinterest.php';
 require PFLOW_DIR . 'includes/providers/class-pflow-provider-whatsapp.php';
+require PFLOW_DIR . 'includes/providers/class-pflow-provider-whatsapp-web.php';
 require PFLOW_DIR . 'includes/class-pflow-posts.php';
 require PFLOW_DIR . 'includes/class-pflow-schedule.php';
 require PFLOW_DIR . 'includes/class-pflow-oauth.php';

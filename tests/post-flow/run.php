@@ -178,7 +178,7 @@ echo "Google Meu Negócio, Pinterest e WhatsApp\n";
 check( 'Google: link não vai no texto', 'Promoção', PFlow_Networks::compose_text( 'google_business', 'Promoção', 'https://ex.com', 0 ) );
 check( 'Pinterest exige imagem', array( 'Pinterest exige ao menos uma imagem.' ), PFlow_Networks::validate( 'pinterest', 'oi', 0 ) );
 check( 'Google exige texto', array( 'Google Meu Negócio exige um texto.' ), PFlow_Networks::validate( 'google_business', '', 1 ) );
-check( 'WhatsApp aceita 1 imagem', array( 'WhatsApp aceita até 1 imagens.' ), PFlow_Networks::validate( 'whatsapp', 'oi', 2 ) );
+check( 'WhatsApp aceita 1 imagem', array( 'WhatsApp aceita só 1 imagem.' ), PFlow_Networks::validate( 'whatsapp_web', 'oi', 2 ) );
 
 $GLOBALS['pflow_test_requests'] = array();
 respond( 200, array( 'name' => 'accounts/1/locations/2/localPosts/9', 'searchUrl' => 'https://local.google.com/place?id=9' ) );
@@ -235,6 +235,60 @@ respond( 401, array( 'error' => array( 'message' => 'Invalid token' ) ) );
 $res = $wa->publish( array( 'external_id' => '1234', 'access_token' => 'T', 'meta' => $acc['meta'] ), array( 'text' => 'x', 'link' => '', 'media' => array() ) );
 check( 'WhatsApp: token inválido para a lista e falha', array( true, 'Invalid token' ), array( is_wp_error( $res ), is_wp_error( $res ) ? $res->get_error_message() : '' ) );
 check( 'WhatsApp: cabeçalho com imagem exige imagem', true, is_wp_error( $wa->publish( array( 'external_id' => '1', 'access_token' => 'T', 'meta' => array( 'header_image' => true ) + $acc['meta'] ), array( 'text' => 'x', 'link' => '', 'media' => array() ) ) ) );
+
+echo "WhatsApp por QR Code (Evolution API)\n";
+$GLOBALS['pflow_test_options']['pflow_settings'] = array( 'evolution_url' => 'https://evo.test/', 'evolution_api_key' => PFlow_Crypto::encrypt( 'KEY' ) );
+$evo     = new PFlow_Provider_WhatsApp_Web();
+$channel = array( 'external_id' => 'status@broadcast', 'access_token' => 'pflow-1-abc', 'meta' => array( 'instance' => 'pflow-1-abc' ) );
+$img     = array( array( 'url' => 'https://ex.com/1.jpg', 'path' => '/up/1.jpg', 'mime' => 'image/jpeg' ) );
+check( 'Evolution configurada', true, $evo->is_configured() );
+
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'instance' => array( 'state' => 'open' ) ) );
+respond( 201, array( 'key' => array( 'id' => 'ST1' ) ) );
+$res  = $evo->publish( $channel, array( 'text' => 'Bom dia!', 'link' => '', 'media' => array() ) );
+$call = $GLOBALS['pflow_test_requests'][1];
+check( 'Status de texto: endpoint e chave', array( 'https://evo.test/message/sendStatus/pflow-1-abc', 'KEY' ), array( $call['url'], $call['args']['headers']['apikey'] ?? '' ) );
+check( 'Status de texto: corpo', array( 'text', 'Bom dia!', true ), array( json_decode( $call['args']['body'], true )['type'], json_decode( $call['args']['body'], true )['content'], json_decode( $call['args']['body'], true )['allContacts'] ) );
+check( 'Status: ID da mensagem', 'ST1', $res['remote_id'] ?? null );
+
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'instance' => array( 'state' => 'open' ) ) );
+respond( 201, array( 'key' => array( 'id' => 'ST2' ) ) );
+$evo->publish( $channel, array( 'text' => 'Promo', 'link' => '', 'media' => $img ) );
+$body = json_decode( $GLOBALS['pflow_test_requests'][1]['args']['body'], true );
+check( 'Status com imagem', array( 'image', 'https://ex.com/1.jpg', 'Promo' ), array( $body['type'], $body['content'], $body['caption'] ) );
+
+$group = array( 'external_id' => '1203630@g.us' ) + $channel;
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'instance' => array( 'state' => 'open' ) ) );
+respond( 201, array( 'key' => array( 'id' => 'G1' ) ) );
+$evo->publish( $group, array( 'text' => 'Oi grupo', 'link' => '', 'media' => array() ) );
+check( 'Grupo: texto', array( 'https://evo.test/message/sendText/pflow-1-abc', array( 'number' => '1203630@g.us', 'text' => 'Oi grupo' ) ), array( $GLOBALS['pflow_test_requests'][1]['url'], json_decode( $GLOBALS['pflow_test_requests'][1]['args']['body'], true ) ) );
+
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'instance' => array( 'state' => 'open' ) ) );
+respond( 201, array( 'key' => array( 'id' => 'G2' ) ) );
+$evo->publish( $group, array( 'text' => 'Foto', 'link' => '', 'media' => $img ) );
+$body = json_decode( $GLOBALS['pflow_test_requests'][1]['args']['body'], true );
+check( 'Grupo: imagem com legenda', array( 'image', 'https://ex.com/1.jpg', 'Foto', '1.jpg' ), array( $body['mediatype'], $body['media'], $body['caption'], $body['fileName'] ) );
+
+respond( 200, array( 'instance' => array( 'state' => 'close' ) ) );
+$res  = $evo->publish( $group, array( 'text' => 'x', 'link' => '', 'media' => array() ) );
+$data = is_wp_error( $res ) ? $res->get_error_data() : array();
+check( 'desconectado: falha com 401 (pede novo QR)', 401, $data['status'] ?? null );
+
+respond( 404, array( 'message' => 'instance not found' ) );
+check( 'instância inexistente', 'missing', $evo->state( 'x' ) );
+
+respond( 200, array( array( 'id' => '2@g.us', 'subject' => 'Zeta' ), array( 'id' => '1@g.us', 'subject' => 'alfa' ), array( 'id' => '55119@s.whatsapp.net' ) ) );
+$dest = $evo->destinations( 'pflow-1-abc' );
+check( 'destinos: Status + grupos em ordem', array( 'status@broadcast', '1@g.us', '2@g.us' ), array_column( $dest, 'external_id' ) );
+check( 'destinos: guardam a instância', 'pflow-1-abc', $dest[1]['meta']['instance'] );
+
+respond( 200, array( 'base64' => 'iVBORw0KGgo' ) );
+check( 'QR vira data URI', 'data:image/png;base64,iVBORw0KGgo', $evo->qr( 'x' ) );
+check( 'WhatsApp por QR: link vai no texto', "Oi\n\nhttps://ex.com", PFlow_Networks::compose_text( 'whatsapp_web', 'Oi', 'https://ex.com', 0 ) );
 
 echo "\n{$count} verificações, {$failures} falha(s).\n";
 exit( $failures ? 1 : 0 );

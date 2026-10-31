@@ -84,8 +84,17 @@ class PFlow_Networks {
 				'color'       => '#E60023',
 				'glyph'       => 'P',
 			),
-			'whatsapp'  => array(
+			'whatsapp_web' => array(
 				'label'       => 'WhatsApp',
+				'provider'    => 'whatsapp_web',
+				'limit'       => 4096,
+				'max_media'   => 1,
+				'needs_media' => false,
+				'color'       => '#25D366',
+				'glyph'       => 'W',
+			),
+			'whatsapp'  => array(
+				'label'       => 'WhatsApp (API oficial)',
 				'provider'    => 'whatsapp',
 				'limit'       => 1000,
 				'max_media'   => 1,
@@ -142,9 +151,14 @@ class PFlow_Networks {
 				'description' => __( 'Pins nas suas pastas do Pinterest. Cada pasta vira um canal.', 'post-flow' ),
 				'networks'    => array( 'pinterest' ),
 			),
+			'whatsapp_web' => array(
+				'label'       => 'WhatsApp (QR Code)',
+				'description' => __( 'Gratuito: leia o QR Code com o celular e publique no seu Status e nos seus grupos. Conexão não oficial.', 'post-flow' ),
+				'networks'    => array( 'whatsapp_web' ),
+			),
 			'whatsapp' => array(
-				'label'       => 'WhatsApp Business',
-				'description' => __( 'Envia o post para a sua lista de contatos (que autorizaram receber) pela API oficial do WhatsApp.', 'post-flow' ),
+				'label'       => 'WhatsApp (API oficial)',
+				'description' => __( 'Pago por mensagem: envia o post para a sua lista de contatos (que autorizaram receber) pela API oficial da Meta.', 'post-flow' ),
 				'networks'    => array( 'whatsapp' ),
 			),
 		);
@@ -164,6 +178,7 @@ class PFlow_Networks {
 			'google'   => 'PFlow_Provider_Google',
 			'pinterest' => 'PFlow_Provider_Pinterest',
 			'whatsapp' => 'PFlow_Provider_WhatsApp',
+			'whatsapp_web' => 'PFlow_Provider_WhatsApp_Web',
 		);
 		return isset( $classes[ $id ] ) ? new $classes[ $id ]() : null;
 	}
@@ -203,7 +218,7 @@ class PFlow_Networks {
 		}
 		if ( $media_count > $type['max_media'] ) {
 			/* translators: 1: rede, 2: máximo */
-			$errors[] = sprintf( __( '%1$s aceita até %2$d imagens.', 'post-flow' ), $type['label'], $type['max_media'] );
+			$errors[] = sprintf( _n( '%1$s aceita só %2$d imagem.', '%1$s aceita até %2$d imagens.', $type['max_media'], 'post-flow' ), $type['label'], $type['max_media'] );
 		}
 		if ( ! empty( $type['needs_text'] ) && '' === trim( (string) $text ) ) {
 			/* translators: %s: rede */

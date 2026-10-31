@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Post Flow – Agendamento de posts em redes sociais
- * Description:       Plataforma multiusuário para agendar e publicar posts no Facebook, Instagram, LinkedIn, X, Threads, Google Meu Negócio, Pinterest e WhatsApp pelas APIs oficiais. Cada usuário se cadastra, conecta os próprios canais e vê só os seus dados. Painel no shortcode [post_flow].
- * Version:           0.2.0
+ * Description:       Plataforma multiusuário para agendar e publicar posts no Facebook, Instagram, LinkedIn, X, Threads, Google Meu Negócio, Pinterest e WhatsApp (Status e grupos por QR Code, ou API oficial). Cada usuário se cadastra, conecta os próprios canais e vê só os seus dados. Painel no shortcode [post_flow].
+ * Version:           0.3.0
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Author:            Post Flow
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PFLOW_VERSION', '0.2.0' );
+define( 'PFLOW_VERSION', '0.3.0' );
 define( 'PFLOW_DB_VERSION', '1' );
 define( 'PFLOW_FILE', __FILE__ );
 define( 'PFLOW_DIR', plugin_dir_path( __FILE__ ) );
@@ -40,12 +40,14 @@ require_once PFLOW_DIR . 'includes/providers/class-pflow-provider-threads.php';
 require_once PFLOW_DIR . 'includes/providers/class-pflow-provider-google.php';
 require_once PFLOW_DIR . 'includes/providers/class-pflow-provider-pinterest.php';
 require_once PFLOW_DIR . 'includes/providers/class-pflow-provider-whatsapp.php';
+require_once PFLOW_DIR . 'includes/providers/class-pflow-provider-whatsapp-web.php';
 require_once PFLOW_DIR . 'includes/class-pflow-channels.php';
 require_once PFLOW_DIR . 'includes/class-pflow-posts.php';
 require_once PFLOW_DIR . 'includes/class-pflow-schedule.php';
 require_once PFLOW_DIR . 'includes/class-pflow-media.php';
 require_once PFLOW_DIR . 'includes/class-pflow-publisher.php';
 require_once PFLOW_DIR . 'includes/class-pflow-oauth.php';
+require_once PFLOW_DIR . 'includes/class-pflow-whatsapp-web.php';
 require_once PFLOW_DIR . 'app/class-pflow-app.php';
 require_once PFLOW_DIR . 'app/class-pflow-auth.php';
 require_once PFLOW_DIR . 'app/class-pflow-frontend.php';
@@ -67,6 +69,7 @@ add_action(
 		PFlow_Auth::add_role();
 		PFlow_Publisher::init();
 		PFlow_OAuth::init();
+		PFlow_WhatsApp_Web::init();
 		PFlow_App::init();
 		PFlow_Auth::init();
 		PFlow_Frontend::init();

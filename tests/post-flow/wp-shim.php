@@ -291,6 +291,12 @@ function check_admin_referer() {
 function wp_delete_attachment( $id ) {
 	$GLOBALS['pflow_test_deleted'][] = $id;
 }
+function wp_create_nonce() {
+	return 'nonce';
+}
+function delete_user_meta( $u, $k ) {
+	unset( $GLOBALS['pflow_test_usermeta'][ $u ][ $k ] );
+}
 function add_action() {}
 function add_filter() {}
 
@@ -306,5 +312,6 @@ require_once PFLOW_DIR . 'includes/class-pflow-db.php';
 require_once PFLOW_DIR . 'includes/class-pflow-channels.php';
 require_once PFLOW_DIR . 'includes/class-pflow-media.php';
 require_once PFLOW_DIR . 'includes/class-pflow-publisher.php';
+require_once PFLOW_DIR . 'includes/class-pflow-whatsapp-web.php';
 require_once PFLOW_DIR . 'app/class-pflow-app.php';
 require_once PFLOW_DIR . 'app/class-pflow-auth.php';

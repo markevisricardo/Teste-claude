@@ -127,8 +127,28 @@ $copy    = static function ( $id, $value ) {
 							<?php endif; ?>
 						</div>
 					<?php endforeach; ?>
+					<div class="rounded-xl border border-solid border-neutral-800 p-5">
+						<div class="flex flex-wrap items-center justify-between gap-3">
+							<h3 class="m-0 p-0 text-base font-semibold text-white"><?php esc_html_e( 'WhatsApp por QR Code (Evolution API, gratuito)', 'post-flow' ); ?></h3>
+							<span class="flex items-center gap-3">
+								<?php echo PFlow_App::badge( PFlow_WhatsApp_Web::provider()->is_configured() ? 'active' : 'draft' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+								<a href="https://doc.evolution-api.com/" target="_blank" rel="noopener noreferrer" class="text-xs <?php echo esc_attr( PFlow_App::LINK ); ?>"><?php esc_html_e( 'Documentação ↗', 'post-flow' ); ?></a>
+							</span>
+						</div>
+						<p class="<?php echo esc_attr( PFlow_App::HELP ); ?>"><?php esc_html_e( 'Instale a Evolution API (código aberto, Docker) num servidor seu e informe a URL e a chave global (AUTHENTICATION_API_KEY). O plugin cria uma instância por usuário, que conecta o número lendo um QR Code e publica no Status e nos grupos. Sem custo por mensagem, mas é uma conexão não oficial: o WhatsApp pode bloquear números.', 'post-flow' ); ?></p>
+						<div class="mt-4 grid gap-4 md:grid-cols-2">
+							<div>
+								<label for="pflow-evolution-url" class="<?php echo esc_attr( PFlow_App::LABEL ); ?>"><?php esc_html_e( 'URL do servidor', 'post-flow' ); ?></label>
+								<input type="url" id="pflow-evolution-url" name="evolution_url" value="<?php echo esc_attr( $settings['evolution_url'] ); ?>" placeholder="https://whatsapp.suaempresa.com.br" class="<?php echo esc_attr( PFlow_App::INPUT ); ?> mt-2">
+							</div>
+							<div>
+								<label for="pflow-evolution-key" class="<?php echo esc_attr( PFlow_App::LABEL ); ?>"><?php esc_html_e( 'Chave global (apikey)', 'post-flow' ); ?></label>
+								<input type="password" id="pflow-evolution-key" name="evolution_api_key" value="" autocomplete="new-password" placeholder="<?php echo $settings['evolution_api_key'] ? esc_attr__( '•••••••• (salvo — deixe vazio para manter)', 'post-flow' ) : ''; ?>" class="<?php echo esc_attr( PFlow_App::INPUT ); ?> mt-2">
+							</div>
+						</div>
+					</div>
 					<div class="rounded-xl border border-dashed border-neutral-800 p-5">
-						<h3 class="m-0 p-0 text-base font-semibold text-white">WhatsApp Business</h3>
+						<h3 class="m-0 p-0 text-base font-semibold text-white"><?php esc_html_e( 'WhatsApp (API oficial, paga)', 'post-flow' ); ?></h3>
 						<p class="<?php echo esc_attr( PFlow_App::HELP ); ?>"><?php esc_html_e( 'Nada para configurar aqui: cada usuário conecta o próprio número da WhatsApp Cloud API (ID do número, token permanente, modelo aprovado e lista de contatos) na tela Canais. O WhatsApp não tem API para Status nem Canais; o post é enviado como mensagem de modelo para os contatos que autorizaram receber.', 'post-flow' ); ?></p>
 					</div>
 				</div>

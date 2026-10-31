@@ -113,6 +113,18 @@ class PFlow_OAuth {
 			self::back( 'error', __( 'Nenhuma conta foi encontrada nessa conexão.', 'post-flow' ) );
 		}
 
+		self::receive_accounts( $accounts );
+	}
+
+	/**
+	 * Destino das contas que uma conexão trouxe (usuário atual): as já
+	 * conectadas são atualizadas; uma conta nova é salva direto; várias vão
+	 * para a tela de escolha. Sempre redireciona.
+	 *
+	 * @param array  $accounts Contas (ver PFlow_Provider::connect()).
+	 * @param string $renewed  Mensagem quando não há conta nova.
+	 */
+	public static function receive_accounts( array $accounts, $renewed = '' ) {
 		// Reconexão: contas já conectadas recebem o token novo na hora.
 		$new = array();
 		foreach ( $accounts as $account ) {
@@ -124,7 +136,7 @@ class PFlow_OAuth {
 		}
 
 		if ( ! $new ) {
-			self::back( 'success', __( 'Conexão renovada.', 'post-flow' ) );
+			self::back( 'success', '' !== $renewed ? $renewed : __( 'Conexão renovada.', 'post-flow' ) );
 		}
 		if ( 1 === count( $new ) && count( $accounts ) === 1 ) {
 			$saved_count = self::save_accounts( $new );
@@ -248,7 +260,11 @@ class PFlow_OAuth {
 		}
 		check_admin_referer( 'pflow_disconnect' );
 		PFlow_Tenant::set( get_current_user_id() );
-		$ok = PFlow_Channels::delete( absint( $_GET['id'] ?? 0 ) );
+		$channel = PFlow_Channels::get( absint( $_GET['id'] ?? 0 ) );
+		$ok      = $channel && PFlow_Channels::delete( $channel['id'] );
+		if ( $ok && 'whatsapp_web' === $channel['network'] ) {
+			PFlow_WhatsApp_Web::after_channel_removed( get_current_user_id() );
+		}
 		self::back( $ok ? 'success' : 'error', $ok ? __( 'Canal removido. Os posts que iam para ele foram ajustados.', 'post-flow' ) : __( 'Canal não encontrado.', 'post-flow' ) );
 	}
 
@@ -324,7 +340,7 @@ class PFlow_OAuth {
 		return self::parse_signed_request( (string) $request->get_param( 'signed_request' ), (string) PFlow_Settings::get( 'meta_app_secret' ) );
 	}
 
-	private static function back( $type, $message ) {
+	public static function back( $type, $message ) {
 		PFlow_App::notice( PFlow_Tenant::id(), $type, $message );
 		wp_safe_redirect( PFlow_App::url( 'channels' ) );
 		exit;

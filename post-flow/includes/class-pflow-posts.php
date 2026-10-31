@@ -353,6 +353,9 @@ class PFlow_Posts {
 	 */
 	public static function delete_user_data( $user_id ) {
 		global $wpdb;
+		if ( class_exists( 'PFlow_WhatsApp_Web' ) ) {
+			PFlow_WhatsApp_Web::forget( (int) $user_id ); // Desconecta o número do servidor.
+		}
 		$media = array();
 		foreach ( (array) $wpdb->get_col( $wpdb->prepare( 'SELECT media_ids FROM ' . PFlow_DB::posts_table() . ' WHERE user_id = %d', $user_id ) ) as $ids ) { // phpcs:ignore WordPress.DB
 			$media = array_merge( $media, self::parse_ids( $ids ) );

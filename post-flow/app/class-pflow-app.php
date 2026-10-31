@@ -267,12 +267,26 @@ class PFlow_App {
 
 	private static function page_channels() {
 		$picking = isset( $_GET['pick'] ) ? PFlow_OAuth::pending_accounts() : array(); // phpcs:ignore WordPress.Security.NonceVerification
+
+		// Tela do QR Code do WhatsApp.
+		$wa_qr    = null;
+		$instance = PFlow_WhatsApp_Web::instance( PFlow_Tenant::id() );
+		if ( isset( $_GET['wa'] ) && '' !== $instance ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$qr    = PFlow_WhatsApp_Web::provider()->qr( $instance );
+			$wa_qr = array(
+				'qr'    => is_wp_error( $qr ) ? '' : $qr,
+				'error' => is_wp_error( $qr ) ? $qr->get_error_message() : '',
+			);
+		}
+
 		self::view(
 			'channels',
 			array(
-				'channels' => PFlow_Channels::all(),
-				'pending'  => $picking,
-				'left'     => PFlow_Channels::remaining_slots(),
+				'channels'    => PFlow_Channels::all(),
+				'pending'     => $picking,
+				'left'        => PFlow_Channels::remaining_slots(),
+				'wa_qr'       => $wa_qr,
+				'wa_instance' => $instance,
 			)
 		);
 	}

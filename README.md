@@ -29,6 +29,10 @@ Cada pessoa se cadastra, conecta os próprios canais e agenda posts por fila de 
 |---|---|
 | ![Calendário](docs/screenshots/post-flow/calendar.png) | ![Canais](docs/screenshots/post-flow/channels.png) |
 
+| WhatsApp por QR Code (grátis) | |
+|---|---|
+| ![QR Code](docs/screenshots/post-flow/channels-qr.png) | |
+
 | Publicados | Entrar / criar conta |
 |---|---|
 | ![Publicados](docs/screenshots/post-flow/sent.png) | ![Entrar](docs/screenshots/post-flow/auth.png) |

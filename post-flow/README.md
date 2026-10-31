@@ -1,6 +1,6 @@
 # Post Flow – agendamento de posts em redes sociais (SaaS em WordPress)
 
-> Facebook, Instagram, LinkedIn, X, Threads, Google Meu Negócio, Pinterest e WhatsApp.
+> Facebook, Instagram, LinkedIn, X, Threads, Google Meu Negócio, Pinterest e WhatsApp (Status e grupos por QR Code, grátis; ou API oficial).
 
 Um plugin WordPress que vira uma plataforma de agendamento de posts, no estilo das ferramentas de "fila de publicação":
 
@@ -20,7 +20,14 @@ Redes suportadas, todas pelas **APIs oficiais** (sem senha nem scraping):
 | Threads | Perfil | até 500 | 1 a 10 (carrossel) |
 | Google Meu Negócio | Perfis da empresa (cada local é um canal) | até 1.500; **exige texto**; link vira botão "Saiba mais" | 0 ou 1 |
 | Pinterest | Pastas (cada pasta é um canal) | até 500; 1ª linha vira o título; link vira o destino do pin; **exige imagem** | 1 a 5 |
-| WhatsApp | Seu número da WhatsApp Cloud API + lista de contatos | até 1.000; **exige texto**; entra no modelo aprovado | 0 ou 1 (se o modelo tiver imagem) |
+| WhatsApp (QR Code) — **gratuito, não oficial** | Seu **Status** e os **grupos** do número (cada um é um canal) | até 4.096 | 0 ou 1 |
+| WhatsApp (API oficial) — pago por mensagem | Seu número da WhatsApp Cloud API + lista de contatos | até 1.000; **exige texto**; entra no modelo aprovado | 0 ou 1 (se o modelo tiver imagem) |
+
+### Quanto custa cada rede
+
+- **Gratuitas** (só exigem criar o app e, para liberar a todos, a aprovação da rede): Facebook, Instagram, LinkedIn, Threads, Google Meu Negócio e Pinterest.
+- **X**: tem plano gratuito com limite baixo de posts por mês; acima disso, é pago.
+- **WhatsApp**: a API oficial cobra por mensagem. A alternativa **gratuita** é o **WhatsApp por QR Code**, via Evolution API instalada num servidor seu. É uma conexão não oficial (veja abaixo).
 
 ## O que o usuário faz
 
@@ -104,9 +111,30 @@ Cada rede tem a sua URL de retorno, mostrada com botão de copiar no wp-admin (f
 4. No acesso **Trial**, os pins criados ficam visíveis só para o dono da conta. Peça o acesso **Standard** (com vídeo do fluxo) para publicar de verdade.
 5. Cada pasta vira um canal. O token de 30 dias é renovado sozinho.
 
-### WhatsApp Business
+### WhatsApp por QR Code (gratuito, Evolution API)
 
-O WhatsApp **não tem API para postar em Status nem em Canais**. O caminho oficial é a **WhatsApp Cloud API**: o post é enviado como mensagem para uma lista de contatos que **autorizaram receber** (opt-in), usando um **modelo de mensagem aprovado pela Meta**, porque fora da janela de 24 horas de conversa só modelos são permitidos.
+Sem custo por mensagem e sem aprovação da Meta: cada usuário conecta o próprio número **lendo um QR Code** no painel, como no WhatsApp Web, e publica no **Status** e nos **grupos** em que o número está.
+
+> ⚠️ **Conexão não oficial.** Ela vai contra os termos de uso do WhatsApp, e o número pode ser **bloqueado**, principalmente se publicar muito, entrar em muitos grupos ou receber denúncias. Use um **número dedicado** (não o principal da empresa) e publique só onde as pessoas querem receber. O painel mostra esse aviso para o usuário.
+
+Como configurar (administrador, uma vez só):
+
+1. Instale a [Evolution API](https://doc.evolution-api.com/) (código aberto) num servidor seu com Docker, seguindo a documentação dela, que inclui o banco de dados. Use HTTPS (ex.: `https://whatsapp.suaempresa.com.br`).
+2. Defina a chave global `AUTHENTICATION_API_KEY` no servidor.
+3. Em **wp-admin > Post Flow > Configurações**, informe a **URL do servidor** e a **chave global**.
+
+Como o usuário usa:
+
+1. Em **Canais > WhatsApp (QR Code)**, clica em **Gerar QR Code**. O plugin cria uma instância só dele no servidor.
+2. Lê o QR Code no celular (Configurações → Dispositivos conectados → Conectar dispositivo). A tela detecta a conexão sozinha e troca o QR quando ele expira.
+3. Escolhe os destinos: **Meu Status** e os grupos. Cada um vira um canal no editor.
+4. Se o celular desconectar, o post falha com o aviso "WhatsApp desconectado" e o canal pede um novo QR Code. **Desconectar número** apaga a instância do servidor. Excluir a conta também apaga.
+
+Detalhes: no Status, um post só de texto sai com fundo roxo; com imagem, a imagem vai com o texto como legenda. Nos grupos, sai como mensagem (ou imagem com legenda). O link vai no fim do texto. Canais do WhatsApp (newsletters) e listas de contatos individuais não são suportados nesse modo.
+
+### WhatsApp (API oficial, paga)
+
+O WhatsApp **não tem API oficial para postar em Status nem em Canais**. O caminho oficial é a **WhatsApp Cloud API**: o post é enviado como mensagem para uma lista de contatos que **autorizaram receber** (opt-in), usando um **modelo de mensagem aprovado pela Meta**, porque fora da janela de 24 horas de conversa só modelos são permitidos.
 
 Não há nada para configurar no wp-admin: cada usuário conecta o próprio número em **Canais > Conectar WhatsApp Business**, informando:
 
@@ -159,7 +187,8 @@ Os testes rodam com stubs do WordPress e um banco SQLite em memória. As APIs da
 ## Limitações conhecidas / próximos passos
 
 - **Vídeo** (Reels, vídeos no X/LinkedIn/Threads/Pinterest) ainda não é suportado, só texto e imagens.
-- WhatsApp: a lista de contatos é digitada no canal (até 250). Não há importação de CSV, descadastro automático por "SAIR" (precisaria do webhook da Cloud API) nem Embedded Signup, que conectaria o número em um clique sem copiar o token.
+- WhatsApp por QR Code: depende do servidor Evolution API estar no ar, e o número pode ser bloqueado pelo WhatsApp (conexão não oficial).
+- WhatsApp (API oficial): a lista de contatos é digitada no canal (até 250). Não há importação de CSV, descadastro automático por "SAIR" (precisaria do webhook da Cloud API) nem Embedded Signup, que conectaria o número em um clique sem copiar o token.
 - Google Meu Negócio: só posts do tipo "Novidade" (sem Evento nem Oferta).
 - Instagram: só perfis profissionais ligados a uma página do Facebook (via Login do Facebook).
 - LinkedIn: só perfil pessoal. Páginas de empresa exigem o programa Community Management API.

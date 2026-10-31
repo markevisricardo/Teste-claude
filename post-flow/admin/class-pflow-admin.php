@@ -144,7 +144,12 @@ class PFlow_Admin {
 			'allow_registration' => isset( $_POST['allow_registration'] ) ? 1 : 0,
 			'fullscreen'         => isset( $_POST['fullscreen'] ) ? 1 : 0,
 			'max_channels'       => min( 1000, absint( $_POST['max_channels'] ?? 0 ) ),
+			'evolution_url'      => esc_url_raw( trim( (string) wp_unslash( $_POST['evolution_url'] ?? '' ) ), array( 'http', 'https' ) ),
 		);
+		$evolution_key = trim( (string) wp_unslash( $_POST['evolution_api_key'] ?? '' ) );
+		if ( '' !== $evolution_key ) {
+			$values['evolution_api_key'] = $evolution_key;
+		}
 		foreach ( self::provider_fields() as $provider ) {
 			$values[ $provider['id'][0] ] = sanitize_text_field( wp_unslash( $_POST[ $provider['id'][0] ] ?? '' ) );
 			// Campo de segredo vazio = manter o valor atual.

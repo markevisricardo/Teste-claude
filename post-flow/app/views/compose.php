@@ -190,7 +190,7 @@ $pflow_min_date = ( new DateTimeImmutable( 'now', $tz ) )->format( 'Y-m-d' );
 	var submit    = form.querySelector( '[data-pflow-submit]' );
 	var datetime  = form.querySelector( '[data-pflow-datetime]' );
 	var labels    = <?php echo wp_json_encode( array( 'queue' => __( 'Adicionar à fila', 'post-flow' ), 'schedule' => __( 'Agendar', 'post-flow' ), 'now' => __( 'Publicar agora', 'post-flow' ) ) ); ?>;
-	var i18n      = <?php echo wp_json_encode( array( 'needs' => __( '%s exige ao menos uma imagem.', 'post-flow' ), 'max' => __( '%1$s aceita até %2$d imagens.', 'post-flow' ), 'long' => __( 'O texto passa do limite do %s.', 'post-flow' ), 'none' => __( 'Escolha ao menos um canal.', 'post-flow' ), 'text' => __( '%s exige um texto.', 'post-flow' ) ) ); ?>;
+	var i18n      = <?php echo wp_json_encode( array( 'needs' => __( '%s exige ao menos uma imagem.', 'post-flow' ), 'max' => __( '%1$s aceita até %2$d imagem(ns).', 'post-flow' ), 'long' => __( 'O texto passa do limite do %s.', 'post-flow' ), 'none' => __( 'Escolha ao menos um canal.', 'post-flow' ), 'text' => __( '%s exige um texto.', 'post-flow' ) ) ); ?>;
 
 	function len( value ) { return Array.from( value ).length; }
 

@@ -175,6 +175,15 @@ check( 'Google sem o link no texto', 'Oferta da semana', json_decode( $GLOBALS['
 check( 'WhatsApp registra os contatos', '1 de 1 contatos', target_of( $id4, $wa )['remote_id'] );
 check( 'link do pin', 'https://www.pinterest.com/pin/42/', target_of( $id4, $pin )['remote_url'] );
 
+echo "WhatsApp por QR desconectado\n";
+PFlow_Settings::update( array( 'evolution_url' => 'https://evo.test', 'evolution_api_key' => 'KEY' ) );
+$wq  = PFlow_Channels::upsert( account( 'whatsapp_web', '99@g.us', array( 'meta' => array( 'instance' => 'pflow-1-x' ) ) ) );
+$id5 = PFlow_Posts::save( array( 'content' => 'Aviso no grupo', 'link' => '', 'media_ids' => array(), 'in_queue' => 0 ), array( $wq ), $past );
+respond( 200, array( 'instance' => array( 'state' => 'close' ) ) );
+PFlow_Publisher::run();
+check( 'post falha', 'failed', PFlow_Posts::get( $id5 )['status'] );
+check( 'canal pede novo QR', 'expired', PFlow_Channels::get( $wq )['status'] );
+
 echo "Exclusão da conta\n";
 PFlow_Posts::delete_user_data( 1 );
 check( 'canais apagados', 0, PFlow_Channels::count() );
