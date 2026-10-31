@@ -82,6 +82,14 @@ $pflow_ids   = 'draft' === $context ? PFlow_Posts::channel_ids( $card ) : array(
 							<span class="truncate text-neutral-500"><?php echo esc_html( PFlow_Channels::display_name( $pflow_ch ) ); ?></span>
 						</span>
 						<span class="flex items-center gap-2">
+							<?php if ( 'sent' === $pflow_target['status'] && '' === $pflow_target['remote_url'] && '' !== $pflow_target['remote_id'] && 'whatsapp' === $pflow_ch['network'] ) : ?>
+								<span class="text-neutral-400">
+									<?php
+									/* translators: %s: "3 de 5 contatos" */
+									echo esc_html( sprintf( __( 'Enviado a %s', 'post-flow' ), $pflow_target['remote_id'] ) );
+									?>
+								</span>
+							<?php endif; ?>
 							<?php if ( 'sent' === $pflow_target['status'] && '' !== $pflow_target['remote_url'] ) : ?>
 								<a href="<?php echo esc_url( $pflow_target['remote_url'] ); ?>" target="_blank" rel="noopener noreferrer" class="<?php echo esc_attr( PFlow_App::LINK ); ?>"><?php esc_html_e( 'Ver post ↗', 'post-flow' ); ?></a>
 							<?php endif; ?>

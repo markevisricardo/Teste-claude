@@ -73,6 +73,20 @@ class PFlow_Admin {
 				'secret'  => array( 'threads_app_secret', __( 'Threads App Secret', 'post-flow' ) ),
 				'help'    => __( 'App da Meta com o caso de uso "Acessar a API do Threads". Use o ID e a chave do Threads (diferentes dos do app) e cadastre a URL de retorno em "URLs de callback de redirecionamento".', 'post-flow' ),
 			),
+			'google'    => array(
+				'title'   => 'Google Meu Negócio',
+				'console' => 'https://console.cloud.google.com/apis/credentials',
+				'id'      => array( 'google_client_id', __( 'Client ID (OAuth)', 'post-flow' ) ),
+				'secret'  => array( 'google_client_secret', __( 'Client Secret', 'post-flow' ) ),
+				'help'    => __( 'No Google Cloud: ative as APIs "My Business Account Management", "My Business Business Information" e "Google My Business", crie um ID do cliente OAuth do tipo "Aplicativo da Web" com a URL de retorno e peça o acesso à Business Profile API no formulário do Google (sem ele, as chamadas têm cota zero).', 'post-flow' ),
+			),
+			'pinterest' => array(
+				'title'   => 'Pinterest',
+				'console' => 'https://developers.pinterest.com/apps/',
+				'id'      => array( 'pinterest_app_id', __( 'App ID', 'post-flow' ) ),
+				'secret'  => array( 'pinterest_app_secret', __( 'App secret key', 'post-flow' ) ),
+				'help'    => __( 'Crie o app (precisa de conta empresarial), cadastre a URL de retorno em "Redirect URIs". No acesso "Trial" os pins ficam visíveis só para o dono; peça o acesso "Standard" para publicar de verdade.', 'post-flow' ),
+			),
 		);
 	}
 

@@ -1,5 +1,7 @@
 # Post Flow – agendamento de posts em redes sociais (SaaS em WordPress)
 
+> Facebook, Instagram, LinkedIn, X, Threads, Google Meu Negócio, Pinterest e WhatsApp.
+
 Um plugin WordPress que vira uma plataforma de agendamento de posts, no estilo das ferramentas de "fila de publicação":
 
 - **cada pessoa se cadastra** (e-mail + senha) e **conecta os próprios canais**;
@@ -16,6 +18,9 @@ Redes suportadas, todas pelas **APIs oficiais** (sem senha nem scraping):
 | LinkedIn | Perfil pessoal | até 3.000 | 1 a 9 |
 | X (Twitter) | Perfil | até 280 | 1 a 4 |
 | Threads | Perfil | até 500 | 1 a 10 (carrossel) |
+| Google Meu Negócio | Perfis da empresa (cada local é um canal) | até 1.500; **exige texto**; link vira botão "Saiba mais" | 0 ou 1 |
+| Pinterest | Pastas (cada pasta é um canal) | até 500; 1ª linha vira o título; link vira o destino do pin; **exige imagem** | 1 a 5 |
+| WhatsApp | Seu número da WhatsApp Cloud API + lista de contatos | até 1.000; **exige texto**; entra no modelo aprovado | 0 ou 1 (se o modelo tiver imagem) |
 
 ## O que o usuário faz
 
@@ -83,6 +88,35 @@ Cada rede tem a sua URL de retorno, mostrada com botão de copiar no wp-admin (f
 2. Cadastre a URL de retorno em **URLs de callback de redirecionamento** e use o **ID e a chave secreta do Threads** (diferentes dos do app).
 3. Permissões: `threads_basic` e `threads_content_publish`. O token de 60 dias é renovado sozinho.
 
+### Google Meu Negócio (Google Business Profile)
+
+1. No [Google Cloud Console](https://console.cloud.google.com/), crie um projeto e ative as APIs **My Business Account Management**, **My Business Business Information** e **Google My Business**.
+2. Configure a tela de consentimento OAuth e crie um **ID do cliente OAuth** do tipo **Aplicativo da Web**, com a URL de retorno em "URIs de redirecionamento autorizados".
+3. **Peça o acesso à Business Profile API** no formulário do Google. Sem a aprovação, as APIs têm cota zero e a conexão falha. A análise costuma levar alguns dias.
+4. Escopo: `https://www.googleapis.com/auth/business.manage`. O plugin pede acesso "offline" e renova o token sozinho.
+5. Cada local (perfil da empresa) vira um canal. O post sai como "Novidade", com foto opcional e o botão **Saiba mais** apontando para o link.
+
+### Pinterest
+
+1. Em [developers.pinterest.com/apps](https://developers.pinterest.com/apps/), crie o app (exige conta empresarial do Pinterest).
+2. Cadastre a URL de retorno em **Redirect URIs** e copie o **App ID** e a **App secret key**.
+3. Escopos: `boards:read`, `pins:read`, `pins:write` e `user_accounts:read`.
+4. No acesso **Trial**, os pins criados ficam visíveis só para o dono da conta. Peça o acesso **Standard** (com vídeo do fluxo) para publicar de verdade.
+5. Cada pasta vira um canal. O token de 30 dias é renovado sozinho.
+
+### WhatsApp Business
+
+O WhatsApp **não tem API para postar em Status nem em Canais**. O caminho oficial é a **WhatsApp Cloud API**: o post é enviado como mensagem para uma lista de contatos que **autorizaram receber** (opt-in), usando um **modelo de mensagem aprovado pela Meta**, porque fora da janela de 24 horas de conversa só modelos são permitidos.
+
+Não há nada para configurar no wp-admin: cada usuário conecta o próprio número em **Canais > Conectar WhatsApp Business**, informando:
+
+- o **ID do número de telefone** e um **token de acesso permanente** (de um usuário do sistema no Gerenciador de Negócios, com `whatsapp_business_messaging`);
+- o **nome e o idioma do modelo**, que deve ser de categoria **Marketing** e ter a variável `{{1}}` no meio do texto. A Meta recusa modelos que começam ou terminam com variável. Exemplo: `Novidade da Clínica Sorriso: {{1}} — Responda SAIR para não receber mais.`;
+- se o modelo tem **imagem no cabeçalho**. Nesse caso, vai a 1ª imagem do post;
+- a **lista de contatos** (com DDI, até 250 por canal).
+
+O texto do post entra no lugar de `{{1}}`. As quebras de linha viram " · ", porque variáveis de modelo não aceitam quebra de linha. Cada mensagem de marketing é **cobrada pela Meta** por conversa. Envie só para quem pediu: números denunciados como spam perdem qualidade e podem ser bloqueados.
+
 Redes sem credenciais aparecem para os usuários como "Indisponível no momento", então dá para lançar com só algumas.
 
 ## Multiusuário (SaaS)
@@ -124,7 +158,9 @@ Os testes rodam com stubs do WordPress e um banco SQLite em memória. As APIs da
 
 ## Limitações conhecidas / próximos passos
 
-- **Vídeo** (Reels, vídeos no X/LinkedIn/Threads) ainda não é suportado, só texto e imagens.
+- **Vídeo** (Reels, vídeos no X/LinkedIn/Threads/Pinterest) ainda não é suportado, só texto e imagens.
+- WhatsApp: a lista de contatos é digitada no canal (até 250). Não há importação de CSV, descadastro automático por "SAIR" (precisaria do webhook da Cloud API) nem Embedded Signup, que conectaria o número em um clique sem copiar o token.
+- Google Meu Negócio: só posts do tipo "Novidade" (sem Evento nem Oferta).
 - Instagram: só perfis profissionais ligados a uma página do Facebook (via Login do Facebook).
 - LinkedIn: só perfil pessoal. Páginas de empresa exigem o programa Community Management API.
 - Não há texto diferente por rede no mesmo post (dá para usar "Duplicar" e ajustar).

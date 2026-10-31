@@ -15,7 +15,7 @@ O que o plugin faz:
 | Pasta | O que é |
 |---|---|
 | [`comment-flow/`](comment-flow/) | O plugin ([README](comment-flow/README.md)) |
-| [`post-flow/`](post-flow/) | **Post Flow**: plataforma multiusuário para agendar posts no Facebook, Instagram, LinkedIn, X e Threads ([README](post-flow/README.md)) |
+| [`post-flow/`](post-flow/) | **Post Flow**: plataforma multiusuário para agendar posts no Facebook, Instagram, LinkedIn, X, Threads, Google Meu Negócio, Pinterest e WhatsApp ([README](post-flow/README.md)) |
 
 ## Post Flow
 

@@ -12,7 +12,7 @@ class PFlow_Settings {
 	const OPTION = 'pflow_settings';
 
 	/** Campos guardados criptografados. */
-	const SECRET_FIELDS = array( 'meta_app_secret', 'linkedin_client_secret', 'x_client_secret', 'threads_app_secret' );
+	const SECRET_FIELDS = array( 'meta_app_secret', 'linkedin_client_secret', 'x_client_secret', 'threads_app_secret', 'google_client_secret', 'pinterest_app_secret' );
 
 	const REST_NAMESPACE = 'post-flow/v1';
 
@@ -26,6 +26,10 @@ class PFlow_Settings {
 			'x_client_secret'        => '',
 			'threads_app_id'         => '',
 			'threads_app_secret'     => '',
+			'google_client_id'       => '',
+			'google_client_secret'   => '',
+			'pinterest_app_id'       => '',
+			'pinterest_app_secret'   => '',
 			'allow_registration'     => 1,
 			'fullscreen'             => 1,
 			'max_channels'           => 0,
@@ -64,7 +68,7 @@ class PFlow_Settings {
 	}
 
 	/**
-	 * URL de retorno do OAuth de um provedor (meta, linkedin, x, threads).
+	 * URL de retorno do OAuth de um provedor (meta, linkedin, x, threads, google, pinterest).
 	 */
 	public static function redirect_url( $provider ) {
 		return self::rest( '/oauth/' . $provider );

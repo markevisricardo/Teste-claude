@@ -174,5 +174,67 @@ $tokens = $x->refresh( array( 'refresh_token' => 'R1', 'token_expires_at' => tim
 check( 'X: renova token perto de vencer', array( 'NEW', 'R2' ), array( $tokens['access_token'] ?? '', $tokens['refresh_token'] ?? '' ) );
 check( 'X: não renova token novo', null, $x->refresh( array( 'refresh_token' => 'R1', 'token_expires_at' => time() + 3600 ) ) );
 
+echo "Google Meu Negócio, Pinterest e WhatsApp\n";
+check( 'Google: link não vai no texto', 'Promoção', PFlow_Networks::compose_text( 'google_business', 'Promoção', 'https://ex.com', 0 ) );
+check( 'Pinterest exige imagem', array( 'Pinterest exige ao menos uma imagem.' ), PFlow_Networks::validate( 'pinterest', 'oi', 0 ) );
+check( 'Google exige texto', array( 'Google Meu Negócio exige um texto.' ), PFlow_Networks::validate( 'google_business', '', 1 ) );
+check( 'WhatsApp aceita 1 imagem', array( 'WhatsApp aceita até 1 imagens.' ), PFlow_Networks::validate( 'whatsapp', 'oi', 2 ) );
+
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'name' => 'accounts/1/locations/2/localPosts/9', 'searchUrl' => 'https://local.google.com/place?id=9' ) );
+$res  = ( new PFlow_Provider_Google() )->publish(
+	array( 'external_id' => 'accounts/1/locations/2', 'access_token' => 'G' ),
+	array( 'text' => 'Promoção de novembro', 'link' => 'https://ex.com/promo', 'media' => array( array( 'url' => 'https://ex.com/1.jpg', 'path' => '', 'mime' => 'image/jpeg' ) ) )
+);
+$sent = json_decode( $GLOBALS['pflow_test_requests'][0]['args']['body'], true );
+check( 'Google: endpoint do local', 'https://mybusiness.googleapis.com/v4/accounts/1/locations/2/localPosts', $GLOBALS['pflow_test_requests'][0]['url'] );
+check( 'Google: botão Saiba mais com o link', array( 'actionType' => 'LEARN_MORE', 'url' => 'https://ex.com/promo' ), $sent['callToAction'] ?? null );
+check( 'Google: foto', 'https://ex.com/1.jpg', $sent['media'][0]['sourceUrl'] ?? null );
+check( 'Google: link do post', 'https://local.google.com/place?id=9', $res['remote_url'] ?? null );
+
+$GLOBALS['pflow_test_options']['pflow_settings'] = array( 'google_client_id' => 'g', 'google_client_secret' => PFlow_Crypto::encrypt( 's' ) );
+respond( 200, array( 'access_token' => 'A', 'refresh_token' => 'R', 'expires_in' => 3600 ) );
+respond( 200, array( 'accounts' => array( array( 'name' => 'accounts/1' ) ) ) );
+respond( 200, array( 'locations' => array( array( 'name' => 'locations/2', 'title' => 'Clínica Centro' ), array( 'name' => 'locations/3', 'title' => 'Clínica Sul' ) ) ) );
+$acc = ( new PFlow_Provider_Google() )->connect( 'CODE', 'https://example.com/cb', '' );
+check( 'Google: cada local vira um canal', array( 'accounts/1/locations/2', 'accounts/1/locations/3' ), array_column( $acc, 'external_id' ) );
+
+$GLOBALS['pflow_test_requests'] = array();
+respond( 201, array( 'id' => '813' ) );
+$res  = ( new PFlow_Provider_Pinterest() )->publish(
+	array( 'external_id' => 'BOARD', 'access_token' => 'P' ),
+	array(
+		'text'  => "Receita de bolo fit\nPasso a passo completo",
+		'link'  => 'https://ex.com/bolo',
+		'media' => array( array( 'url' => 'https://ex.com/1.jpg', 'path' => '', 'mime' => 'image/jpeg' ), array( 'url' => 'https://ex.com/2.jpg', 'path' => '', 'mime' => 'image/jpeg' ) ),
+	)
+);
+$pin = json_decode( $GLOBALS['pflow_test_requests'][0]['args']['body'], true );
+check( 'Pinterest: título é a 1ª linha', 'Receita de bolo fit', $pin['title'] ?? null );
+check( 'Pinterest: várias imagens', 'multiple_image_urls', $pin['media_source']['source_type'] ?? null );
+check( 'Pinterest: link de destino', 'https://ex.com/bolo', $pin['link'] ?? null );
+check( 'Pinterest: link do pin', 'https://www.pinterest.com/pin/813/', $res['remote_url'] ?? null );
+check( 'Pinterest: título longo é cortado', 100, mb_strlen( PFlow_Provider_Pinterest::title( str_repeat( 'a', 150 ) ) ) );
+
+check( 'WhatsApp: normaliza contatos', array( '5511999998888', '5521988887777' ), PFlow_Provider_WhatsApp::parse_recipients( "+55 (11) 99999-8888\n5521988887777, 123, 5511999998888" ) );
+check( 'WhatsApp: variável sem quebra de linha', 'Oi · tudo bem?   sim', PFlow_Provider_WhatsApp::template_text( "Oi\n\ntudo bem?      sim" ) );
+$wa = new PFlow_Provider_WhatsApp();
+respond( 200, array( 'verified_name' => 'Clínica Sorriso', 'display_phone_number' => '+55 11 4000-0000' ) );
+$acc = $wa->connect_form( array( 'phone_number_id' => '1234', 'access_token' => 'T', 'template' => 'Novidades', 'language' => 'pt_BR', 'recipients' => "5511999998888\n5511977776666" ) );
+check( 'WhatsApp: conecta pelo formulário', array( '1234', 'novidades', 2 ), array( $acc['external_id'] ?? '', $acc['meta']['template'] ?? '', count( $acc['meta']['recipients'] ?? array() ) ) );
+check( 'WhatsApp: exige contatos', true, is_wp_error( $wa->connect_form( array( 'phone_number_id' => '1', 'access_token' => 'T', 'template' => 'x', 'recipients' => '' ) ) ) );
+
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'messages' => array( array( 'id' => 'w1' ) ) ) );
+respond( 400, array( 'error' => array( 'message' => 'Recipient not in allowed list' ) ) );
+$res = $wa->publish( array( 'external_id' => '1234', 'access_token' => 'T', 'meta' => $acc['meta'] ), array( 'text' => "Promo\nhoje", 'link' => '', 'media' => array() ) );
+$msg = json_decode( $GLOBALS['pflow_test_requests'][0]['args']['body'], true );
+check( 'WhatsApp: envia modelo com o texto', array( 'novidades', 'Promo · hoje' ), array( $msg['template']['name'] ?? '', $msg['template']['components'][0]['parameters'][0]['text'] ?? '' ) );
+check( 'WhatsApp: conta os enviados', '1 de 2 contatos', $res['remote_id'] ?? null );
+respond( 401, array( 'error' => array( 'message' => 'Invalid token' ) ) );
+$res = $wa->publish( array( 'external_id' => '1234', 'access_token' => 'T', 'meta' => $acc['meta'] ), array( 'text' => 'x', 'link' => '', 'media' => array() ) );
+check( 'WhatsApp: token inválido para a lista e falha', array( true, 'Invalid token' ), array( is_wp_error( $res ), is_wp_error( $res ) ? $res->get_error_message() : '' ) );
+check( 'WhatsApp: cabeçalho com imagem exige imagem', true, is_wp_error( $wa->publish( array( 'external_id' => '1', 'access_token' => 'T', 'meta' => array( 'header_image' => true ) + $acc['meta'] ), array( 'text' => 'x', 'link' => '', 'media' => array() ) ) ) );
+
 echo "\n{$count} verificações, {$failures} falha(s).\n";
 exit( $failures ? 1 : 0 );

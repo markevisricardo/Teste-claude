@@ -34,7 +34,11 @@ PFlow_Settings::update(
 		'linkedin_client_secret' => 'x',
 		'x_client_id'        => 'Zm9v',
 		'x_client_secret'    => 'x',
-		'max_channels'       => 10,
+		'google_client_id'   => 'g',
+		'google_client_secret' => 'x',
+		'pinterest_app_id'   => 'p',
+		'pinterest_app_secret' => 'x',
+		'max_channels'       => 12,
 	)
 );
 
@@ -47,6 +51,9 @@ $ch = array(
 	'x'  => PFlow_Channels::upsert( array( 'network' => 'x', 'external_id' => '4', 'provider_user_id' => 'x', 'name' => 'Ana Souza', 'username' => 'anasouza', 'avatar_url' => '', 'access_token' => 't', 'refresh_token' => 'r', 'token_expires_at' => time() + 7200, 'meta' => array() ) ),
 	'th' => PFlow_Channels::upsert( array( 'network' => 'threads', 'external_id' => '5', 'provider_user_id' => 't', 'name' => 'Clínica Sorriso', 'username' => 'clinicasorriso', 'avatar_url' => '', 'access_token' => 't', 'refresh_token' => '', 'token_expires_at' => time() - 10, 'meta' => array() ) ),
 );
+$ch['gb'] = PFlow_Channels::upsert( array( 'network' => 'google_business', 'external_id' => 'accounts/1/locations/2', 'provider_user_id' => 'g', 'name' => 'Clínica Sorriso – Centro', 'username' => '', 'avatar_url' => '', 'access_token' => 't', 'refresh_token' => 'r', 'token_expires_at' => time() + 3000, 'meta' => array() ) );
+$ch['pi'] = PFlow_Channels::upsert( array( 'network' => 'pinterest', 'external_id' => 'b1', 'provider_user_id' => 'p', 'name' => 'Sorrisos saudáveis · @clinicasorriso', 'username' => '', 'avatar_url' => '', 'access_token' => 't', 'refresh_token' => 'r', 'token_expires_at' => time() + 25 * DAY_IN_SECONDS, 'meta' => array() ) );
+$ch['wa'] = PFlow_Channels::upsert( array( 'network' => 'whatsapp', 'external_id' => '1098765', 'provider_user_id' => '1098765', 'name' => 'Clínica Sorriso · +55 11 4000-0000', 'username' => '', 'avatar_url' => '', 'access_token' => 't', 'refresh_token' => '', 'token_expires_at' => 0, 'meta' => array( 'template' => 'novidades', 'language' => 'pt_BR', 'header_image' => true, 'recipients' => array( '5511999998888', '5511977776666', '5521988887777' ) ) ) );
 PFlow_Channels::mark( $ch['th'], 'expired', 'A conexão venceu.' );
 PFlow_Schedule::save( 1, array( 1, 2, 3, 4, 5 ), array( '09:00', '12:30', '18:00' ) );
 
@@ -58,9 +65,9 @@ $at   = static function ( $days, $time ) use ( $tz ) {
 $save = static function ( $content, $link, $media, $channels, $due, $queue = 1 ) {
 	return PFlow_Posts::save( array( 'content' => $content, 'link' => $link, 'media_ids' => $media, 'in_queue' => $queue ), $channels, $due );
 };
-$save( "Novembro Azul também é cuidado com a saúde bucal 💙\n\nAgende a sua avaliação gratuita esta semana.", 'https://clinicasorriso.com.br/agenda', array( 1 ), array( $ch['fb'], $ch['ig'], $ch['li'] ), $at( 1, '09:00' ) );
+$save( "Novembro Azul também é cuidado com a saúde bucal 💙\n\nAgende a sua avaliação gratuita esta semana.", 'https://clinicasorriso.com.br/agenda', array( 1 ), array( $ch['fb'], $ch['ig'], $ch['li'], $ch['gb'], $ch['wa'] ), $at( 1, '09:00' ) );
 $save( '5 hábitos simples que deixam o sorriso mais branco sem clareamento. Thread 🧵', '', array(), array( $ch['x'], $ch['li'] ), $at( 1, '12:30' ) );
-$save( 'Bastidores da nossa nova sala de atendimento infantil. Ficou linda!', '', array( 2, 3 ), array( $ch['fb'], $ch['ig'] ), $at( 2, '18:00' ) );
+$save( 'Bastidores da nossa nova sala de atendimento infantil. Ficou linda!', '', array( 2, 3 ), array( $ch['fb'], $ch['ig'], $ch['pi'] ), $at( 2, '18:00' ) );
 $save( 'Webinar gratuito: como montar a rotina de higiene bucal da família. Inscrições abertas!', 'https://clinicasorriso.com.br/webinar', array(), array( $ch['fb'], $ch['li'], $ch['x'] ), $at( 3, '10:15' ), 0 );
 $save( 'Rascunho: depoimento da Dona Maria sobre a prótese nova', '', array( 3 ), array( $ch['ig'] ), '' );
 $save( 'Ideia de post: perguntas frequentes sobre aparelho invisível', '', array(), array( $ch['fb'], $ch['ig'], $ch['li'] ), '' );
@@ -85,7 +92,8 @@ $sent = static function ( $content, $media, $map, $ago ) use ( $save, $wpdb ) {
 	}
 	PFlow_Posts::refresh_status( $id );
 };
-$sent( 'Hoje é dia de campanha de prevenção! Passe na clínica até as 18h. 🦷', array( 1 ), array( $ch['fb'] => array( 'sent', 'https://facebook.com/x', '' ), $ch['ig'] => array( 'sent', 'https://instagram.com/p/x', '' ) ), 3 * HOUR_IN_SECONDS );
+$sent( 'Hoje é dia de campanha de prevenção! Passe na clínica até as 18h. 🦷', array( 1 ), array( $ch['fb'] => array( 'sent', 'https://facebook.com/x', '' ), $ch['ig'] => array( 'sent', 'https://instagram.com/p/x', '' ), $ch['wa'] => array( 'sent', '', '' ) ), 3 * HOUR_IN_SECONDS );
+$wpdb->query( $wpdb->prepare( "UPDATE wp_pflow_targets SET remote_id = %s WHERE channel_id = %d AND status = 'sent'", '3 de 3 contatos', $ch['wa'] ) );
 $sent( 'Você sabia? Trocar a escova a cada 3 meses faz diferença.', array(), array( $ch['x'] => array( 'failed', '', 'You are not allowed to create a Tweet with duplicate content.' ), $ch['li'] => array( 'sent', 'https://linkedin.com/feed/update/x', '' ) ), DAY_IN_SECONDS + 3600 );
 
 // Telas do painel.

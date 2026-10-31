@@ -127,6 +127,10 @@ $copy    = static function ( $id, $value ) {
 							<?php endif; ?>
 						</div>
 					<?php endforeach; ?>
+					<div class="rounded-xl border border-dashed border-neutral-800 p-5">
+						<h3 class="m-0 p-0 text-base font-semibold text-white">WhatsApp Business</h3>
+						<p class="<?php echo esc_attr( PFlow_App::HELP ); ?>"><?php esc_html_e( 'Nada para configurar aqui: cada usuário conecta o próprio número da WhatsApp Cloud API (ID do número, token permanente, modelo aprovado e lista de contatos) na tela Canais. O WhatsApp não tem API para Status nem Canais; o post é enviado como mensagem de modelo para os contatos que autorizaram receber.', 'post-flow' ); ?></p>
+					</div>
 				</div>
 			</section>
 

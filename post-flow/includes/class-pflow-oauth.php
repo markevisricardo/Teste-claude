@@ -22,11 +22,12 @@ class PFlow_OAuth {
 		add_action( 'admin_post_pflow_connect', array( __CLASS__, 'start' ) );
 		add_action( 'admin_post_pflow_pick_channels', array( __CLASS__, 'pick' ) );
 		add_action( 'admin_post_pflow_disconnect', array( __CLASS__, 'disconnect' ) );
+		add_action( 'admin_post_pflow_connect_whatsapp', array( __CLASS__, 'connect_whatsapp' ) );
 	}
 
 	public static function register_routes() {
 		$public = '__return_true'; // Validadas pelo "state" ou pelo signed_request da Meta.
-		register_rest_route( PFlow_Settings::REST_NAMESPACE, '/oauth/(?P<provider>meta|linkedin|x|threads)', array( 'methods' => 'GET', 'callback' => array( __CLASS__, 'callback' ), 'permission_callback' => $public ) );
+		register_rest_route( PFlow_Settings::REST_NAMESPACE, '/oauth/(?P<provider>meta|linkedin|x|threads|google|pinterest)', array( 'methods' => 'GET', 'callback' => array( __CLASS__, 'callback' ), 'permission_callback' => $public ) );
 		register_rest_route( PFlow_Settings::REST_NAMESPACE, '/meta/deauthorize', array( 'methods' => 'POST', 'callback' => array( __CLASS__, 'deauthorize' ), 'permission_callback' => $public ) );
 		register_rest_route( PFlow_Settings::REST_NAMESPACE, '/meta/data-deletion', array( 'methods' => 'POST', 'callback' => array( __CLASS__, 'data_deletion' ), 'permission_callback' => $public ) );
 		register_rest_route( PFlow_Settings::REST_NAMESPACE, '/meta/data-deletion-status', array( 'methods' => 'GET', 'callback' => array( __CLASS__, 'data_deletion_status' ), 'permission_callback' => $public ) );
@@ -46,7 +47,7 @@ class PFlow_OAuth {
 
 		$id       = sanitize_key( wp_unslash( $_GET['provider'] ?? '' ) );
 		$provider = PFlow_Networks::provider( $id );
-		if ( ! $provider ) {
+		if ( ! $provider || 'oauth' !== $provider->connect_mode() ) {
 			self::back( 'error', __( 'Rede desconhecida.', 'post-flow' ) );
 		}
 		if ( ! $provider->is_configured() ) {
@@ -193,6 +194,51 @@ class PFlow_OAuth {
 			++$count;
 		}
 		return $count;
+	}
+
+	/**
+	 * WhatsApp: o usuário cola as credenciais do próprio número. Também serve
+	 * para editar o modelo e a lista de contatos (token vazio = manter).
+	 */
+	public static function connect_whatsapp() {
+		if ( ! is_user_logged_in() ) {
+			wp_safe_redirect( PFlow_App::url() );
+			exit;
+		}
+		check_admin_referer( 'pflow_connect_whatsapp' );
+		PFlow_Tenant::set( get_current_user_id() );
+
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput
+		$fields = array(
+			'phone_number_id' => sanitize_text_field( wp_unslash( $_POST['phone_number_id'] ?? '' ) ),
+			'access_token'    => trim( (string) wp_unslash( $_POST['access_token'] ?? '' ) ),
+			'template'        => sanitize_text_field( wp_unslash( $_POST['template'] ?? '' ) ),
+			'language'        => sanitize_text_field( wp_unslash( $_POST['language'] ?? 'pt_BR' ) ),
+			'header_image'    => ! empty( $_POST['header_image'] ),
+			'recipients'      => sanitize_textarea_field( wp_unslash( $_POST['recipients'] ?? '' ) ),
+		);
+		// phpcs:enable
+
+		$existing = null;
+		foreach ( PFlow_Channels::all() as $channel ) {
+			if ( 'whatsapp' === $channel['network'] && preg_replace( '/\D/', '', $fields['phone_number_id'] ) === $channel['external_id'] ) {
+				$existing = $channel;
+			}
+		}
+		if ( '' === $fields['access_token'] && $existing ) {
+			$fields['access_token'] = $existing['access_token'];
+		}
+		if ( ! $existing && 0 === PFlow_Channels::remaining_slots() ) {
+			self::back( 'error', __( 'Você atingiu o limite de canais do seu plano. Remova um canal para conectar outro.', 'post-flow' ) );
+		}
+
+		$account = ( new PFlow_Provider_WhatsApp() )->connect_form( $fields );
+		if ( is_wp_error( $account ) ) {
+			self::back( 'error', $account->get_error_message() );
+		}
+		PFlow_Channels::upsert( $account );
+		/* translators: %d: contatos */
+		self::back( 'success', sprintf( _n( 'WhatsApp conectado, com %d contato na lista.', 'WhatsApp conectado, com %d contatos na lista.', count( $account['meta']['recipients'] ), 'post-flow' ), count( $account['meta']['recipients'] ) ) );
 	}
 
 	public static function disconnect() {

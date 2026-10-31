@@ -154,9 +154,31 @@ $GLOBALS['wpdb']->query( $GLOBALS['wpdb']->prepare( "UPDATE wp_pflow_targets SET
 PFlow_Posts::release_stuck();
 check( 'vira falha (não arrisca publicar duas vezes)', 'failed', PFlow_Posts::get( $id3 )['status'] );
 
+echo "Google, Pinterest e WhatsApp pelo publicador\n";
+PFlow_Settings::update( array( 'google_client_id' => 'g', 'google_client_secret' => 's', 'pinterest_app_id' => 'p', 'pinterest_app_secret' => 's' ) );
+$gb  = PFlow_Channels::upsert( account( 'google_business', 'accounts/1/locations/2', array( 'refresh_token' => 'GR', 'token_expires_at' => time() - 10 ) ) );
+$pin = PFlow_Channels::upsert( account( 'pinterest', 'BOARD', array( 'token_expires_at' => time() + 20 * DAY_IN_SECONDS ) ) );
+$wa  = PFlow_Channels::upsert( account( 'whatsapp', '1234', array( 'meta' => array( 'template' => 'novidades', 'language' => 'pt_BR', 'header_image' => false, 'recipients' => array( '5511999998888' ) ) ) ) );
+check( 'meta do WhatsApp volta do banco', array( '5511999998888' ), PFlow_Channels::get( $wa )['meta']['recipients'] );
+$GLOBALS['pflow_test_media'][7] = 'https://ex.com/7.jpg';
+$GLOBALS['pflow_test_requests'] = array();
+$id4 = PFlow_Posts::save( array( 'content' => 'Oferta da semana', 'link' => 'https://ex.com/oferta', 'media_ids' => array( 7 ), 'in_queue' => 0 ), array( $gb, $pin, $wa ), $past );
+respond( 200, array( 'access_token' => 'GA2', 'expires_in' => 3600 ) );                               // Google: renova o token vencido.
+respond( 200, array( 'name' => 'lp/1', 'searchUrl' => 'https://local.google.com/p/1' ) );           // Google: localPosts.
+respond( 201, array( 'id' => '42' ) );                                                              // Pinterest: pin.
+respond( 200, array( 'messages' => array( array( 'id' => 'wamid' ) ) ) );                          // WhatsApp: mensagem.
+PFlow_Publisher::run();
+check( 'publicado nos três', 'sent', PFlow_Posts::get( $id4 )['status'] );
+check( 'Google usou o token renovado', 'Bearer GA2', $GLOBALS['pflow_test_requests'][1]['args']['headers']['Authorization'] ?? null );
+check( 'token novo do Google salvo', 'GA2', PFlow_Channels::get( $gb )['access_token'] );
+check( 'Google sem o link no texto', 'Oferta da semana', json_decode( $GLOBALS['pflow_test_requests'][1]['args']['body'], true )['summary'] ?? null );
+check( 'WhatsApp registra os contatos', '1 de 1 contatos', target_of( $id4, $wa )['remote_id'] );
+check( 'link do pin', 'https://www.pinterest.com/pin/42/', target_of( $id4, $pin )['remote_url'] );
+
 echo "Exclusão da conta\n";
 PFlow_Posts::delete_user_data( 1 );
 check( 'canais apagados', 0, PFlow_Channels::count() );
+check( 'imagens apagadas', array( 7 ), $GLOBALS['pflow_test_deleted'] ?? array() );
 check( 'posts apagados', 0, (int) $GLOBALS['wpdb']->get_var( 'SELECT COUNT(*) FROM wp_pflow_posts WHERE user_id = 1' ) );
 PFlow_Tenant::set( 2 );
 check( 'outro usuário intacto', 1, PFlow_Channels::count() );

@@ -24,7 +24,7 @@ $tab = $can_register ? $tab : 'login';
 			<ul class="mt-8 space-y-3 text-sm text-neutral-300">
 				<?php
 				$features = array(
-					__( 'Facebook, Instagram, LinkedIn, X e Threads num só lugar', 'post-flow' ),
+					__( 'Facebook, Instagram, LinkedIn, X, Threads, Google, Pinterest e WhatsApp', 'post-flow' ),
 					__( 'Fila com os seus horários de publicação', 'post-flow' ),
 					__( 'Agendamento por data e calendário da semana', 'post-flow' ),
 					__( 'Histórico com o link de cada post publicado', 'post-flow' ),

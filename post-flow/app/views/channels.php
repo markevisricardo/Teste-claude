@@ -55,7 +55,15 @@ $pflow_actions  = '';
 								<p class="truncate text-sm font-semibold text-white"><?php echo esc_html( PFlow_Channels::display_name( $pflow_channel ) ); ?></p>
 								<p class="mt-0.5 text-xs text-neutral-500">
 									<?php echo esc_html( PFlow_Networks::label( $pflow_channel['network'] ) ); ?>
-									<?php if ( 'active' === $pflow_channel['status'] && $pflow_channel['token_expires_at'] && 'x' !== $pflow_channel['network'] ) : ?>
+									<?php if ( 'whatsapp' === $pflow_channel['network'] ) : ?>
+										·
+										<?php
+										$pflow_n = count( (array) ( $pflow_channel['meta']['recipients'] ?? array() ) );
+										/* translators: %d: contatos */
+										echo esc_html( sprintf( _n( '%d contato', '%d contatos', $pflow_n, 'post-flow' ), $pflow_n ) . ' · ' . sprintf( __( 'modelo "%s"', 'post-flow' ), $pflow_channel['meta']['template'] ?? '' ) );
+										?>
+									<?php endif; ?>
+									<?php if ( 'active' === $pflow_channel['status'] && $pflow_channel['token_expires_at'] && ! in_array( $pflow_channel['network'], array( 'x', 'google_business' ), true ) ) : ?>
 										·
 										<?php
 										$pflow_days = max( 0, (int) floor( ( $pflow_channel['token_expires_at'] - time() ) / DAY_IN_SECONDS ) );
@@ -71,9 +79,21 @@ $pflow_actions  = '';
 						</div>
 						<div class="flex items-center gap-2">
 							<?php echo PFlow_App::badge( $pflow_channel['status'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-							<a href="<?php echo esc_url( PFlow_App::action_url( 'connect', array( 'provider' => $pflow_provider ) ) ); ?>" class="<?php echo esc_attr( PFlow_App::BTN_SMALL ); ?>"><?php esc_html_e( 'Reconectar', 'post-flow' ); ?></a>
+							<?php if ( 'whatsapp' === $pflow_channel['network'] ) : ?>
+								<button type="button" class="<?php echo esc_attr( PFlow_App::BTN_SMALL ); ?>" data-pflow-toggle="pflow-wa-edit-<?php echo (int) $pflow_channel['id']; ?>"><?php esc_html_e( 'Editar', 'post-flow' ); ?></button>
+							<?php else : ?>
+								<a href="<?php echo esc_url( PFlow_App::action_url( 'connect', array( 'provider' => $pflow_provider ) ) ); ?>" class="<?php echo esc_attr( PFlow_App::BTN_SMALL ); ?>"><?php esc_html_e( 'Reconectar', 'post-flow' ); ?></a>
+							<?php endif; ?>
 							<a href="<?php echo esc_url( PFlow_App::action_url( 'disconnect', array( 'id' => $pflow_channel['id'] ) ) ); ?>" class="<?php echo esc_attr( PFlow_App::BTN_SMALL ); ?> hover:border-red-500 hover:text-red-300" onclick="return confirm('<?php echo esc_js( __( 'Remover este canal? Ele sai dos posts que ainda não foram publicados.', 'post-flow' ) ); ?>');"><?php esc_html_e( 'Remover', 'post-flow' ); ?></a>
 						</div>
+						<?php if ( 'whatsapp' === $pflow_channel['network'] ) : ?>
+							<div id="pflow-wa-edit-<?php echo (int) $pflow_channel['id']; ?>" class="w-full" hidden>
+								<?php
+								$wa = $pflow_channel;
+								include PFLOW_DIR . 'app/views/partials/whatsapp-form.php';
+								?>
+							</div>
+						<?php endif; ?>
 					</div>
 				<?php endforeach; ?>
 			</div>
@@ -103,7 +123,20 @@ $pflow_actions  = '';
 						</div>
 					</div>
 					<div class="mt-6">
-						<?php if ( ! $pflow_ready ) : ?>
+						<?php if ( 'form' === $pflow_provider->connect_mode() && ! $pflow_full ) : ?>
+							<button type="button" class="<?php echo esc_attr( PFlow_App::BTN_PRIMARY ); ?>" data-pflow-toggle="pflow-wa-new">
+								<?php
+								/* translators: %s: rede */
+								echo esc_html( sprintf( __( 'Conectar %s', 'post-flow' ), $pflow_info['label'] ) );
+								?>
+							</button>
+							<div id="pflow-wa-new" hidden>
+								<?php
+								$wa = null;
+								include PFLOW_DIR . 'app/views/partials/whatsapp-form.php';
+								?>
+							</div>
+						<?php elseif ( ! $pflow_ready ) : ?>
 							<span class="<?php echo esc_attr( PFlow_App::BTN_SECONDARY ); ?> cursor-not-allowed opacity-50"><?php esc_html_e( 'Indisponível no momento', 'post-flow' ); ?></span>
 						<?php elseif ( $pflow_full ) : ?>
 							<span class="<?php echo esc_attr( PFlow_App::BTN_SECONDARY ); ?> cursor-not-allowed opacity-50"><?php esc_html_e( 'Limite do plano atingido', 'post-flow' ); ?></span>
@@ -122,3 +155,15 @@ $pflow_actions  = '';
 		<p class="mt-6 text-xs leading-5 text-neutral-500"><?php esc_html_e( 'O Instagram precisa ser uma conta profissional (Empresa ou Criador) ligada a uma página do Facebook. Você é levado ao site de cada rede para autorizar; não guardamos a sua senha.', 'post-flow' ); ?></p>
 	</section>
 </div>
+<script>
+document.querySelectorAll( '[data-pflow-toggle]' ).forEach( function ( button ) {
+	button.addEventListener( 'click', function () {
+		var box = document.getElementById( button.getAttribute( 'data-pflow-toggle' ) );
+		box.hidden = ! box.hidden;
+		if ( ! box.hidden ) {
+			var field = box.querySelector( 'input:not([type=hidden]):not([readonly]), textarea' );
+			if ( field ) { field.focus(); }
+		}
+	} );
+} );
+</script>

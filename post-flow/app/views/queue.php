@@ -59,7 +59,7 @@ foreach ( $posts as $pflow_post ) {
 			<?php if ( ! $channels ) : ?>
 				<section class="<?php echo esc_attr( PFlow_App::CARD ); ?> text-center">
 					<h2 class="m-0 p-0 text-lg font-semibold text-white"><?php esc_html_e( 'Conecte o seu primeiro canal', 'post-flow' ); ?></h2>
-					<p class="mx-auto mt-2 max-w-md text-sm text-neutral-400"><?php esc_html_e( 'Facebook, Instagram, LinkedIn, X ou Threads. Depois é só escrever e agendar.', 'post-flow' ); ?></p>
+					<p class="mx-auto mt-2 max-w-md text-sm text-neutral-400"><?php esc_html_e( 'Facebook, Instagram, LinkedIn, X, Threads, Google Meu Negócio, Pinterest ou WhatsApp. Depois é só escrever e agendar.', 'post-flow' ); ?></p>
 					<a href="<?php echo esc_url( PFlow_App::url( 'channels' ) ); ?>" class="<?php echo esc_attr( PFlow_App::BTN_PRIMARY ); ?> mt-6"><?php esc_html_e( 'Conectar canais', 'post-flow' ); ?></a>
 				</section>
 			<?php elseif ( ! $posts && ! $drafts ) : ?>

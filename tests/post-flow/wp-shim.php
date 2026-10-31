@@ -288,6 +288,9 @@ function wp_safe_redirect( $url ) {
 function check_admin_referer() {
 	return true;
 }
+function wp_delete_attachment( $id ) {
+	$GLOBALS['pflow_test_deleted'][] = $id;
+}
 function add_action() {}
 function add_filter() {}
 

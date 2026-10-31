@@ -62,6 +62,7 @@ $pflow_min_date = ( new DateTimeImmutable( 'now', $tz ) )->format( 'Y-m-d' );
 								data-limit="<?php echo (int) $pflow_type['limit']; ?>"
 								data-max-media="<?php echo (int) $pflow_type['max_media']; ?>"
 								data-needs-media="<?php echo $pflow_type['needs_media'] ? '1' : '0'; ?>"
+								data-needs-text="<?php echo empty( $pflow_type['needs_text'] ) ? '0' : '1'; ?>"
 								<?php checked( in_array( $pflow_channel['id'], $selected, true ) ); ?>
 								<?php disabled( $pflow_off ); ?>>
 							<span class="flex items-center gap-2 rounded-full border border-solid border-neutral-800 bg-black py-1.5 pl-1.5 pr-3 text-sm text-neutral-300 transition-colors peer-checked:border-violet-500 peer-checked:bg-violet-500/10 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-violet-400">
@@ -82,7 +83,7 @@ $pflow_min_date = ( new DateTimeImmutable( 'now', $tz ) )->format( 'Y-m-d' );
 
 				<label for="pflow-link" class="<?php echo esc_attr( PFlow_App::LABEL ); ?> mt-6"><?php esc_html_e( 'Link (opcional)', 'post-flow' ); ?></label>
 				<input type="url" id="pflow-link" name="link" value="<?php echo esc_attr( $post['link'] ); ?>" placeholder="https://" class="<?php echo esc_attr( PFlow_App::INPUT ); ?> mt-2">
-				<p class="<?php echo esc_attr( PFlow_App::HELP ); ?>"><?php esc_html_e( 'No Facebook sem imagem vira a prévia do link; nas outras redes vai no fim do texto. No Instagram, links no texto não são clicáveis.', 'post-flow' ); ?></p>
+				<p class="<?php echo esc_attr( PFlow_App::HELP ); ?>"><?php esc_html_e( 'No Facebook sem imagem vira a prévia do link; no Google vira o botão "Saiba mais"; no Pinterest é o destino do pin; nas outras redes vai no fim do texto. No Instagram, links no texto não são clicáveis.', 'post-flow' ); ?></p>
 
 				<p class="<?php echo esc_attr( PFlow_App::LABEL ); ?> mt-6"><?php esc_html_e( 'Imagens', 'post-flow' ); ?></p>
 				<div class="mt-2 flex flex-wrap gap-3" data-pflow-media>
@@ -189,7 +190,7 @@ $pflow_min_date = ( new DateTimeImmutable( 'now', $tz ) )->format( 'Y-m-d' );
 	var submit    = form.querySelector( '[data-pflow-submit]' );
 	var datetime  = form.querySelector( '[data-pflow-datetime]' );
 	var labels    = <?php echo wp_json_encode( array( 'queue' => __( 'Adicionar à fila', 'post-flow' ), 'schedule' => __( 'Agendar', 'post-flow' ), 'now' => __( 'Publicar agora', 'post-flow' ) ) ); ?>;
-	var i18n      = <?php echo wp_json_encode( array( 'needs' => __( '%s exige ao menos uma imagem.', 'post-flow' ), 'max' => __( '%1$s aceita até %2$d imagens.', 'post-flow' ), 'long' => __( 'O texto passa do limite do %s.', 'post-flow' ), 'none' => __( 'Escolha ao menos um canal.', 'post-flow' ) ) ); ?>;
+	var i18n      = <?php echo wp_json_encode( array( 'needs' => __( '%s exige ao menos uma imagem.', 'post-flow' ), 'max' => __( '%1$s aceita até %2$d imagens.', 'post-flow' ), 'long' => __( 'O texto passa do limite do %s.', 'post-flow' ), 'none' => __( 'Escolha ao menos um canal.', 'post-flow' ), 'text' => __( '%s exige um texto.', 'post-flow' ) ) ); ?>;
 
 	function len( value ) { return Array.from( value ).length; }
 
@@ -201,7 +202,8 @@ $pflow_min_date = ( new DateTimeImmutable( 'now', $tz ) )->format( 'Y-m-d' );
 	function finalText( network, media ) {
 		var body = text.value.trim();
 		var url  = link.value.trim();
-		if ( ! url || ( network === 'facebook' && media === 0 ) || body.indexOf( url ) !== -1 ) { return body; }
+		var own  = network === 'google_business' || network === 'pinterest' || ( network === 'facebook' && media === 0 );
+		if ( ! url || own || body.indexOf( url ) !== -1 ) { return body; }
 		return body ? body + '\n\n' + url : url;
 	}
 
@@ -225,6 +227,7 @@ $pflow_min_date = ( new DateTimeImmutable( 'now', $tz ) )->format( 'Y-m-d' );
 			counters.appendChild( chip );
 			if ( used > limit ) { problems.push( i18n.long.replace( '%s', label ) ); }
 			if ( c.getAttribute( 'data-needs-media' ) === '1' && media === 0 ) { problems.push( i18n.needs.replace( '%s', label ) ); }
+			if ( c.getAttribute( 'data-needs-text' ) === '1' && ! text.value.trim() ) { problems.push( i18n.text.replace( '%s', label ) ); }
 			var max = parseInt( c.getAttribute( 'data-max-media' ), 10 );
 			if ( media > max ) { problems.push( i18n.max.replace( '%1$s', label ).replace( '%2$d', max ) ); }
 		} );

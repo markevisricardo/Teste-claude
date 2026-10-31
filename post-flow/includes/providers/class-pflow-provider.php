@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 
 abstract class PFlow_Provider {
 
-	/** @return string meta, linkedin, x ou threads. */
+	/** @return string meta, linkedin, x, threads, google, pinterest ou whatsapp. */
 	abstract public function id();
 
 	/** O administrador já cadastrou o app desta rede? */
@@ -48,6 +48,14 @@ abstract class PFlow_Provider {
 	 */
 	public function refresh( array $channel ) {
 		return null;
+	}
+
+	/**
+	 * Como o usuário conecta: 'oauth' (botão que leva ao site da rede) ou
+	 * 'form' (o usuário cola as próprias credenciais, como no WhatsApp).
+	 */
+	public function connect_mode() {
+		return 'oauth';
 	}
 
 	/** A rede usa PKCE no OAuth? */

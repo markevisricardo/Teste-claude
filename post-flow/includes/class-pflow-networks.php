@@ -63,6 +63,37 @@ class PFlow_Networks {
 				'color'       => '#101010',
 				'glyph'       => '@',
 			),
+			'google_business' => array(
+				'label'       => 'Google Meu Negócio',
+				'provider'    => 'google',
+				'limit'       => 1500,
+				'max_media'   => 1,
+				'needs_media' => false,
+				'needs_text'  => true,
+				'link_field'  => true,
+				'color'       => '#4285F4',
+				'glyph'       => 'G',
+			),
+			'pinterest' => array(
+				'label'       => 'Pinterest',
+				'provider'    => 'pinterest',
+				'limit'       => 500,
+				'max_media'   => 5,
+				'needs_media' => true,
+				'link_field'  => true,
+				'color'       => '#E60023',
+				'glyph'       => 'P',
+			),
+			'whatsapp'  => array(
+				'label'       => 'WhatsApp',
+				'provider'    => 'whatsapp',
+				'limit'       => 1000,
+				'max_media'   => 1,
+				'needs_media' => false,
+				'needs_text'  => true,
+				'color'       => '#25D366',
+				'glyph'       => 'W',
+			),
 		);
 	}
 
@@ -101,6 +132,21 @@ class PFlow_Networks {
 				'description' => __( 'O seu perfil do Threads.', 'post-flow' ),
 				'networks'    => array( 'threads' ),
 			),
+			'google'   => array(
+				'label'       => 'Google Meu Negócio',
+				'description' => __( 'Posts de novidades nos perfis da sua empresa no Google (Busca e Maps).', 'post-flow' ),
+				'networks'    => array( 'google_business' ),
+			),
+			'pinterest' => array(
+				'label'       => 'Pinterest',
+				'description' => __( 'Pins nas suas pastas do Pinterest. Cada pasta vira um canal.', 'post-flow' ),
+				'networks'    => array( 'pinterest' ),
+			),
+			'whatsapp' => array(
+				'label'       => 'WhatsApp Business',
+				'description' => __( 'Envia o post para a sua lista de contatos (que autorizaram receber) pela API oficial do WhatsApp.', 'post-flow' ),
+				'networks'    => array( 'whatsapp' ),
+			),
 		);
 	}
 
@@ -115,6 +161,9 @@ class PFlow_Networks {
 			'linkedin' => 'PFlow_Provider_LinkedIn',
 			'x'        => 'PFlow_Provider_X',
 			'threads'  => 'PFlow_Provider_Threads',
+			'google'   => 'PFlow_Provider_Google',
+			'pinterest' => 'PFlow_Provider_Pinterest',
+			'whatsapp' => 'PFlow_Provider_WhatsApp',
 		);
 		return isset( $classes[ $id ] ) ? new $classes[ $id ]() : null;
 	}
@@ -156,20 +205,33 @@ class PFlow_Networks {
 			/* translators: 1: rede, 2: máximo */
 			$errors[] = sprintf( __( '%1$s aceita até %2$d imagens.', 'post-flow' ), $type['label'], $type['max_media'] );
 		}
-		if ( '' === trim( (string) $text ) && $media_count < 1 ) {
+		if ( ! empty( $type['needs_text'] ) && '' === trim( (string) $text ) ) {
+			/* translators: %s: rede */
+			$errors[] = sprintf( __( '%s exige um texto.', 'post-flow' ), $type['label'] );
+		} elseif ( '' === trim( (string) $text ) && $media_count < 1 ) {
 			$errors[] = __( 'Escreva um texto ou adicione uma imagem.', 'post-flow' );
 		}
 		return $errors;
 	}
 
 	/**
-	 * Texto publicado numa rede: o link vai junto do texto, exceto no
-	 * Facebook sem imagem, onde ele vira a prévia do link.
+	 * O link vai num campo próprio da rede (e não no texto)? Vale para o
+	 * Google (botão "Saiba mais"), o Pinterest (destino do pin) e o Facebook
+	 * sem imagem (prévia do link).
+	 */
+	public static function link_is_separate( $network, $media_count ) {
+		$type = self::type( $network );
+		return ( $type && ! empty( $type['link_field'] ) ) || ( 'facebook' === $network && 0 === (int) $media_count );
+	}
+
+	/**
+	 * Texto publicado numa rede: o link vai no fim do texto, exceto nas redes
+	 * em que ele tem campo próprio.
 	 */
 	public static function compose_text( $network, $content, $link, $media_count ) {
 		$content = trim( (string) $content );
 		$link    = trim( (string) $link );
-		if ( '' === $link || ( 'facebook' === $network && 0 === $media_count ) ) {
+		if ( '' === $link || self::link_is_separate( $network, $media_count ) ) {
 			return $content;
 		}
 		if ( false !== strpos( $content, $link ) ) {

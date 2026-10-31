@@ -196,11 +196,11 @@ class PFlow_Publisher {
 
 	/**
 	 * Manutenção diária: renova tokens que estão para vencer (Threads,
-	 * LinkedIn com refresh token) mesmo sem posts agendados.
+	 * Pinterest, LinkedIn com refresh token) mesmo sem posts agendados.
 	 */
 	public static function daily() {
 		global $wpdb;
-		$rows = (array) $wpdb->get_results( $wpdb->prepare( 'SELECT id, user_id FROM ' . PFlow_DB::channels_table() . " WHERE status = 'active' AND network IN ('threads','linkedin') AND token_expires_at > 0 AND token_expires_at < %d", time() + 15 * DAY_IN_SECONDS ), ARRAY_A ); // phpcs:ignore WordPress.DB
+		$rows = (array) $wpdb->get_results( $wpdb->prepare( 'SELECT id, user_id FROM ' . PFlow_DB::channels_table() . " WHERE status = 'active' AND network IN ('threads','linkedin','pinterest') AND token_expires_at > 0 AND token_expires_at < %d", time() + 15 * DAY_IN_SECONDS ), ARRAY_A ); // phpcs:ignore WordPress.DB
 		foreach ( $rows as $row ) {
 			PFlow_Tenant::run_as(
 				(int) $row['user_id'],

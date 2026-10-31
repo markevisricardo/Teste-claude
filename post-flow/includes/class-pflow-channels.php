@@ -32,7 +32,7 @@ class PFlow_Channels {
 		global $wpdb;
 		$sql  = 'SELECT * FROM ' . PFlow_DB::channels_table() . ' WHERE user_id = %d';
 		$sql .= $only_active ? " AND status = 'active'" : '';
-		$sql .= ' ORDER BY FIELD(network, \'facebook\', \'instagram\', \'linkedin\', \'x\', \'threads\'), name ASC';
+		$sql .= ' ORDER BY FIELD(network, \'facebook\', \'instagram\', \'linkedin\', \'x\', \'threads\', \'google_business\', \'pinterest\', \'whatsapp\'), name ASC';
 		$rows = $wpdb->get_results( $wpdb->prepare( $sql, PFlow_Tenant::id() ), ARRAY_A ); // phpcs:ignore WordPress.DB
 		return array_map( array( __CLASS__, 'decode' ), (array) $rows );
 	}
