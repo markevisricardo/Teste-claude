@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" preserveAspectRatio="xMidYMid slice"><defs>
+<radialGradient id="av_blush" cx="50%" cy="50%" r="50%">
+  <stop offset="0" stop-color="#E79A8E" stop-opacity=".55"/>
+  <stop offset="1" stop-color="#E79A8E" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="av_face" x1="0" y1="0" x2="1" y2="0">
+  <stop offset="0" stop-color="#E2B9A3"/>
+  <stop offset=".22" stop-color="#F2D5C4"/>
+  <stop offset=".78" stop-color="#F2D5C4"/>
+  <stop offset="1" stop-color="#E2B9A3"/>
+</linearGradient>
+<linearGradient id="av_neck" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#C9927A"/>
+  <stop offset=".35" stop-color="#E2B9A3"/>
+  <stop offset="1" stop-color="#F2D5C4"/>
+</linearGradient>
+<linearGradient id="av_blonde" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#A9845A"/>
+  <stop offset=".25" stop-color="#DDBE8F"/>
+  <stop offset="1" stop-color="#EED7AE"/>
+</linearGradient>
+<linearGradient id="av_brown" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#4A3127"/>
+  <stop offset="1" stop-color="#6E4A39"/>
+</linearGradient>
+</defs>
+<circle cx="40" cy="40" r="40" fill="#EDE1D8"/>
+<g transform="translate(4 2) scale(.18)">
+<g transform="translate(0 0) scale(1.0)">
+
+<path d="M200 92 C112 92 88 165 96 245 C102 315 78 385 62 455 C110 470 150 450 165 420 L235 420 C250 450 290 470 338 455 C322 385 298 315 304 245 C312 165 288 92 200 92 Z" fill="url(#av_blonde)"/>
+
+<path d="M40 520 C55 440 115 405 172 392 Q200 404 228 392 C285 405 345 440 360 520 Z" fill="#F2D5C4"/>
+<path d="M95 520 C100 470 125 430 158 395 Q200 420 242 395 C275 430 300 470 305 520 Z" fill="#C99A7E"/>
+<path d="M158 395 Q200 420 242 395 L242 380 Q200 405 158 380 Z" fill="#C99A7E"/>
+<path d="M160 386 Q200 408 240 386" stroke="#000" stroke-opacity=".18" stroke-width="2" fill="none"/>
+<path d="M172 318 L172 392 Q200 410 228 392 L228 318 Z" fill="url(#av_neck)"/>
+<ellipse cx="120" cy="228" rx="10" ry="22" fill="#E2B9A3"/>
+<ellipse cx="280" cy="228" rx="10" ry="22" fill="#E2B9A3"/>
+
+<path d="M200 120 C255 120 280 160 280 215 C280 270 260 315 230 340 C218 350 208 355 200 355 C192 355 182 350 170 340 C140 315 120 270 120 215 C120 160 145 120 200 120 Z" fill="url(#av_face)"/>
+<circle cx="150" cy="268" r="26" fill="url(#av_blush)"/>
+<circle cx="250" cy="268" r="26" fill="url(#av_blush)"/>
+<path d="M142 200 Q162 186 187 196" stroke="#7A5A40" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+<path d="M213 196 Q238 186 258 200" stroke="#7A5A40" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+
+<path d="M144 224 Q165 208 186 224 Q165 233 144 224 Z" fill="#FBF6F3"/>
+<circle cx="165" cy="222.5" r="7.5" fill="#6B4A3A"/>
+<circle cx="165" cy="222.5" r="3.6" fill="#2A1C17"/>
+<circle cx="167.5" cy="220" r="1.8" fill="#fff"/>
+<path d="M142 223 Q165 204 188 222" stroke="#3A2620" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M147 230 Q165 236 183 229" stroke="#C9927A" stroke-width="1.2" fill="none" opacity=".6"/>
+<path d="M214 224 Q235 208 256 224 Q235 233 214 224 Z" fill="#FBF6F3"/>
+<circle cx="235" cy="222.5" r="7.5" fill="#6B4A3A"/>
+<circle cx="235" cy="222.5" r="3.6" fill="#2A1C17"/>
+<circle cx="237.5" cy="220" r="1.8" fill="#fff"/>
+<path d="M212 223 Q235 204 258 222" stroke="#3A2620" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M217 230 Q235 236 253 229" stroke="#C9927A" stroke-width="1.2" fill="none" opacity=".6"/>
+<path d="M201 228 C199 245 195 258 193 266 Q200 274 210 268" stroke="#C9927A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<path d="M178 298 Q190 289 200 294 Q210 289 222 298 Q200 303 178 298 Z" fill="#C9786E"/>
+<path d="M178 298 Q200 320 222 298 Q200 303 178 298 Z" fill="#D88A80"/>
+<path d="M192 307 Q200 310 208 307" stroke="#fff" stroke-opacity=".5" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+<path d="M200 98 C138 98 110 150 116 228 C126 176 162 136 214 126 C246 136 270 166 284 228 C292 150 262 98 200 98 Z" fill="url(#av_blonde)"/>
+<path d="M118 205 C104 285 122 350 92 445 C138 430 150 360 142 262 Z" fill="url(#av_blonde)"/>
+<path d="M282 205 C296 285 278 350 308 445 C262 430 250 360 258 262 Z" fill="url(#av_blonde)"/>
+<path d="M205 110 C170 130 140 160 128 215 M220 116 C250 140 270 170 276 215 M124 260 C122 320 118 370 104 430 M276 260 C278 320 282 370 296 430" stroke="#EED7AE" stroke-width="2.5" fill="none" opacity=".7" stroke-linecap="round"/>
+<path d="M195 104 C185 115 180 122 176 130" stroke="#A9845A" stroke-width="3" fill="none" opacity=".5"/>
+
+</g></g>
+</svg>

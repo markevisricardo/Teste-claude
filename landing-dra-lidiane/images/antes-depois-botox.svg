@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" preserveAspectRatio="xMidYMid slice"><defs>
+<radialGradient id="bota_blush" cx="50%" cy="50%" r="50%">
+  <stop offset="0" stop-color="#E79A8E" stop-opacity=".55"/>
+  <stop offset="1" stop-color="#E79A8E" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="bota_face" x1="0" y1="0" x2="1" y2="0">
+  <stop offset="0" stop-color="#E2B9A3"/>
+  <stop offset=".22" stop-color="#F2D5C4"/>
+  <stop offset=".78" stop-color="#F2D5C4"/>
+  <stop offset="1" stop-color="#E2B9A3"/>
+</linearGradient>
+<linearGradient id="bota_neck" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#C9927A"/>
+  <stop offset=".35" stop-color="#E2B9A3"/>
+  <stop offset="1" stop-color="#F2D5C4"/>
+</linearGradient>
+<linearGradient id="bota_blonde" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#A9845A"/>
+  <stop offset=".25" stop-color="#DDBE8F"/>
+  <stop offset="1" stop-color="#EED7AE"/>
+</linearGradient>
+<linearGradient id="bota_brown" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#4A3127"/>
+  <stop offset="1" stop-color="#6E4A39"/>
+</linearGradient>
+
+<radialGradient id="botb_blush" cx="50%" cy="50%" r="50%">
+  <stop offset="0" stop-color="#E79A8E" stop-opacity=".55"/>
+  <stop offset="1" stop-color="#E79A8E" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="botb_face" x1="0" y1="0" x2="1" y2="0">
+  <stop offset="0" stop-color="#E2B9A3"/>
+  <stop offset=".22" stop-color="#F2D5C4"/>
+  <stop offset=".78" stop-color="#F2D5C4"/>
+  <stop offset="1" stop-color="#E2B9A3"/>
+</linearGradient>
+<linearGradient id="botb_neck" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#C9927A"/>
+  <stop offset=".35" stop-color="#E2B9A3"/>
+  <stop offset="1" stop-color="#F2D5C4"/>
+</linearGradient>
+<linearGradient id="botb_blonde" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#A9845A"/>
+  <stop offset=".25" stop-color="#DDBE8F"/>
+  <stop offset="1" stop-color="#EED7AE"/>
+</linearGradient>
+<linearGradient id="botb_brown" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#4A3127"/>
+  <stop offset="1" stop-color="#6E4A39"/>
+</linearGradient>
+
+<clipPath id="botoxL"><rect x="0" y="0" width="200" height="300"/></clipPath>
+<clipPath id="botoxR"><rect x="200" y="0" width="200" height="300"/></clipPath></defs>
+<rect width="400" height="300" fill="#EEE2D9"/>
+<g clip-path="url(#botoxL)"><rect width="200" height="300" fill="#E9DCD2"/>
+  <g transform="translate(72 -10) scale(.64)">
+<g transform="translate(0 0) scale(1.0)">
+
+<circle cx="200" cy="82" r="38" fill="url(#bota_brown)"/>
+<path d="M200 96 C130 96 108 160 116 235 L284 235 C292 160 270 96 200 96 Z" fill="url(#bota_brown)"/>
+
+<path d="M40 520 C55 440 115 405 172 392 Q200 404 228 392 C285 405 345 440 360 520 Z" fill="#F2D5C4"/>
+<path d="M120 430 Q150 445 175 440" stroke="#E2B9A3" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M280 430 Q250 445 225 440" stroke="#E2B9A3" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M172 318 L172 392 Q200 410 228 392 L228 318 Z" fill="url(#bota_neck)"/>
+<ellipse cx="120" cy="228" rx="10" ry="22" fill="#E2B9A3"/>
+<ellipse cx="280" cy="228" rx="10" ry="22" fill="#E2B9A3"/>
+
+<path d="M200 120 C255 120 280 160 280 215 C280 270 260 315 230 340 C218 350 208 355 200 355 C192 355 182 350 170 340 C140 315 120 270 120 215 C120 160 145 120 200 120 Z" fill="url(#bota_face)"/>
+<circle cx="150" cy="268" r="26" fill="url(#bota_blush)"/>
+<circle cx="250" cy="268" r="26" fill="url(#bota_blush)"/>
+<path d="M142 200 Q162 186 187 196" stroke="#2E1E18" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+<path d="M213 196 Q238 186 258 200" stroke="#2E1E18" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+
+<path d="M144 224 Q165 208 186 224 Q165 233 144 224 Z" fill="#FBF6F3"/>
+<circle cx="165" cy="222.5" r="7.5" fill="#6B4A3A"/>
+<circle cx="165" cy="222.5" r="3.6" fill="#2A1C17"/>
+<circle cx="167.5" cy="220" r="1.8" fill="#fff"/>
+<path d="M142 223 Q165 204 188 222" stroke="#3A2620" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M147 230 Q165 236 183 229" stroke="#C9927A" stroke-width="1.2" fill="none" opacity=".6"/>
+<path d="M214 224 Q235 208 256 224 Q235 233 214 224 Z" fill="#FBF6F3"/>
+<circle cx="235" cy="222.5" r="7.5" fill="#6B4A3A"/>
+<circle cx="235" cy="222.5" r="3.6" fill="#2A1C17"/>
+<circle cx="237.5" cy="220" r="1.8" fill="#fff"/>
+<path d="M212 223 Q235 204 258 222" stroke="#3A2620" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M217 230 Q235 236 253 229" stroke="#C9927A" stroke-width="1.2" fill="none" opacity=".6"/>
+<path d="M201 228 C199 245 195 258 193 266 Q200 274 210 268" stroke="#C9927A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<path d="M178 298 Q190 289 200 294 Q210 289 222 298 Q200 303 178 298 Z" fill="#C9786E"/>
+<path d="M178 298 Q200 320 222 298 Q200 303 178 298 Z" fill="#D88A80"/>
+<path d="M192 307 Q200 310 208 307" stroke="#fff" stroke-opacity=".5" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+<path d="M200 100 C140 100 114 150 118 222 C130 172 165 135 214 127 C245 136 270 166 282 222 C288 150 262 100 200 100 Z" fill="url(#bota_brown)"/>
+<path d="M190 104 C160 120 136 160 126 210 M214 108 C246 128 266 160 276 208" stroke="#6E4A39" stroke-width="2" fill="none" opacity=".6"/>
+<path d="M165 172 Q200 166 235 172 M170 184 Q200 179 230 184" stroke="#C9927A" stroke-width="1.6" fill="none" opacity=".7"/><path d="M178 286 Q170 300 172 318 M222 286 Q230 300 228 318" stroke="#C9927A" stroke-width="1.6" fill="none" opacity=".6"/>
+</g></g></g>
+<g clip-path="url(#botoxR)"><rect x="200" width="200" height="300" fill="#F4ECE6"/>
+  <g transform="translate(72 -10) scale(.64)">
+<g transform="translate(0 0) scale(1.0)">
+
+<circle cx="200" cy="82" r="38" fill="url(#botb_brown)"/>
+<path d="M200 96 C130 96 108 160 116 235 L284 235 C292 160 270 96 200 96 Z" fill="url(#botb_brown)"/>
+
+<path d="M40 520 C55 440 115 405 172 392 Q200 404 228 392 C285 405 345 440 360 520 Z" fill="#F2D5C4"/>
+<path d="M120 430 Q150 445 175 440" stroke="#E2B9A3" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M280 430 Q250 445 225 440" stroke="#E2B9A3" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M172 318 L172 392 Q200 410 228 392 L228 318 Z" fill="url(#botb_neck)"/>
+<ellipse cx="120" cy="228" rx="10" ry="22" fill="#E2B9A3"/>
+<ellipse cx="280" cy="228" rx="10" ry="22" fill="#E2B9A3"/>
+
+<path d="M200 120 C255 120 280 160 280 215 C280 270 260 315 230 340 C218 350 208 355 200 355 C192 355 182 350 170 340 C140 315 120 270 120 215 C120 160 145 120 200 120 Z" fill="url(#botb_face)"/>
+<circle cx="150" cy="268" r="26" fill="url(#botb_blush)"/>
+<circle cx="250" cy="268" r="26" fill="url(#botb_blush)"/>
+<path d="M142 200 Q162 186 187 196" stroke="#2E1E18" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+<path d="M213 196 Q238 186 258 200" stroke="#2E1E18" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+
+<path d="M144 224 Q165 208 186 224 Q165 233 144 224 Z" fill="#FBF6F3"/>
+<circle cx="165" cy="222.5" r="7.5" fill="#6B4A3A"/>
+<circle cx="165" cy="222.5" r="3.6" fill="#2A1C17"/>
+<circle cx="167.5" cy="220" r="1.8" fill="#fff"/>
+<path d="M142 223 Q165 204 188 222" stroke="#3A2620" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M147 230 Q165 236 183 229" stroke="#C9927A" stroke-width="1.2" fill="none" opacity=".6"/>
+<path d="M214 224 Q235 208 256 224 Q235 233 214 224 Z" fill="#FBF6F3"/>
+<circle cx="235" cy="222.5" r="7.5" fill="#6B4A3A"/>
+<circle cx="235" cy="222.5" r="3.6" fill="#2A1C17"/>
+<circle cx="237.5" cy="220" r="1.8" fill="#fff"/>
+<path d="M212 223 Q235 204 258 222" stroke="#3A2620" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M217 230 Q235 236 253 229" stroke="#C9927A" stroke-width="1.2" fill="none" opacity=".6"/>
+<path d="M201 228 C199 245 195 258 193 266 Q200 274 210 268" stroke="#C9927A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<path d="M178 298 Q190 289 200 294 Q210 289 222 298 Q200 303 178 298 Z" fill="#C9786E"/>
+<path d="M178 298 Q200 320 222 298 Q200 303 178 298 Z" fill="#D88A80"/>
+<path d="M192 307 Q200 310 208 307" stroke="#fff" stroke-opacity=".5" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+<path d="M200 100 C140 100 114 150 118 222 C130 172 165 135 214 127 C245 136 270 166 282 222 C288 150 262 100 200 100 Z" fill="url(#botb_brown)"/>
+<path d="M190 104 C160 120 136 160 126 210 M214 108 C246 128 266 160 276 208" stroke="#6E4A39" stroke-width="2" fill="none" opacity=".6"/>
+<ellipse cx="150" cy="255" rx="22" ry="12" fill="#fff" opacity=".35"/><ellipse cx="250" cy="255" rx="22" ry="12" fill="#fff" opacity=".35"/>
+</g></g></g>
+<line x1="200" y1="0" x2="200" y2="300" stroke="#fff" stroke-width="3"/>
+<rect x="12" y="12" width="56" height="22" rx="11" fill="#fff" opacity=".85"/>
+<text x="40" y="27" font-family="Arial, sans-serif" font-size="11" fill="#6B4A3A" text-anchor="middle" letter-spacing="1">ANTES</text>
+<rect x="324" y="12" width="64" height="22" rx="11" fill="#C99A7E"/>
+<text x="356" y="27" font-family="Arial, sans-serif" font-size="11" fill="#fff" text-anchor="middle" letter-spacing="1">DEPOIS</text>
+</svg>

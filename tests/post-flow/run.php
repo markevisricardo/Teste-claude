@@ -1,0 +1,441 @@
+<?php
+/**
+ * Testes da lógica do Post Flow (sem WordPress nem banco).
+ * Rode com:  npm run test:postflow   (ou php tests/post-flow/run.php)
+ */
+
+require __DIR__ . '/bootstrap.php';
+
+$failures = 0;
+$count    = 0;
+function check( $label, $expected, $actual ) {
+	global $failures, $count;
+	++$count;
+	if ( $expected === $actual ) {
+		echo "  ok   {$label}\n";
+		return;
+	}
+	++$failures;
+	echo "  FAIL {$label}\n       esperado: " . var_export( $expected, true ) . "\n       obtido:   " . var_export( $actual, true ) . "\n";
+}
+function respond( $code, $body, $headers = array() ) {
+	$GLOBALS['pflow_test_http'][] = array( 'code' => $code, 'body' => $body, 'headers' => $headers );
+}
+
+$sp  = new DateTimeZone( 'America/Sao_Paulo' ); // UTC-3, sem horário de verão.
+$utc = new DateTimeZone( 'UTC' );
+
+echo "Fila (próximo horário livre)\n";
+// Segunda, 03/11/2025 10:00 em São Paulo = 13:00 UTC.
+$now = ( new DateTimeImmutable( '2025-11-03 10:00:00', $sp ) )->getTimestamp();
+check( 'pega o próximo horário do mesmo dia', '2025-11-03 15:30:00', PFlow_Schedule::next_slot( array( 1, 2, 3, 4, 5 ), array( '09:00', '12:30', '18:00' ), $sp, $now ) );
+check( 'pula horário ocupado', '2025-11-03 21:00:00', PFlow_Schedule::next_slot( array( 1, 2, 3, 4, 5 ), array( '09:00', '12:30', '18:00' ), $sp, $now, array( '2025-11-03 15:30' ) ) );
+check( 'vai para o dia seguinte', '2025-11-04 12:00:00', PFlow_Schedule::next_slot( array( 1, 2, 3, 4, 5 ), array( '09:00', '12:30', '18:00' ), $sp, $now, array( '2025-11-03 15:30', '2025-11-03 21:00' ) ) );
+$friday = ( new DateTimeImmutable( '2025-11-07 19:00:00', $sp ) )->getTimestamp();
+check( 'pula o fim de semana', '2025-11-10 12:00:00', PFlow_Schedule::next_slot( array( 1, 2, 3, 4, 5 ), array( '09:00', '12:30', '18:00' ), $sp, $friday ) );
+check( 'sem horários devolve vazio', '', PFlow_Schedule::next_slot( array(), array( '09:00' ), $sp, $now ) );
+check( 'horário a menos de 1 minuto é pulado', '2025-11-03 15:30:00', PFlow_Schedule::next_slot( array( 1 ), array( '10:00', '12:30' ), $sp, $now - 30 ) );
+check( 'sanitiza dias e horários', array( 'days' => array( 0, 3 ), 'times' => array( '07:05', '18:00' ) ), PFlow_Schedule::sanitize( array( '3', 9, '0', 3 ), array( '18:00', '7:05', '25:00', 'xx', '18:00' ) ) );
+check( 'converte data local para UTC', '2025-12-24 21:30:00', PFlow_Schedule::local_to_utc( '2025-12-24', '18:30', $sp ) );
+check( 'rejeita data inválida', '', PFlow_Schedule::local_to_utc( '24/12/2025', '18:30', $sp ) );
+check( 'converte UTC para local', '2025-12-24 18:30', PFlow_Schedule::to_local( '2025-12-24 21:30:00', $sp )->format( 'Y-m-d H:i' ) );
+
+echo "Regras das redes\n";
+check( 'X: limite de 280', array( 'X aceita até 280 caracteres.' ), PFlow_Networks::validate( 'x', str_repeat( 'a', 281 ), 0 ) );
+check( 'X: 280 passa', array(), PFlow_Networks::validate( 'x', str_repeat( 'á', 280 ), 0 ) );
+check( 'Instagram exige imagem', array( 'Instagram exige ao menos uma imagem ou um vídeo.' ), PFlow_Networks::validate( 'instagram', 'oi', 0 ) );
+check( 'X: até 4 imagens', array( 'X aceita até 4 imagens.' ), PFlow_Networks::validate( 'x', 'oi', 5 ) );
+check( 'texto e imagem vazios', array( 'Escreva um texto ou adicione uma imagem ou um vídeo.' ), PFlow_Networks::validate( 'linkedin', '  ', 0 ) );
+check( 'emoji conta como 1 caractere', 3, PFlow_Networks::text_length( 'a🚀b' ) );
+check( 'link vai para o fim do texto', "Novo post\n\nhttps://ex.com", PFlow_Networks::compose_text( 'x', 'Novo post', 'https://ex.com', 0 ) );
+check( 'Facebook sem imagem usa a prévia do link', 'Novo post', PFlow_Networks::compose_text( 'facebook', 'Novo post', 'https://ex.com', 0 ) );
+check( 'Facebook com imagem põe o link no texto', "Novo post\n\nhttps://ex.com", PFlow_Networks::compose_text( 'facebook', 'Novo post', 'https://ex.com', 1 ) );
+check( 'link já no texto não duplica', 'Veja https://ex.com', PFlow_Networks::compose_text( 'x', 'Veja https://ex.com', 'https://ex.com', 0 ) );
+
+echo "Status do post\n";
+check( 'sem destinos = rascunho', 'draft', PFlow_Posts::status_from_targets( array() ) );
+check( 'pendente = agendado', 'scheduled', PFlow_Posts::status_from_targets( array( 'sent', 'pending' ) ) );
+check( 'tudo publicado', 'sent', PFlow_Posts::status_from_targets( array( 'sent', 'sent' ) ) );
+check( 'misto = em parte', 'partial', PFlow_Posts::status_from_targets( array( 'sent', 'failed' ) ) );
+check( 'tudo falhou', 'failed', PFlow_Posts::status_from_targets( array( 'failed' ) ) );
+check( 'IDs de mídia', array( 3, 7 ), PFlow_Posts::parse_ids( '3,,7,3,abc' ) );
+
+echo "LinkedIn (little text)\n";
+check( 'escapa reservados e mantém hashtags', 'Oi \\(teste\\) \\@ana {hashtag|\\#|marketing} \\_x\\_', PFlow_Provider_LinkedIn::escape( 'Oi (teste) @ana #marketing _x_' ) );
+check( 'texto comum fica igual', 'Bom dia, pessoal!', PFlow_Provider_LinkedIn::escape( 'Bom dia, pessoal!' ) );
+
+echo "Criptografia e assinatura da Meta\n";
+$enc = PFlow_Crypto::encrypt( 'token-secreto' );
+check( 'token criptografado não aparece em claro', false, strpos( $enc, 'token-secreto' ) !== false );
+check( 'descriptografa', 'token-secreto', PFlow_Crypto::decrypt( $enc ) );
+check( 'valor adulterado vira vazio', '', PFlow_Crypto::decrypt( substr( $enc, 0, -4 ) . 'AAAA' ) );
+$b64     = static function ( $v ) {
+	return rtrim( strtr( base64_encode( $v ), '+/', '-_' ), '=' );
+};
+$payload = $b64( json_encode( array( 'user_id' => '123', 'algorithm' => 'HMAC-SHA256' ) ) );
+$signed  = $b64( hash_hmac( 'sha256', $payload, 'segredo', true ) ) . '.' . $payload;
+check( 'signed_request válido', '123', PFlow_OAuth::parse_signed_request( $signed, 'segredo' )['user_id'] ?? null );
+check( 'signed_request com outra chave', null, PFlow_OAuth::parse_signed_request( $signed, 'outra' ) );
+
+echo "HTTP e mensagens de erro\n";
+check( 'erro da Meta', 'Invalid OAuth access token.', PFlow_Http::error_message( array( 'error' => array( 'message' => 'Invalid OAuth access token.' ) ), 400 ) );
+check( 'erro do X', 'You are not allowed to create a Tweet with duplicate content.', PFlow_Http::error_message( array( 'detail' => 'You are not allowed to create a Tweet with duplicate content.' ), 403 ) );
+check( 'erro sem corpo', 'A rede social respondeu com erro HTTP 502.', PFlow_Http::error_message( '', 502 ) );
+respond( 503, array( 'message' => 'down' ) );
+$err = PFlow_Http::request( 'GET', 'https://api.test/x' );
+check( '5xx pode tentar de novo', true, PFlow_Http::is_retryable( $err ) );
+respond( 400, array( 'message' => 'bad' ) );
+check( '4xx não tenta de novo', false, PFlow_Http::is_retryable( PFlow_Http::request( 'GET', 'https://api.test/x' ) ) );
+
+echo "X: PKCE e multipart\n";
+$GLOBALS['pflow_test_options']['pflow_settings'] = array( 'x_client_id' => 'cid', 'x_client_secret' => PFlow_Crypto::encrypt( 'sec' ) );
+$x   = new PFlow_Provider_X();
+$url = $x->authorize_url( 'STATE', 'https://example.com/cb', 'verifier123' );
+$exp = rtrim( strtr( base64_encode( hash( 'sha256', 'verifier123', true ) ), '+/', '-_' ), '=' );
+check( 'code_challenge S256', true, false !== strpos( $url, 'code_challenge=' . $exp ) && false !== strpos( $url, 'code_challenge_method=S256' ) );
+$body = PFlow_Provider_X::multipart( 'BND', array( 'media_category' => 'tweet_image' ), 'media', 'a.jpg', 'image/jpeg', 'BYTES' );
+check( 'multipart', "--BND\r\nContent-Disposition: form-data; name=\"media_category\"\r\n\r\ntweet_image\r\n--BND\r\nContent-Disposition: form-data; name=\"media\"; filename=\"a.jpg\"\r\nContent-Type: image/jpeg\r\n\r\nBYTES\r\n--BND--\r\n", $body );
+
+echo "Publicação (respostas simuladas)\n";
+// X com imagem: upload → tweet.
+$GLOBALS['pflow_test_requests'] = array();
+$tmp                            = tempnam( sys_get_temp_dir(), 'pf' );
+file_put_contents( $tmp, 'JPEGDATA' );
+respond( 200, array( 'data' => array( 'id' => 'M1' ) ) );
+respond( 201, array( 'data' => array( 'id' => '999' ) ) );
+$res = $x->publish(
+	array( 'access_token' => 'AT', 'username' => 'marca' ),
+	array( 'text' => 'Olá', 'link' => '', 'media' => array( array( 'url' => 'https://ex.com/a.jpg', 'path' => $tmp, 'mime' => 'image/jpeg' ) ) )
+);
+check( 'X: link do post', 'https://x.com/marca/status/999', $res['remote_url'] ?? null );
+check( 'X: tweet leva o media_id', array( 'text' => 'Olá', 'media' => array( 'media_ids' => array( 'M1' ) ) ), json_decode( $GLOBALS['pflow_test_requests'][1]['args']['body'], true ) );
+
+// Facebook com 2 fotos: 2 uploads sem publicar + feed com attached_media.
+$GLOBALS['pflow_test_options']['pflow_settings'] = array( 'meta_app_id' => 'a', 'meta_app_secret' => PFlow_Crypto::encrypt( 'b' ) );
+$GLOBALS['pflow_test_requests']                  = array();
+respond( 200, array( 'id' => 'P1' ) );
+respond( 200, array( 'id' => 'P2' ) );
+respond( 200, array( 'id' => 'PAGE_POST' ) );
+$meta = new PFlow_Provider_Meta();
+$res  = $meta->publish(
+	array( 'network' => 'facebook', 'external_id' => 'PAGE', 'access_token' => 'PT' ),
+	array(
+		'text'  => 'Fotos',
+		'link'  => '',
+		'media' => array(
+			array( 'url' => 'https://ex.com/1.jpg', 'path' => '', 'mime' => 'image/jpeg' ),
+			array( 'url' => 'https://ex.com/2.jpg', 'path' => '', 'mime' => 'image/jpeg' ),
+		),
+	)
+);
+$feed = $GLOBALS['pflow_test_requests'][2]['args']['body'];
+check( 'Facebook: fotos anexadas ao post', '{"media_fbid":"P2"}', $feed['attached_media[1]'] ?? null );
+check( 'Facebook: foto enviada sem publicar', 'false', $GLOBALS['pflow_test_requests'][0]['args']['body']['published'] ?? null );
+check( 'Facebook: link do post', 'https://www.facebook.com/PAGE_POST', $res['remote_url'] ?? null );
+
+// Instagram: contêiner → status FINISHED → publish → permalink.
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'id' => 'C1' ) );
+respond( 200, array( 'status_code' => 'FINISHED' ) );
+respond( 200, array( 'id' => 'IGM' ) );
+respond( 200, array( 'permalink' => 'https://www.instagram.com/p/abc/' ) );
+$res = $meta->publish(
+	array( 'network' => 'instagram', 'external_id' => 'IG', 'access_token' => 'PT' ),
+	array( 'text' => 'Legenda', 'link' => '', 'media' => array( array( 'url' => 'https://ex.com/1.jpg', 'path' => '', 'mime' => 'image/jpeg' ) ) )
+);
+check( 'Instagram: link do post', 'https://www.instagram.com/p/abc/', $res['remote_url'] ?? null );
+check( 'Instagram: publica o contêiner', 'C1', $GLOBALS['pflow_test_requests'][2]['args']['body']['creation_id'] ?? null );
+
+// Instagram: imagem recusada.
+respond( 200, array( 'id' => 'C2' ) );
+respond( 200, array( 'status_code' => 'ERROR' ) );
+$res = $meta->publish(
+	array( 'network' => 'instagram', 'external_id' => 'IG', 'access_token' => 'PT' ),
+	array( 'text' => 'x', 'link' => '', 'media' => array( array( 'url' => 'https://ex.com/1.jpg', 'path' => '', 'mime' => 'image/jpeg' ) ) )
+);
+check( 'Instagram: erro de mídia vira falha', true, is_wp_error( $res ) && ! PFlow_Http::is_retryable( $res ) );
+
+// LinkedIn: o URN vem no cabeçalho x-restli-id.
+respond( 201, '', array( 'x-restli-id' => 'urn:li:share:42' ) );
+$res = ( new PFlow_Provider_LinkedIn() )->publish( array( 'access_token' => 'T', 'external_id' => 'abc' ), array( 'text' => 'Oi', 'link' => '', 'media' => array() ) );
+check( 'LinkedIn: link do post', 'https://www.linkedin.com/feed/update/urn:li:share:42/', $res['remote_url'] ?? null );
+
+// Threads texto: contêiner → publish → permalink.
+respond( 200, array( 'id' => 'TC' ) );
+respond( 200, array( 'id' => 'TP' ) );
+respond( 200, array( 'permalink' => 'https://www.threads.net/@marca/post/xyz' ) );
+$res = ( new PFlow_Provider_Threads() )->publish( array( 'access_token' => 'T', 'external_id' => 'U' ), array( 'text' => 'Oi', 'link' => '', 'media' => array() ) );
+check( 'Threads: link do post', 'https://www.threads.net/@marca/post/xyz', $res['remote_url'] ?? null );
+
+// X: renovação do token quando está para vencer.
+$GLOBALS['pflow_test_options']['pflow_settings'] = array( 'x_client_id' => 'cid', 'x_client_secret' => PFlow_Crypto::encrypt( 'sec' ) );
+respond( 200, array( 'access_token' => 'NEW', 'refresh_token' => 'R2', 'expires_in' => 7200 ) );
+$tokens = $x->refresh( array( 'refresh_token' => 'R1', 'token_expires_at' => time() + 60 ) );
+check( 'X: renova token perto de vencer', array( 'NEW', 'R2' ), array( $tokens['access_token'] ?? '', $tokens['refresh_token'] ?? '' ) );
+check( 'X: não renova token novo', null, $x->refresh( array( 'refresh_token' => 'R1', 'token_expires_at' => time() + 3600 ) ) );
+
+echo "Google Meu Negócio, Pinterest e WhatsApp\n";
+check( 'Google: link não vai no texto', 'Promoção', PFlow_Networks::compose_text( 'google_business', 'Promoção', 'https://ex.com', 0 ) );
+check( 'Pinterest exige imagem', array( 'Pinterest exige ao menos uma imagem ou um vídeo.' ), PFlow_Networks::validate( 'pinterest', 'oi', 0 ) );
+check( 'Google exige texto', array( 'Google Meu Negócio exige um texto.' ), PFlow_Networks::validate( 'google_business', '', 1 ) );
+check( 'WhatsApp aceita 1 imagem', array( 'WhatsApp aceita só 1 imagem.' ), PFlow_Networks::validate( 'whatsapp_web', 'oi', 2 ) );
+
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'name' => 'accounts/1/locations/2/localPosts/9', 'searchUrl' => 'https://local.google.com/place?id=9' ) );
+$res  = ( new PFlow_Provider_Google() )->publish(
+	array( 'external_id' => 'accounts/1/locations/2', 'access_token' => 'G' ),
+	array( 'text' => 'Promoção de novembro', 'link' => 'https://ex.com/promo', 'media' => array( array( 'url' => 'https://ex.com/1.jpg', 'path' => '', 'mime' => 'image/jpeg' ) ) )
+);
+$sent = json_decode( $GLOBALS['pflow_test_requests'][0]['args']['body'], true );
+check( 'Google: endpoint do local', 'https://mybusiness.googleapis.com/v4/accounts/1/locations/2/localPosts', $GLOBALS['pflow_test_requests'][0]['url'] );
+check( 'Google: botão Saiba mais com o link', array( 'actionType' => 'LEARN_MORE', 'url' => 'https://ex.com/promo' ), $sent['callToAction'] ?? null );
+check( 'Google: foto', 'https://ex.com/1.jpg', $sent['media'][0]['sourceUrl'] ?? null );
+check( 'Google: link do post', 'https://local.google.com/place?id=9', $res['remote_url'] ?? null );
+
+$GLOBALS['pflow_test_options']['pflow_settings'] = array( 'google_client_id' => 'g', 'google_client_secret' => PFlow_Crypto::encrypt( 's' ) );
+respond( 200, array( 'access_token' => 'A', 'refresh_token' => 'R', 'expires_in' => 3600 ) );
+respond( 200, array( 'accounts' => array( array( 'name' => 'accounts/1' ) ) ) );
+respond( 200, array( 'locations' => array( array( 'name' => 'locations/2', 'title' => 'Clínica Centro' ), array( 'name' => 'locations/3', 'title' => 'Clínica Sul' ) ) ) );
+$acc = ( new PFlow_Provider_Google() )->connect( 'CODE', 'https://example.com/cb', '' );
+check( 'Google: cada local vira um canal', array( 'accounts/1/locations/2', 'accounts/1/locations/3' ), array_column( $acc, 'external_id' ) );
+
+$GLOBALS['pflow_test_requests'] = array();
+respond( 201, array( 'id' => '813' ) );
+$res  = ( new PFlow_Provider_Pinterest() )->publish(
+	array( 'external_id' => 'BOARD', 'access_token' => 'P' ),
+	array(
+		'text'  => "Receita de bolo fit\nPasso a passo completo",
+		'link'  => 'https://ex.com/bolo',
+		'media' => array( array( 'url' => 'https://ex.com/1.jpg', 'path' => '', 'mime' => 'image/jpeg' ), array( 'url' => 'https://ex.com/2.jpg', 'path' => '', 'mime' => 'image/jpeg' ) ),
+	)
+);
+$pin = json_decode( $GLOBALS['pflow_test_requests'][0]['args']['body'], true );
+check( 'Pinterest: título é a 1ª linha', 'Receita de bolo fit', $pin['title'] ?? null );
+check( 'Pinterest: várias imagens', 'multiple_image_urls', $pin['media_source']['source_type'] ?? null );
+check( 'Pinterest: link de destino', 'https://ex.com/bolo', $pin['link'] ?? null );
+check( 'Pinterest: link do pin', 'https://www.pinterest.com/pin/813/', $res['remote_url'] ?? null );
+check( 'Pinterest: título longo é cortado', 100, mb_strlen( PFlow_Provider_Pinterest::title( str_repeat( 'a', 150 ) ) ) );
+
+check( 'WhatsApp: normaliza contatos', array( '5511999998888', '5521988887777' ), PFlow_Provider_WhatsApp::parse_recipients( "+55 (11) 99999-8888\n5521988887777, 123, 5511999998888" ) );
+check( 'WhatsApp: variável sem quebra de linha', 'Oi · tudo bem?   sim', PFlow_Provider_WhatsApp::template_text( "Oi\n\ntudo bem?      sim" ) );
+$wa = new PFlow_Provider_WhatsApp();
+respond( 200, array( 'verified_name' => 'Clínica Sorriso', 'display_phone_number' => '+55 11 4000-0000' ) );
+$acc = $wa->connect_form( array( 'phone_number_id' => '1234', 'access_token' => 'T', 'template' => 'Novidades', 'language' => 'pt_BR', 'recipients' => "5511999998888\n5511977776666" ) );
+check( 'WhatsApp: conecta pelo formulário', array( '1234', 'novidades', 2 ), array( $acc['external_id'] ?? '', $acc['meta']['template'] ?? '', count( $acc['meta']['recipients'] ?? array() ) ) );
+check( 'WhatsApp: exige contatos', true, is_wp_error( $wa->connect_form( array( 'phone_number_id' => '1', 'access_token' => 'T', 'template' => 'x', 'recipients' => '' ) ) ) );
+
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'messages' => array( array( 'id' => 'w1' ) ) ) );
+respond( 400, array( 'error' => array( 'message' => 'Recipient not in allowed list' ) ) );
+$res = $wa->publish( array( 'external_id' => '1234', 'access_token' => 'T', 'meta' => $acc['meta'] ), array( 'text' => "Promo\nhoje", 'link' => '', 'media' => array() ) );
+$msg = json_decode( $GLOBALS['pflow_test_requests'][0]['args']['body'], true );
+check( 'WhatsApp: envia modelo com o texto', array( 'novidades', 'Promo · hoje' ), array( $msg['template']['name'] ?? '', $msg['template']['components'][0]['parameters'][0]['text'] ?? '' ) );
+check( 'WhatsApp: conta os enviados', '1 de 2 contatos', $res['remote_id'] ?? null );
+respond( 401, array( 'error' => array( 'message' => 'Invalid token' ) ) );
+$res = $wa->publish( array( 'external_id' => '1234', 'access_token' => 'T', 'meta' => $acc['meta'] ), array( 'text' => 'x', 'link' => '', 'media' => array() ) );
+check( 'WhatsApp: token inválido para a lista e falha', array( true, 'Invalid token' ), array( is_wp_error( $res ), is_wp_error( $res ) ? $res->get_error_message() : '' ) );
+check( 'WhatsApp: cabeçalho com imagem exige imagem', true, is_wp_error( $wa->publish( array( 'external_id' => '1', 'access_token' => 'T', 'meta' => array( 'header_image' => true ) + $acc['meta'] ), array( 'text' => 'x', 'link' => '', 'media' => array() ) ) ) );
+
+echo "WhatsApp por QR Code (Evolution API)\n";
+$GLOBALS['pflow_test_options']['pflow_settings'] = array( 'evolution_url' => 'https://evo.test/', 'evolution_api_key' => PFlow_Crypto::encrypt( 'KEY' ) );
+$evo     = new PFlow_Provider_WhatsApp_Web();
+$channel = array( 'external_id' => 'status@broadcast', 'access_token' => 'pflow-1-abc', 'meta' => array( 'instance' => 'pflow-1-abc' ) );
+$img     = array( array( 'url' => 'https://ex.com/1.jpg', 'path' => '/up/1.jpg', 'mime' => 'image/jpeg' ) );
+check( 'Evolution configurada', true, $evo->is_configured() );
+
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'instance' => array( 'state' => 'open' ) ) );
+respond( 201, array( 'key' => array( 'id' => 'ST1' ) ) );
+$res  = $evo->publish( $channel, array( 'text' => 'Bom dia!', 'link' => '', 'media' => array() ) );
+$call = $GLOBALS['pflow_test_requests'][1];
+check( 'Status de texto: endpoint e chave', array( 'https://evo.test/message/sendStatus/pflow-1-abc', 'KEY' ), array( $call['url'], $call['args']['headers']['apikey'] ?? '' ) );
+check( 'Status de texto: corpo', array( 'text', 'Bom dia!', true ), array( json_decode( $call['args']['body'], true )['type'], json_decode( $call['args']['body'], true )['content'], json_decode( $call['args']['body'], true )['allContacts'] ) );
+check( 'Status: ID da mensagem', 'ST1', $res['remote_id'] ?? null );
+
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'instance' => array( 'state' => 'open' ) ) );
+respond( 201, array( 'key' => array( 'id' => 'ST2' ) ) );
+$evo->publish( $channel, array( 'text' => 'Promo', 'link' => '', 'media' => $img ) );
+$body = json_decode( $GLOBALS['pflow_test_requests'][1]['args']['body'], true );
+check( 'Status com imagem', array( 'image', 'https://ex.com/1.jpg', 'Promo' ), array( $body['type'], $body['content'], $body['caption'] ) );
+
+$group = array( 'external_id' => '1203630@g.us' ) + $channel;
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'instance' => array( 'state' => 'open' ) ) );
+respond( 201, array( 'key' => array( 'id' => 'G1' ) ) );
+$evo->publish( $group, array( 'text' => 'Oi grupo', 'link' => '', 'media' => array() ) );
+check( 'Grupo: texto', array( 'https://evo.test/message/sendText/pflow-1-abc', array( 'number' => '1203630@g.us', 'text' => 'Oi grupo' ) ), array( $GLOBALS['pflow_test_requests'][1]['url'], json_decode( $GLOBALS['pflow_test_requests'][1]['args']['body'], true ) ) );
+
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'instance' => array( 'state' => 'open' ) ) );
+respond( 201, array( 'key' => array( 'id' => 'G2' ) ) );
+$evo->publish( $group, array( 'text' => 'Foto', 'link' => '', 'media' => $img ) );
+$body = json_decode( $GLOBALS['pflow_test_requests'][1]['args']['body'], true );
+check( 'Grupo: imagem com legenda', array( 'image', 'https://ex.com/1.jpg', 'Foto', '1.jpg' ), array( $body['mediatype'], $body['media'], $body['caption'], $body['fileName'] ) );
+
+respond( 200, array( 'instance' => array( 'state' => 'close' ) ) );
+$res  = $evo->publish( $group, array( 'text' => 'x', 'link' => '', 'media' => array() ) );
+$data = is_wp_error( $res ) ? $res->get_error_data() : array();
+check( 'desconectado: falha com 401 (pede novo QR)', 401, $data['status'] ?? null );
+
+respond( 404, array( 'message' => 'instance not found' ) );
+check( 'instância inexistente', 'missing', $evo->state( 'x' ) );
+
+respond( 200, array( array( 'id' => '2@g.us', 'subject' => 'Zeta' ), array( 'id' => '1@g.us', 'subject' => 'alfa' ), array( 'id' => '55119@s.whatsapp.net' ) ) );
+$dest = $evo->destinations( 'pflow-1-abc' );
+check( 'destinos: Status + grupos em ordem', array( 'status@broadcast', '1@g.us', '2@g.us' ), array_column( $dest, 'external_id' ) );
+check( 'destinos: guardam a instância', 'pflow-1-abc', $dest[1]['meta']['instance'] );
+
+respond( 200, array( 'base64' => 'iVBORw0KGgo' ) );
+check( 'QR vira data URI', 'data:image/png;base64,iVBORw0KGgo', $evo->qr( 'x' ) );
+check( 'WhatsApp por QR: link vai no texto', "Oi\n\nhttps://ex.com", PFlow_Networks::compose_text( 'whatsapp_web', 'Oi', 'https://ex.com', 0 ) );
+
+echo "Vídeo\n";
+$GLOBALS['pflow_test_filters'] = array( 'pflow_video_wait_tries' => 3, 'pflow_video_wait_seconds' => 0 );
+$vpath = tempnam( sys_get_temp_dir(), 'pfv' );
+file_put_contents( $vpath, str_repeat( 'V', 10 * 1024 * 1024 ) ); // 10 MB.
+$vid   = array( 'url' => 'https://ex.com/v.mp4', 'path' => $vpath, 'mime' => 'video/mp4', 'kind' => 'video', 'bytes' => filesize( $vpath ) );
+$vpost = array( 'text' => 'Novo vídeo!', 'link' => '', 'media' => array(), 'video' => $vid );
+
+check( 'Instagram aceita só vídeo', array(), PFlow_Networks::validate( 'instagram', 'oi', 0, array( 'bytes' => 1000 ) ) );
+check( 'Google não aceita vídeo', array( 'Google Meu Negócio não aceita vídeo pela API.' ), PFlow_Networks::validate( 'google_business', 'oi', 0, array( 'bytes' => 1000 ) ) );
+check( 'X: vídeo acima de 512 MB', array( 'X aceita vídeo de até 512 MB.' ), PFlow_Networks::validate( 'x', 'oi', 0, array( 'bytes' => 600 * 1048576 ) ) );
+check( 'WhatsApp oficial: vídeo até 16 MB', array( 'WhatsApp (API oficial) aceita vídeo de até 16 MB.' ), PFlow_Networks::validate( 'whatsapp', 'oi', 0, array( 'bytes' => 20 * 1048576 ) ) );
+
+// Facebook: /videos com file_url.
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'id' => 'VID1' ) );
+$res = $meta->publish( array( 'network' => 'facebook', 'external_id' => 'PAGE', 'access_token' => 'PT' ), $vpost );
+check( 'Facebook vídeo: endpoint de vídeo', 'https://graph-video.facebook.com/v23.0/PAGE/videos', $GLOBALS['pflow_test_requests'][0]['url'] );
+check( 'Facebook vídeo: file_url e descrição', array( 'https://ex.com/v.mp4', 'Novo vídeo!' ), array( $GLOBALS['pflow_test_requests'][0]['args']['body']['file_url'], $GLOBALS['pflow_test_requests'][0]['args']['body']['description'] ) );
+check( 'Facebook vídeo: link', 'https://www.facebook.com/watch/?v=VID1', $res['remote_url'] ?? null );
+
+// Instagram: Reels, espera o processamento.
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'id' => 'RC' ) );
+respond( 200, array( 'status_code' => 'IN_PROGRESS' ) );
+respond( 200, array( 'status_code' => 'FINISHED' ) );
+respond( 200, array( 'id' => 'REEL' ) );
+respond( 200, array( 'permalink' => 'https://www.instagram.com/reel/xyz/' ) );
+$res = $meta->publish( array( 'network' => 'instagram', 'external_id' => 'IG', 'access_token' => 'PT' ), $vpost );
+$c   = $GLOBALS['pflow_test_requests'][0]['args']['body'];
+check( 'Instagram vídeo vira Reels', array( 'REELS', 'https://ex.com/v.mp4', 'true' ), array( $c['media_type'], $c['video_url'], $c['share_to_feed'] ) );
+check( 'Instagram Reels: link', 'https://www.instagram.com/reel/xyz/', $res['remote_url'] ?? null );
+
+respond( 200, array( 'id' => 'RC2' ) );
+respond( 200, array( 'status_code' => 'IN_PROGRESS' ) );
+respond( 200, array( 'status_code' => 'IN_PROGRESS' ) );
+respond( 200, array( 'status_code' => 'IN_PROGRESS' ) );
+$res = $meta->publish( array( 'network' => 'instagram', 'external_id' => 'IG', 'access_token' => 'PT' ), $vpost );
+check( 'Instagram: processamento demorado tenta de novo depois', true, is_wp_error( $res ) && PFlow_Http::is_retryable( $res ) );
+
+// Threads: VIDEO.
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'id' => 'TV' ) );
+respond( 200, array( 'status' => 'FINISHED' ) );
+respond( 200, array( 'id' => 'TVP' ) );
+respond( 200, array( 'permalink' => 'https://www.threads.net/@m/post/v' ) );
+$res = ( new PFlow_Provider_Threads() )->publish( array( 'access_token' => 'T', 'external_id' => 'U' ), $vpost );
+check( 'Threads vídeo', array( 'VIDEO', 'https://ex.com/v.mp4', 'https://www.threads.net/@m/post/v' ), array( $GLOBALS['pflow_test_requests'][0]['args']['body']['media_type'], $GLOBALS['pflow_test_requests'][0]['args']['body']['video_url'], $res['remote_url'] ?? '' ) );
+
+// LinkedIn: init → 3 partes (PUT) → finalize → AVAILABLE → post.
+$GLOBALS['pflow_test_requests'] = array();
+$four = 4 * 1024 * 1024;
+respond(
+	200,
+	array(
+		'value' => array(
+			'video'              => 'urn:li:video:V1',
+			'uploadToken'        => 'TOK',
+			'uploadInstructions' => array(
+				array( 'uploadUrl' => 'https://up/1', 'firstByte' => 0, 'lastByte' => $four - 1 ),
+				array( 'uploadUrl' => 'https://up/2', 'firstByte' => $four, 'lastByte' => 2 * $four - 1 ),
+				array( 'uploadUrl' => 'https://up/3', 'firstByte' => 2 * $four, 'lastByte' => filesize( $vpath ) - 1 ),
+			),
+		),
+	)
+);
+respond( 200, '', array( 'etag' => '"E1"' ) );
+respond( 200, '', array( 'etag' => '"E2"' ) );
+respond( 200, '', array( 'etag' => '"E3"' ) );
+respond( 200, '' );
+respond( 200, array( 'status' => 'AVAILABLE' ) );
+respond( 201, '', array( 'x-restli-id' => 'urn:li:share:77' ) );
+$res = ( new PFlow_Provider_LinkedIn() )->publish( array( 'access_token' => 'T', 'external_id' => 'abc' ), $vpost );
+$r   = $GLOBALS['pflow_test_requests'];
+check( 'LinkedIn vídeo: tamanho declarado', filesize( $vpath ), json_decode( $r[0]['args']['body'], true )['initializeUploadRequest']['fileSizeBytes'] );
+check( 'LinkedIn vídeo: partes com os bytes certos', array( $four, $four, filesize( $vpath ) - 2 * $four ), array( strlen( $r[1]['args']['body'] ), strlen( $r[2]['args']['body'] ), strlen( $r[3]['args']['body'] ) ) );
+check( 'LinkedIn vídeo: finalize com os ETags', array( 'E1', 'E2', 'E3' ), json_decode( $r[4]['args']['body'], true )['finalizeUploadRequest']['uploadedPartIds'] );
+check( 'LinkedIn vídeo: post com o vídeo', array( 'media' => array( 'id' => 'urn:li:video:V1' ) ), json_decode( $r[6]['args']['body'], true )['content'] );
+check( 'LinkedIn vídeo: link', 'https://www.linkedin.com/feed/update/urn:li:share:77/', $res['remote_url'] ?? null );
+
+// X: initialize → 3 appends → finalize → status → tweet.
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'data' => array( 'id' => 'XM' ) ) );
+respond( 204, '' );
+respond( 204, '' );
+respond( 204, '' );
+respond( 200, array( 'data' => array( 'id' => 'XM', 'processing_info' => array( 'state' => 'pending' ) ) ) );
+respond( 200, array( 'data' => array( 'processing_info' => array( 'state' => 'succeeded' ) ) ) );
+respond( 201, array( 'data' => array( 'id' => '1001' ) ) );
+$res = $x->publish( array( 'access_token' => 'AT', 'username' => 'marca' ), $vpost );
+$r   = $GLOBALS['pflow_test_requests'];
+check( 'X vídeo: initialize', array( 'https://api.x.com/2/media/upload/initialize', 'tweet_video', filesize( $vpath ) ), array( $r[0]['url'], json_decode( $r[0]['args']['body'], true )['media_category'], json_decode( $r[0]['args']['body'], true )['total_bytes'] ) );
+check( 'X vídeo: 3 partes de até 4 MB', array( 'https://api.x.com/2/media/upload/XM/append', true ), array( $r[3]['url'], false !== strpos( $r[3]['args']['body'], 'name="segment_index"' . "\r\n\r\n2" ) ) );
+check( 'X vídeo: tweet com o media_id', array( 'XM' ), json_decode( $r[6]['args']['body'], true )['media']['media_ids'] );
+check( 'X vídeo: link', 'https://x.com/marca/status/1001', $res['remote_url'] ?? null );
+
+// Pinterest: registra mídia → envia → succeeded → pin com video_id.
+$GLOBALS['pflow_test_requests'] = array();
+respond( 201, array( 'media_id' => 'PM', 'upload_url' => 'https://s3/up', 'upload_parameters' => array( 'key' => 'k1', 'policy' => 'p' ) ) );
+respond( 204, '' );
+respond( 200, array( 'status' => 'succeeded' ) );
+respond( 201, array( 'id' => '900' ) );
+$res = ( new PFlow_Provider_Pinterest() )->publish( array( 'external_id' => 'B', 'access_token' => 'P' ), $vpost );
+$r   = $GLOBALS['pflow_test_requests'];
+check( 'Pinterest vídeo: envia os campos do S3', true, false !== strpos( $r[1]['args']['body'], 'name="key"' ) && false !== strpos( $r[1]['args']['body'], 'name="file"' ) );
+check( 'Pinterest vídeo: pin com video_id', array( 'video_id', 'PM' ), array( json_decode( $r[3]['args']['body'], true )['media_source']['source_type'], json_decode( $r[3]['args']['body'], true )['media_source']['media_id'] ) );
+check( 'Pinterest vídeo: link', 'https://www.pinterest.com/pin/900/', $res['remote_url'] ?? null );
+
+// WhatsApp por QR: Status e grupo com vídeo.
+$GLOBALS['pflow_test_options']['pflow_settings'] = array( 'evolution_url' => 'https://evo.test/', 'evolution_api_key' => PFlow_Crypto::encrypt( 'KEY' ) );
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'instance' => array( 'state' => 'open' ) ) );
+respond( 201, array( 'key' => array( 'id' => 'SV' ) ) );
+$evo->publish( $channel, $vpost );
+$body = json_decode( $GLOBALS['pflow_test_requests'][1]['args']['body'], true );
+check( 'WhatsApp QR: Status com vídeo', array( 'video', 'https://ex.com/v.mp4', 'Novo vídeo!' ), array( $body['type'], $body['content'], $body['caption'] ) );
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'instance' => array( 'state' => 'open' ) ) );
+respond( 201, array( 'key' => array( 'id' => 'GV' ) ) );
+$evo->publish( $group, $vpost );
+$body = json_decode( $GLOBALS['pflow_test_requests'][1]['args']['body'], true );
+check( 'WhatsApp QR: grupo com vídeo', array( 'video', 'video/mp4' ), array( $body['mediatype'], $body['mimetype'] ) );
+
+// WhatsApp oficial: cabeçalho de vídeo.
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, array( 'messages' => array( array( 'id' => 'w' ) ) ) );
+respond( 200, array( 'messages' => array( array( 'id' => 'w' ) ) ) );
+$wa->publish( array( 'external_id' => '1234', 'access_token' => 'T', 'meta' => array( 'header_image' => true ) + $acc['meta'] ), $vpost );
+$msg = json_decode( $GLOBALS['pflow_test_requests'][0]['args']['body'], true );
+check( 'WhatsApp oficial: cabeçalho de vídeo', array( 'type' => 'video', 'video' => array( 'link' => 'https://ex.com/v.mp4' ) ), $msg['template']['components'][0]['parameters'][0] );
+
+echo "Google Drive\n";
+check( 'ID do link /file/d/', '1AbCdEfGhIjKlMnOp', PFlow_Drive::file_id( 'https://drive.google.com/file/d/1AbCdEfGhIjKlMnOp/view?usp=sharing' ) );
+check( 'ID do link open?id=', '1AbCdEfGhIjKlMnOp', PFlow_Drive::file_id( 'https://drive.google.com/open?id=1AbCdEfGhIjKlMnOp' ) );
+check( 'link que não é do Drive', '', PFlow_Drive::file_id( 'https://dropbox.com/s/1AbCdEfGhIjKlMnOp' ) );
+check( 'URL de download direto', 'https://drive.usercontent.google.com/download?id=1AbCdEfGhIjKlMnOp&export=download&confirm=t', PFlow_Drive::download_url( '1AbCdEfGhIjKlMnOp' ) );
+respond( 206, "\x00\x00\x00\x18ftypmp42" . str_repeat( 'x', 100 ), array( 'Content-Type' => 'video/mp4', 'Content-Range' => 'bytes 0-1023/52428800' ) );
+check( 'probe: vídeo público com tamanho', array( 'bytes' => 52428800, 'mime' => 'video/mp4' ), PFlow_Drive::probe( 'https://drive.google.com/file/d/1AbCdEfGhIjKlMnOp/view' ) );
+check( 'probe: pede só os primeiros bytes', 'bytes=0-1023', end( $GLOBALS['pflow_test_requests'] )['args']['headers']['Range'] ?? '' );
+respond( 200, '<!DOCTYPE html><html><body>Fazer login</body></html>', array( 'Content-Type' => 'text/html; charset=utf-8' ) );
+$p = PFlow_Drive::probe( 'https://drive.google.com/file/d/1AbCdEfGhIjKlMnOp/view' );
+check( 'probe: arquivo privado pede compartilhamento', true, is_wp_error( $p ) && false !== strpos( $p->get_error_message(), 'Qualquer pessoa com o link' ) );
+respond( 206, '%PDF-1.7 ....', array( 'Content-Type' => 'application/pdf', 'Content-Range' => 'bytes 0-1023/2000' ) );
+check( 'probe: arquivo que não é vídeo', true, is_wp_error( PFlow_Drive::probe( 'https://drive.google.com/file/d/1AbCdEfGhIjKlMnOp/view' ) ) );
+respond( 206, "\x00\x00\x00\x18ftypmp42", array( 'Content-Type' => 'video/mp4', 'Content-Range' => 'bytes 0-1023/' . ( 900 * 1048576 ) ) );
+check( 'probe: vídeo grande demais', true, is_wp_error( PFlow_Drive::probe( 'https://drive.google.com/file/d/1AbCdEfGhIjKlMnOp/view' ) ) );
+@unlink( $vpath );
+
+echo "\n{$count} verificações, {$failures} falha(s).\n";
+exit( $failures ? 1 : 0 );

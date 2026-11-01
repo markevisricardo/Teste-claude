@@ -1,0 +1,235 @@
+/*
+ * Fonte do CSS do painel. Gere o arquivo final com:  npm run build:postflow
+ * (o resultado vai para assets/app.css, que é o que o WordPress carrega).
+ */
+
+/* Com o preflight desligado, "base" gera só as variáveis --tw-* usadas por ring/shadow/transform. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------
+ * Fundo escuro no wp-admin, só nas telas do plugin (body.pflow-dark).
+ * ------------------------------------------------------------------- */
+
+html.wp-toolbar:has(body.pflow-dark),
+body.pflow-dark {
+	background: #000;
+}
+
+body.pflow-dark #wpcontent,
+body.pflow-dark #wpbody,
+body.pflow-dark #wpbody-content {
+	background: transparent;
+}
+
+body.pflow-dark #wpfooter,
+body.pflow-dark #wpfooter a {
+	color: #525252;
+}
+
+/* Avisos de outros plugins e do WordPress dentro das nossas telas. */
+body.pflow-dark .notice,
+body.pflow-dark div.updated,
+body.pflow-dark div.error {
+	background: #0a0a0a;
+	color: #e5e5e5;
+	border: 1px solid #262626;
+	border-left: 4px solid #8b5cf6;
+	border-radius: 12px;
+	box-shadow: none;
+	margin: 0 0 16px;
+}
+
+body.pflow-dark .notice-error,
+body.pflow-dark div.error {
+	border-left-color: #ef4444;
+}
+
+body.pflow-dark .notice a {
+	color: #a78bfa;
+}
+
+body.pflow-dark .notice-dismiss::before {
+	color: #737373;
+}
+
+/* Painel em tela cheia no front-end (templates/app.php). */
+html:has(> body.pflow-screen),
+body.pflow-screen {
+	background: #000;
+	margin: 0;
+	min-height: 100%;
+}
+
+/* ---------------------------------------------------------------------
+ * "Reset" escopado (o preflight está desligado para não afetar o wp-admin).
+ * ------------------------------------------------------------------- */
+
+.pflow-app {
+	color: #fff;
+	font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+.pflow-app h1,
+.pflow-app h2,
+.pflow-app h3,
+.pflow-app p,
+.pflow-app ul,
+.pflow-app ol,
+.pflow-app li,
+.pflow-app figure {
+	margin: 0;
+	padding: 0;
+	color: inherit;
+}
+
+.pflow-app *,
+.pflow-app *::before,
+.pflow-app *::after {
+	box-sizing: border-box;
+}
+
+.pflow-app a {
+	text-decoration: none;
+}
+
+/* Botões e campos herdam a fonte (o tema pode definir outra). */
+.pflow-app button,
+.pflow-app input,
+.pflow-app select,
+.pflow-app textarea {
+	font-family: inherit;
+	letter-spacing: normal;
+	text-transform: none;
+}
+
+/* Elementos escondidos via atributo hidden (vence display das utilities). */
+.pflow-app [hidden] {
+	display: none !important;
+}
+
+.pflow-app a:focus {
+	box-shadow: none;
+	outline: 2px solid #8b5cf6;
+	outline-offset: 2px;
+}
+
+.pflow-app code {
+	background: #171717;
+	color: #ddd6fe;
+	border-radius: 6px;
+	padding: 2px 6px;
+	font-size: 12px;
+}
+
+.pflow-app input[type="text"],
+.pflow-app input[type="url"],
+.pflow-app input[type="email"],
+.pflow-app input[type="search"],
+.pflow-app input[type="password"],
+.pflow-app input[type="number"],
+.pflow-app textarea,
+.pflow-app select {
+	box-shadow: none;
+	min-height: 40px;
+	max-width: none;
+}
+
+.pflow-app input:focus,
+.pflow-app textarea:focus,
+.pflow-app select:focus {
+	border-color: #8b5cf6;
+	box-shadow: 0 0 0 1px #8b5cf6;
+	outline: none;
+}
+
+.pflow-app select {
+	-webkit-appearance: none;
+	appearance: none;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='%23a3a3a3'%3E%3Cpath d='M5.5 7.5 10 12l4.5-4.5'/%3E%3C/svg%3E");
+	background-position: right 10px center;
+	background-repeat: no-repeat;
+	background-size: 16px;
+	padding-right: 36px;
+}
+
+.pflow-app ::placeholder {
+	color: #525252;
+	opacity: 1;
+}
+
+/* Paginação gerada pelo paginate_links(). */
+.pflow-app .page-numbers {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 36px;
+	height: 36px;
+	padding: 0 10px;
+	margin-right: 4px;
+	border: 1px solid #262626;
+	border-radius: 8px;
+	color: #d4d4d4;
+	font-size: 13px;
+}
+
+.pflow-app a.page-numbers:hover {
+	border-color: #8b5cf6;
+	color: #fff;
+}
+
+.pflow-app .page-numbers.current {
+	background: #7c3aed;
+	border-color: #7c3aed;
+	color: #fff;
+}
+
+/* ---------------------------------------------------------------------
+ * Fundo com brilho azul e grade de pontos (painel e telas do wp-admin).
+ * ------------------------------------------------------------------- */
+
+.pflow-app .pflow-bg,
+body.pflow-dark #wpwrap {
+	background-color: #000;
+	background-image:
+		radial-gradient(ellipse 70% 45% at 50% -5%, rgba(124, 58, 237, 0.30), transparent 70%),
+		radial-gradient(ellipse 40% 35% at 100% 100%, rgba(79, 70, 229, 0.18), transparent 70%),
+		radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.07) 1px, transparent 0);
+	background-size: 100% 100%, 100% 100%, 24px 24px;
+	background-attachment: fixed;
+}
+
+/* Cabeçalho azul: brilho e textura por cima do gradiente. */
+.pflow-app .pflow-hero::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-image:
+		radial-gradient(circle at 85% -20%, rgba(255, 255, 255, 0.25), transparent 45%),
+		radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.12) 1px, transparent 0);
+	background-size: 100% 100%, 18px 18px;
+	pointer-events: none;
+}
+
+/* Botões dentro do cabeçalho azul: o primário fica branco. */
+.pflow-app .pflow-hero .bg-violet-600 {
+	background-color: #fff;
+	color: #6d28d9;
+	box-shadow: 0 10px 15px -3px rgba(46, 16, 101, 0.35);
+}
+
+.pflow-app .pflow-hero .bg-violet-600:hover {
+	background-color: #f5f3ff;
+	color: #5b21b6;
+}
+
+.pflow-app .pflow-hero .border-neutral-700 {
+	border-color: rgba(255, 255, 255, 0.4);
+}
+
+.pflow-app .pflow-hero .border-neutral-700:hover {
+	border-color: #fff;
+	color: #fff;
+}
