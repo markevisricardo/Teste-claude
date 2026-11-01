@@ -34,7 +34,7 @@ $pflow_wa_key  = $wa ? (string) $wa['id'] : 'new';
 	<label class="flex cursor-pointer items-center gap-3">
 		<input type="checkbox" name="header_image" value="1" class="peer sr-only" <?php checked( ! empty( $pflow_wa_meta['header_image'] ) ); ?>>
 		<span class="<?php echo esc_attr( PFlow_App::TOGGLE ); ?>"></span>
-		<span class="text-sm text-white"><?php esc_html_e( 'O modelo tem imagem no cabeçalho (usa a 1ª imagem do post)', 'post-flow' ); ?></span>
+		<span class="text-sm text-white"><?php esc_html_e( 'O modelo tem mídia no cabeçalho (usa o vídeo ou a 1ª imagem do post; o tipo precisa ser o mesmo do modelo)', 'post-flow' ); ?></span>
 	</label>
 	<div>
 		<label for="pflow-wa-to-<?php echo esc_attr( $pflow_wa_key ); ?>" class="<?php echo esc_attr( PFlow_App::LABEL ); ?>"><?php esc_html_e( 'Contatos que autorizaram receber', 'post-flow' ); ?></label>

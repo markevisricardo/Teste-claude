@@ -121,6 +121,14 @@ class PFlow_Provider_LinkedIn extends PFlow_Provider {
 		$token  = $channel['access_token'];
 		$author = 'urn:li:person:' . $channel['external_id'];
 
+		$video_urn = '';
+		if ( self::video( $post ) ) {
+			$video_urn = $this->upload_video( $token, $author, self::video( $post ) );
+			if ( is_wp_error( $video_urn ) ) {
+				return $video_urn;
+			}
+		}
+
 		$images = array();
 		foreach ( $post['media'] as $item ) {
 			$image = $this->upload_image( $token, $author, $item );
@@ -142,7 +150,9 @@ class PFlow_Provider_LinkedIn extends PFlow_Provider {
 			'lifecycleState'            => 'PUBLISHED',
 			'isReshareDisabledByAuthor' => false,
 		);
-		if ( 1 === count( $images ) ) {
+		if ( '' !== $video_urn ) {
+			$body['content'] = array( 'media' => array( 'id' => $video_urn ) );
+		} elseif ( 1 === count( $images ) ) {
 			$body['content'] = array( 'media' => array( 'id' => $images[0] ) );
 		} elseif ( count( $images ) > 1 ) {
 			$body['content'] = array(
@@ -205,6 +215,91 @@ class PFlow_Provider_LinkedIn extends PFlow_Provider {
 			)
 		);
 		return is_wp_error( $put ) ? $put : $urn;
+	}
+
+	/**
+	 * Envia um vídeo em partes (initializeUpload → PUT de cada parte →
+	 * finalizeUpload) e espera o LinkedIn processar.
+	 *
+	 * @return string|WP_Error URN do vídeo (urn:li:video:...).
+	 */
+	private function upload_video( $token, $author, array $video ) {
+		$size = $video['bytes'] ? (int) $video['bytes'] : ( is_readable( $video['path'] ) ? (int) filesize( $video['path'] ) : 0 );
+		$init = PFlow_Http::request(
+			'POST',
+			self::API . 'videos?action=initializeUpload',
+			array(
+				'headers' => self::headers( $token ),
+				'json'    => array(
+					'initializeUploadRequest' => array(
+						'owner'           => $author,
+						'fileSizeBytes'   => $size,
+						'uploadCaptions'  => false,
+						'uploadThumbnail' => false,
+					),
+				),
+			)
+		);
+		if ( is_wp_error( $init ) ) {
+			return $init;
+		}
+		$value = (array) ( $init['body']['value'] ?? array() );
+		$urn   = (string) ( $value['video'] ?? '' );
+		if ( '' === $urn || empty( $value['uploadInstructions'] ) ) {
+			return new WP_Error( 'pflow_linkedin_video', __( 'O LinkedIn não aceitou o envio do vídeo.', 'post-flow' ) );
+		}
+
+		$etags = array();
+		foreach ( (array) $value['uploadInstructions'] as $part ) {
+			$first = (int) $part['firstByte'];
+			$bytes = self::read_chunk( $video['path'], $first, (int) $part['lastByte'] - $first + 1 );
+			if ( false === $bytes ) {
+				return new WP_Error( 'pflow_linkedin_video', __( 'Vídeo não encontrado no servidor.', 'post-flow' ) );
+			}
+			$put = PFlow_Http::request(
+				'PUT',
+				(string) $part['uploadUrl'],
+				array(
+					'headers' => array( 'Content-Type' => 'application/octet-stream' ),
+					'body'    => $bytes,
+					'timeout' => 300,
+				)
+			);
+			if ( is_wp_error( $put ) ) {
+				return $put;
+			}
+			$etags[] = trim( (string) ( $put['headers']['etag'] ?? '' ), '"' );
+		}
+
+		$final = PFlow_Http::request(
+			'POST',
+			self::API . 'videos?action=finalizeUpload',
+			array(
+				'headers' => self::headers( $token ),
+				'json'    => array(
+					'finalizeUploadRequest' => array(
+						'video'           => $urn,
+						'uploadToken'     => (string) ( $value['uploadToken'] ?? '' ),
+						'uploadedPartIds' => $etags,
+					),
+				),
+			)
+		);
+		if ( is_wp_error( $final ) ) {
+			return $final;
+		}
+
+		$ready = self::wait_video(
+			static function () use ( $token, $urn ) {
+				$res = PFlow_Http::request( 'GET', self::API . 'videos/' . rawurlencode( $urn ), array( 'headers' => self::headers( $token ) ) );
+				if ( is_wp_error( $res ) ) {
+					return $res;
+				}
+				$status = (string) ( $res['body']['status'] ?? '' );
+				return 'AVAILABLE' === $status ? 'ready' : ( 'PROCESSING_FAILED' === $status ? 'error' : 'wait' );
+			}
+		);
+		return is_wp_error( $ready ) ? $ready : $urn;
 	}
 
 	/**

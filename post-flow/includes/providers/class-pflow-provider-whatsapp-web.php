@@ -184,14 +184,16 @@ class PFlow_Provider_WhatsApp_Web extends PFlow_Provider {
 			return new WP_Error( 'pflow_wa_web', __( 'O WhatsApp está desconectado. Em Canais, clique em "Gerar QR Code" e leia com o celular.', 'post-flow' ), array( 'status' => 401 ) );
 		}
 
-		$image = $post['media'] ? $post['media'][0] : null;
+		$video = self::video( $post );
+		$image = $video ? $video : ( $post['media'] ? $post['media'][0] : null ); // A mídia do post (vídeo ou 1ª imagem).
+		$kind  = $video ? 'video' : 'image';
 		$to    = $channel['external_id'];
 		$path  = rawurlencode( $instance );
 
 		if ( self::STATUS_JID === $to ) {
 			$body = $image
 				? array(
-					'type'        => 'image',
+					'type'        => $kind,
 					'content'     => $image['url'],
 					'caption'     => $post['text'],
 					'allContacts' => true,
@@ -210,11 +212,11 @@ class PFlow_Provider_WhatsApp_Web extends PFlow_Provider {
 				'message/sendMedia/' . $path,
 				array(
 					'number'    => $to,
-					'mediatype' => 'image',
+					'mediatype' => $kind,
 					'mimetype'  => $image['mime'],
 					'caption'   => $post['text'],
 					'media'     => $image['url'],
-					'fileName'  => basename( $image['path'] ? $image['path'] : 'imagem.jpg' ),
+					'fileName'  => basename( $image['path'] ? $image['path'] : ( $video ? 'video.mp4' : 'imagem.jpg' ) ),
 				)
 			);
 		} else {

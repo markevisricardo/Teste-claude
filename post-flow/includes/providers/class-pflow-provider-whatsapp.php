@@ -134,12 +134,15 @@ class PFlow_Provider_WhatsApp extends PFlow_Provider {
 
 		$components = array();
 		if ( ! empty( $meta['header_image'] ) ) {
-			if ( ! $post['media'] ) {
-				return new WP_Error( 'pflow_whatsapp', __( 'O modelo do WhatsApp tem imagem no cabeçalho: adicione uma imagem ao post.', 'post-flow' ) );
+			// Cabeçalho de mídia: o modelo precisa ter cabeçalho do mesmo tipo (imagem ou vídeo).
+			$video = self::video( $post );
+			if ( ! $post['media'] && ! $video ) {
+				return new WP_Error( 'pflow_whatsapp', __( 'O modelo do WhatsApp tem mídia no cabeçalho: adicione uma imagem ou um vídeo ao post.', 'post-flow' ) );
 			}
+			$kind         = $video ? 'video' : 'image';
 			$components[] = array(
 				'type'       => 'header',
-				'parameters' => array( array( 'type' => 'image', 'image' => array( 'link' => $post['media'][0]['url'] ) ) ),
+				'parameters' => array( array( 'type' => $kind, $kind => array( 'link' => $video ? $video['url'] : $post['media'][0]['url'] ) ) ),
 			);
 		}
 		$components[] = array(

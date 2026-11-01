@@ -121,6 +121,13 @@ class PFlow_Provider_X extends PFlow_Provider {
 		$body  = array( 'text' => $post['text'] );
 
 		$media_ids = array();
+		if ( self::video( $post ) ) {
+			$id = $this->upload_video( $token, self::video( $post ) );
+			if ( is_wp_error( $id ) ) {
+				return $id;
+			}
+			$media_ids[] = $id;
+		}
 		foreach ( $post['media'] as $item ) {
 			$id = $this->upload( $token, $item );
 			if ( is_wp_error( $id ) ) {
@@ -184,6 +191,85 @@ class PFlow_Provider_X extends PFlow_Provider {
 		}
 		$id = (string) ( $res['body']['data']['id'] ?? $res['body']['media_id_string'] ?? '' );
 		return '' !== $id ? $id : new WP_Error( 'pflow_x_upload', __( 'O X não devolveu o ID da imagem.', 'post-flow' ) );
+	}
+
+	/**
+	 * Envio de vídeo em partes: initialize → append (4 MB por vez) →
+	 * finalize → espera o processamento.
+	 *
+	 * @return string|WP_Error media_id.
+	 */
+	private function upload_video( $token, array $video ) {
+		$auth = array( 'Authorization' => 'Bearer ' . $token );
+		$size = $video['bytes'] ? (int) $video['bytes'] : ( is_readable( $video['path'] ) ? (int) filesize( $video['path'] ) : 0 );
+
+		$init = PFlow_Http::request(
+			'POST',
+			self::API . 'media/upload/initialize',
+			array(
+				'headers' => $auth,
+				'json'    => array(
+					'media_type'     => $video['mime'],
+					'total_bytes'    => $size,
+					'media_category' => 'tweet_video',
+				),
+			)
+		);
+		if ( is_wp_error( $init ) ) {
+			return $init;
+		}
+		$id = (string) ( $init['body']['data']['id'] ?? '' );
+		if ( '' === $id ) {
+			return new WP_Error( 'pflow_x_video', __( 'O X não aceitou o envio do vídeo.', 'post-flow' ) );
+		}
+
+		$chunk = 4 * 1024 * 1024;
+		for ( $offset = 0, $segment = 0; $offset < $size; $offset += $chunk, $segment++ ) {
+			$bytes = self::read_chunk( $video['path'], $offset, $chunk );
+			if ( false === $bytes ) {
+				return new WP_Error( 'pflow_x_video', __( 'Vídeo não encontrado no servidor.', 'post-flow' ) );
+			}
+			$boundary = 'pflow' . wp_generate_password( 24, false );
+			$append   = PFlow_Http::request(
+				'POST',
+				self::API . 'media/upload/' . rawurlencode( $id ) . '/append',
+				array(
+					'headers' => $auth + array( 'Content-Type' => 'multipart/form-data; boundary=' . $boundary ),
+					'body'    => self::multipart( $boundary, array( 'segment_index' => (string) $segment ), 'media', 'video.mp4', 'application/octet-stream', $bytes ),
+					'timeout' => 120,
+				)
+			);
+			if ( is_wp_error( $append ) ) {
+				return $append;
+			}
+		}
+
+		$final = PFlow_Http::request( 'POST', self::API . 'media/upload/' . rawurlencode( $id ) . '/finalize', array( 'headers' => $auth ) );
+		if ( is_wp_error( $final ) ) {
+			return $final;
+		}
+		if ( empty( $final['body']['data']['processing_info'] ) ) {
+			return $id; // Já processado.
+		}
+
+		$ready = self::wait_video(
+			static function () use ( $auth, $id ) {
+				$res = PFlow_Http::request(
+					'GET',
+					self::API . 'media/upload',
+					array(
+						'headers' => $auth,
+						'query'   => array( 'command' => 'STATUS', 'media_id' => $id ),
+					)
+				);
+				if ( is_wp_error( $res ) ) {
+					return $res;
+				}
+				$state = (string) ( $res['body']['data']['processing_info']['state'] ?? 'succeeded' );
+				return 'succeeded' === $state ? 'ready' : ( 'failed' === $state ? 'error' : 'wait' );
+			}
+		);
+		return is_wp_error( $ready ) ? $ready : $id;
 	}
 
 	public static function multipart( $boundary, array $fields, $file_field, $filename, $mime, $bytes ) {

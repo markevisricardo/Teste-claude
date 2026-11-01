@@ -63,8 +63,9 @@ $pflow_tones    = array(
 										<?php endforeach; ?>
 									</span>
 								</span>
-								<?php if ( $pflow_post['media_ids'] ) : ?>
-									<img src="<?php echo esc_url( PFlow_Media::thumb( $pflow_post['media_ids'][0] ) ); ?>" alt="" class="mt-2 h-16 w-full rounded-lg object-cover" loading="lazy">
+								<?php $pflow_thumbs = PFlow_App::display_media( $pflow_post ); ?>
+								<?php if ( $pflow_thumbs ) : ?>
+									<span class="mt-2 block"><?php echo PFlow_App::media_thumb( $pflow_thumbs[0], 'h-16 w-full' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
 								<?php endif; ?>
 								<span class="mt-1.5 block break-words text-xs leading-5 text-neutral-300"><?php echo esc_html( PFlow_App::excerpt( $pflow_post['content'], 70 ) ); ?></span>
 							</a>

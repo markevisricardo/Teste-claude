@@ -19,6 +19,32 @@ class PFlow_Publisher {
 		add_filter( 'cron_schedules', array( __CLASS__, 'cron_schedules' ) ); // phpcs:ignore WordPress.WP.CronInterval
 		add_action( self::HOOK, array( __CLASS__, 'run' ) );
 		add_action( self::DAILY_HOOK, array( __CLASS__, 'daily' ) );
+		PFlow_Drive::init();
+	}
+
+	/**
+	 * O post tem vídeo? Vídeos levam minutos para processar nas redes, então
+	 * "Publicar agora" deixa o envio para o publicador, em segundo plano.
+	 */
+	public static function has_video( array $post ) {
+		if ( '' !== (string) ( $post['video_url'] ?? '' ) ) {
+			return true;
+		}
+		foreach ( $post['media_ids'] as $id ) {
+			if ( PFlow_Media::is_video( $id ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Dispara o publicador agora, sem esperar o próximo minuto.
+	 */
+	public static function kick() {
+		if ( function_exists( 'spawn_cron' ) ) {
+			spawn_cron();
+		}
 	}
 
 	public static function cron_schedules( $schedules ) {
@@ -108,10 +134,24 @@ class PFlow_Publisher {
 			return $channel;
 		}
 
-		$media = PFlow_Media::for_publish( $post['media_ids'] );
-		$text  = PFlow_Networks::compose_text( $channel['network'], $post['content'], $post['link'], count( $media ) );
+		// Vídeo do Google Drive: baixa para a biblioteca antes do primeiro envio.
+		$downloaded = PFlow_Drive::ensure( $post );
+		if ( is_wp_error( $downloaded ) ) {
+			return $downloaded;
+		}
+		if ( $downloaded ) {
+			$post['media_ids'] = array( $downloaded );
+		}
 
-		$problems = PFlow_Networks::validate( $channel['network'], $text, count( $media ) );
+		$split = PFlow_Media::split( PFlow_Media::for_publish( $post['media_ids'] ) );
+		$video = $split['video'];
+		if ( $video && function_exists( 'set_time_limit' ) ) {
+			@set_time_limit( 900 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors -- vídeos levam minutos para processar.
+		}
+		$count = count( $split['images'] ) + ( $video ? 1 : 0 );
+		$text  = PFlow_Networks::compose_text( $channel['network'], $post['content'], $post['link'], $count );
+
+		$problems = PFlow_Networks::validate( $channel['network'], $text, count( $split['images'] ), $video ? array( 'bytes' => $video['bytes'] ) : null );
 		if ( $problems ) {
 			return new WP_Error( 'pflow_invalid', implode( ' ', $problems ) );
 		}
@@ -121,7 +161,8 @@ class PFlow_Publisher {
 			array(
 				'text'  => $text,
 				'link'  => (string) $post['link'],
-				'media' => $media,
+				'media' => $split['images'],
+				'video' => $video,
 			)
 		);
 	}

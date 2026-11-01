@@ -144,6 +144,27 @@ class PFlow_Provider_Meta extends PFlow_Provider {
 		$page  = $channel['external_id'];
 		$token = $channel['access_token'];
 		$media = $post['media'];
+		$video = self::video( $post );
+
+		if ( $video ) {
+			// Vídeo: a Meta baixa o arquivo da URL pública e processa em segundo plano.
+			$res = PFlow_Http::request(
+				'POST',
+				'https://graph-video.facebook.com/' . PFLOW_GRAPH_VERSION . '/' . $page . '/videos',
+				array(
+					'form'    => array( 'file_url' => $video['url'], 'description' => $post['text'], 'access_token' => $token ),
+					'timeout' => 120,
+				)
+			);
+			if ( is_wp_error( $res ) ) {
+				return $res;
+			}
+			$id = (string) $res['body']['id'];
+			return array(
+				'remote_id'  => $id,
+				'remote_url' => 'https://www.facebook.com/watch/?v=' . rawurlencode( $id ),
+			);
+		}
 
 		if ( ! $media ) {
 			$form = array( 'message' => $post['text'], 'access_token' => $token );
@@ -204,12 +225,25 @@ class PFlow_Provider_Meta extends PFlow_Provider {
 		$ig    = $channel['external_id'];
 		$token = $channel['access_token'];
 		$media = $post['media'];
+		$video = self::video( $post );
 
-		if ( ! $media ) {
-			return new WP_Error( 'pflow_ig_media', __( 'O Instagram exige ao menos uma imagem.', 'post-flow' ) );
+		if ( ! $media && ! $video ) {
+			return new WP_Error( 'pflow_ig_media', __( 'O Instagram exige uma imagem ou um vídeo.', 'post-flow' ) );
 		}
 
-		if ( 1 === count( $media ) ) {
+		if ( $video ) {
+			// Vídeos saem como Reels (e também aparecem no feed).
+			$container = $this->ig_container(
+				$ig,
+				$token,
+				array(
+					'media_type'    => 'REELS',
+					'video_url'     => $video['url'],
+					'caption'       => $post['text'],
+					'share_to_feed' => 'true',
+				)
+			);
+		} elseif ( 1 === count( $media ) ) {
 			$container = $this->ig_container( $ig, $token, array( 'image_url' => $media[0]['url'], 'caption' => $post['text'] ) );
 		} else {
 			$children = array();
@@ -234,16 +268,15 @@ class PFlow_Provider_Meta extends PFlow_Provider {
 			return $container;
 		}
 
-		$ready = self::wait_until_ready(
-			static function () use ( $container, $token ) {
-				$res = PFlow_Http::request( 'GET', self::graph( $container ), array( 'query' => array( 'fields' => 'status_code', 'access_token' => $token ) ) );
-				if ( is_wp_error( $res ) ) {
-					return $res;
-				}
-				$code = (string) ( $res['body']['status_code'] ?? '' );
-				return 'FINISHED' === $code ? 'ready' : ( in_array( $code, array( 'ERROR', 'EXPIRED' ), true ) ? 'error' : 'wait' );
+		$check = static function () use ( $container, $token ) {
+			$res = PFlow_Http::request( 'GET', self::graph( $container ), array( 'query' => array( 'fields' => 'status_code', 'access_token' => $token ) ) );
+			if ( is_wp_error( $res ) ) {
+				return $res;
 			}
-		);
+			$code = (string) ( $res['body']['status_code'] ?? '' );
+			return 'FINISHED' === $code ? 'ready' : ( in_array( $code, array( 'ERROR', 'EXPIRED' ), true ) ? 'error' : 'wait' );
+		};
+		$ready = $video ? self::wait_video( $check ) : self::wait_until_ready( $check );
 		if ( is_wp_error( $ready ) ) {
 			return $ready;
 		}

@@ -15,7 +15,7 @@ O que o plugin faz:
 | Pasta | O que é |
 |---|---|
 | [`comment-flow/`](comment-flow/) | O plugin ([README](comment-flow/README.md)) |
-| [`post-flow/`](post-flow/) | **Post Flow**: plataforma multiusuário para agendar posts no Facebook, Instagram, LinkedIn, X, Threads, Google Meu Negócio, Pinterest e WhatsApp ([README](post-flow/README.md)) |
+| [`post-flow/`](post-flow/) | **Post Flow**: plataforma multiusuário para agendar posts com imagem ou vídeo (inclusive por link do Google Drive) no Facebook, Instagram, LinkedIn, X, Threads, Google Meu Negócio, Pinterest e WhatsApp ([README](post-flow/README.md)) |
 
 ## Post Flow
 
@@ -31,9 +31,9 @@ Cada pessoa se cadastra, conecta os próprios canais e agenda posts por fila de 
 |---|---|
 | ![Calendário](docs/screenshots/post-flow/calendar.png) | ![Canais](docs/screenshots/post-flow/channels.png) |
 
-| WhatsApp por QR Code (grátis) | |
+| WhatsApp por QR Code (grátis) | Vídeo (arquivo ou Google Drive) |
 |---|---|
-| ![QR Code](docs/screenshots/post-flow/channels-qr.png) | |
+| ![QR Code](docs/screenshots/post-flow/channels-qr.png) | ![Vídeo](docs/screenshots/post-flow/compose-video.png) |
 
 | Publicados | Entrar / criar conta |
 |---|---|

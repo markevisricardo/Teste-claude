@@ -69,6 +69,8 @@ class PFlow_DB {
 				link varchar(2048) NOT NULL DEFAULT '',
 				media_ids varchar(255) NOT NULL DEFAULT '',
 				channel_ids varchar(255) NOT NULL DEFAULT '',
+				video_url varchar(2048) NOT NULL DEFAULT '',
+				video_bytes bigint(20) unsigned NOT NULL DEFAULT 0,
 				status varchar(20) NOT NULL DEFAULT 'draft',
 				in_queue tinyint(1) NOT NULL DEFAULT 0,
 				scheduled_at datetime NULL,

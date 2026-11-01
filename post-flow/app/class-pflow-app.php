@@ -163,6 +163,8 @@ class PFlow_App {
 				'content'      => '',
 				'link'         => '',
 				'media_ids'    => array(),
+				'video_url'    => '',
+				'video_bytes'  => 0,
 				'status'       => 'draft',
 				'in_queue'     => 0,
 				'scheduled_at' => null,
@@ -356,19 +358,57 @@ class PFlow_App {
 		$mine     = self::channels_by_id();
 		$channels = array_values( array_intersect( array_map( 'absint', (array) ( $_POST['channels'] ?? array() ) ), array_keys( $mine ) ) );
 
-		// Imagens: as que ficaram + as novas.
-		$keep   = PFlow_Media::owned( array_map( 'absint', (array) ( $_POST['keep_media'] ?? array() ) ) );
-		$upload = PFlow_Media::handle_uploads( 'media' );
-		$media  = array_slice( array_merge( $keep, $upload['ids'] ), 0, 10 );
+		// Mídia: as que ficaram + as enviadas agora (imagens e/ou um vídeo) + link do Drive.
+		$keep    = PFlow_Media::owned( array_map( 'absint', (array) ( $_POST['keep_media'] ?? array() ) ) );
+		$upload  = PFlow_Media::handle_uploads( 'media' );
+		$up_vid  = PFlow_Media::handle_uploads( 'video' );
+		$all     = array_merge( $keep, $upload['ids'], $up_vid['ids'] );
+		$videos  = array_values( array_filter( $all, array( 'PFlow_Media', 'is_video' ) ) );
+		$images  = array_slice( array_values( array_diff( $all, $videos ) ), 0, 10 );
+		$errors  = array_merge( $upload['errors'], $up_vid['errors'] );
+
+		$drive       = trim( (string) wp_unslash( $_POST['video_url'] ?? '' ) );
+		$drive_bytes = 0;
+		if ( '' !== $drive && $videos ) {
+			$errors[] = __( 'Escolha um só vídeo: o arquivo enviado ou o link do Google Drive.', 'post-flow' );
+			$drive    = '';
+		} elseif ( '' !== $drive ) {
+			$same = $existing && $existing['video_url'] === $drive;
+			if ( $same ) {
+				$drive_bytes = (int) $existing['video_bytes'];
+				$videos      = array_values( array_filter( $existing['media_ids'], array( 'PFlow_Media', 'is_video' ) ) ); // Já baixado antes.
+			} else {
+				$probe = PFlow_Drive::probe( $drive );
+				if ( is_wp_error( $probe ) ) {
+					$errors[] = $probe->get_error_message();
+					$drive    = '';
+				} else {
+					$drive_bytes = (int) $probe['bytes'];
+				}
+			}
+			$drive = '' !== $drive ? esc_url_raw( $drive, array( 'https' ) ) : '';
+		}
+		if ( count( $videos ) > 1 ) {
+			$errors[] = __( 'Use só um vídeo por post.', 'post-flow' );
+			$videos   = array_slice( $videos, 0, 1 );
+		}
+		$has_video = $videos || '' !== $drive;
+		if ( $has_video && $images ) {
+			$errors[] = __( 'Use imagens ou um vídeo no mesmo post, não os dois.', 'post-flow' );
+		}
+
+		$media       = $has_video ? $videos : $images;
+		$video_bytes = $videos ? (int) filesize( (string) get_attached_file( $videos[0] ) ) : $drive_bytes;
+		$video_info  = $has_video ? array( 'bytes' => $video_bytes ) : null;
 
 		$data = array(
-			'content'   => sanitize_textarea_field( wp_unslash( $_POST['content'] ?? '' ) ),
-			'link'      => esc_url_raw( trim( (string) wp_unslash( $_POST['link'] ?? '' ) ), array( 'http', 'https' ) ),
-			'media_ids' => $media,
-			'in_queue'  => 'queue' === $when ? 1 : 0,
+			'content'     => sanitize_textarea_field( wp_unslash( $_POST['content'] ?? '' ) ),
+			'link'        => esc_url_raw( trim( (string) wp_unslash( $_POST['link'] ?? '' ) ), array( 'http', 'https' ) ),
+			'media_ids'   => $media,
+			'video_url'   => $drive,
+			'video_bytes' => $video_bytes,
+			'in_queue'    => 'queue' === $when ? 1 : 0,
 		);
-
-		$errors = $upload['errors'];
 		$due    = '';
 		$tz     = PFlow_Schedule::timezone( PFlow_Tenant::id() );
 
@@ -393,19 +433,20 @@ class PFlow_App {
 			if ( ! $channels ) {
 				$errors[] = __( 'Escolha ao menos um canal.', 'post-flow' );
 			}
+			$media_count = count( $images ) + ( $has_video ? 1 : 0 );
 			foreach ( $channels as $channel_id ) {
 				$network = $mine[ $channel_id ]['network'];
-				$text    = PFlow_Networks::compose_text( $network, $data['content'], $data['link'], count( $media ) );
-				$errors  = array_merge( $errors, PFlow_Networks::validate( $network, $text, count( $media ) ) );
+				$text    = PFlow_Networks::compose_text( $network, $data['content'], $data['link'], $media_count );
+				$errors  = array_merge( $errors, PFlow_Networks::validate( $network, $text, $has_video ? 0 : count( $images ), $video_info ) );
 			}
-		} elseif ( '' === trim( $data['content'] ) && ! $media ) {
+		} elseif ( '' === trim( $data['content'] ) && ! $media && '' === $drive ) {
 			$errors[] = __( 'O rascunho está vazio.', 'post-flow' );
 		}
 
 		$errors = array_values( array_unique( $errors ) );
 		if ( $errors ) {
 			// Nada se perde: guarda como rascunho e volta ao editor.
-			if ( '' !== trim( $data['content'] ) || $media ) {
+			if ( '' !== trim( $data['content'] ) || $media || '' !== $drive ) {
 				$data['in_queue'] = 0;
 				$id               = PFlow_Posts::save( $data, $channels, '', $id );
 				/* translators: %s: lista de problemas */
@@ -419,13 +460,30 @@ class PFlow_App {
 		if ( 'draft' === $when ) {
 			self::redirect( 'queue', 'success', __( 'Rascunho salvo.', 'post-flow' ) );
 		}
+		if ( '' !== $drive && ! $videos ) {
+			PFlow_Drive::schedule_prefetch( $id ); // Baixa o vídeo do Drive em segundo plano.
+		}
 		if ( 'now' === $when ) {
-			PFlow_Publisher::run_post( $id );
-			self::after_publish( $id );
+			self::publish_or_kick( $id );
 		}
 		$local = PFlow_Schedule::to_local( $due, $tz );
 		/* translators: %s: data e hora */
 		self::redirect( 'queue', 'success', sprintf( __( 'Post agendado para %s.', 'post-flow' ), wp_date( 'd/m \à\s H:i', $local->getTimestamp(), $tz ) ) );
+	}
+
+	/**
+	 * "Publicar agora": posts com imagem ou texto saem na hora; vídeos levam
+	 * minutos para processar nas redes, então vão para o publicador, em
+	 * segundo plano, e o usuário acompanha em Publicados.
+	 */
+	private static function publish_or_kick( $id ) {
+		$post = PFlow_Posts::get( $id );
+		if ( $post && PFlow_Publisher::has_video( $post ) ) {
+			PFlow_Publisher::kick();
+			self::redirect( 'queue', 'success', __( 'Vídeo enviado para publicação. Ele sai em alguns minutos, enquanto as redes processam; acompanhe aqui e em Publicados.', 'post-flow' ) );
+		}
+		PFlow_Publisher::run_post( $id );
+		self::after_publish( $id );
 	}
 
 	/**
@@ -452,8 +510,7 @@ class PFlow_App {
 		}
 		$wpdb->query( $wpdb->prepare( 'UPDATE ' . PFlow_DB::targets_table() . " SET due_at = %s WHERE post_id = %d AND status = 'pending'", PFlow_DB::now(), $post['id'] ) ); // phpcs:ignore WordPress.DB
 		$wpdb->update( PFlow_DB::posts_table(), array( 'scheduled_at' => PFlow_DB::now(), 'in_queue' => 0 ), array( 'id' => $post['id'] ) ); // phpcs:ignore WordPress.DB
-		PFlow_Publisher::run_post( $post['id'] );
-		self::after_publish( $post['id'] );
+		self::publish_or_kick( $post['id'] );
 	}
 
 	public static function delete_post() {
@@ -469,8 +526,7 @@ class PFlow_App {
 		if ( ! PFlow_Posts::retry( $id ) ) {
 			self::redirect( 'sent', 'error', __( 'Post não encontrado.', 'post-flow' ) );
 		}
-		PFlow_Publisher::run_post( $id );
-		self::after_publish( $id );
+		self::publish_or_kick( $id );
 	}
 
 	/**
@@ -486,7 +542,9 @@ class PFlow_App {
 			array(
 				'content'   => $post['content'],
 				'link'      => $post['link'],
-				'media_ids' => $post['media_ids'],
+				'media_ids'   => $post['media_ids'],
+				'video_url'   => $post['video_url'],
+				'video_bytes' => $post['video_bytes'],
 				'in_queue'  => 0,
 			),
 			PFlow_Posts::channel_ids( $post ),
@@ -577,6 +635,33 @@ class PFlow_App {
 			'username'   => $target['username'],
 			'avatar_url' => $target['avatar_url'],
 		);
+	}
+
+	/**
+	 * Miniatura de uma mídia (imagem, vídeo ou vídeo ainda no Google Drive).
+	 *
+	 * @param int|string $id    ID do anexo, ou 'drive' para vídeo ainda não baixado.
+	 * @param string     $size  Classes de tamanho (Tailwind).
+	 */
+	public static function media_thumb( $id, $size ) {
+		$play = '<span class="absolute inset-0 flex items-center justify-center"><span class="flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white"><svg class="ml-0.5 h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6 4.5v11l9-5.5-9-5.5Z"/></svg></span></span>';
+		if ( 'drive' === $id ) {
+			return '<span class="relative flex ' . esc_attr( $size ) . ' flex-col items-center justify-center gap-1 rounded-lg bg-gradient-to-br from-neutral-800 to-neutral-900 text-[10px] font-medium text-neutral-300">' . $play . '<span class="absolute bottom-1 left-0 right-0 text-center">' . esc_html__( 'Google Drive', 'post-flow' ) . '</span></span>';
+		}
+		if ( PFlow_Media::is_video( $id ) ) {
+			return '<span class="relative block ' . esc_attr( $size ) . ' overflow-hidden rounded-lg bg-black"><video src="' . esc_url( PFlow_Media::thumb( $id ) ) . '#t=0.5" class="h-full w-full object-cover" muted preload="metadata"></video>' . $play . '</span>';
+		}
+		return '<img src="' . esc_url( PFlow_Media::thumb( $id ) ) . '" alt="" class="' . esc_attr( $size ) . ' rounded-lg object-cover" loading="lazy">';
+	}
+
+	/**
+	 * Mídias para exibir num post (IDs ou 'drive').
+	 */
+	public static function display_media( array $post ) {
+		if ( ! $post['media_ids'] && '' !== (string) ( $post['video_url'] ?? '' ) ) {
+			return array( 'drive' );
+		}
+		return array_slice( $post['media_ids'], 0, 4 );
 	}
 
 	public static function excerpt( $text, $length = 220 ) {

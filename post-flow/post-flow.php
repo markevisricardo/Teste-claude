@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Post Flow – Agendamento de posts em redes sociais
  * Description:       Plataforma multiusuário para agendar e publicar posts no Facebook, Instagram, LinkedIn, X, Threads, Google Meu Negócio, Pinterest e WhatsApp (Status e grupos por QR Code, ou API oficial). Cada usuário se cadastra, conecta os próprios canais e vê só os seus dados. Painel no shortcode [post_flow].
- * Version:           0.3.0
+ * Version:           0.4.0
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Author:            Post Flow
@@ -12,14 +12,18 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PFLOW_VERSION', '0.3.0' );
-define( 'PFLOW_DB_VERSION', '1' );
+define( 'PFLOW_VERSION', '0.4.0' );
+define( 'PFLOW_DB_VERSION', '2' );
 define( 'PFLOW_FILE', __FILE__ );
 define( 'PFLOW_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PFLOW_URL', plugin_dir_url( __FILE__ ) );
 
 if ( ! defined( 'PFLOW_GRAPH_VERSION' ) ) {
 	define( 'PFLOW_GRAPH_VERSION', 'v23.0' );
+}
+if ( ! defined( 'PFLOW_MAX_VIDEO_MB' ) ) {
+	// Tamanho máximo de vídeo aceito pela plataforma (envio ou Google Drive).
+	define( 'PFLOW_MAX_VIDEO_MB', 500 );
 }
 if ( ! defined( 'PFLOW_LINKEDIN_VERSION' ) ) {
 	// Versão da API REST do LinkedIn (AAAAMM). Cada versão vale por cerca de um ano.
@@ -45,6 +49,7 @@ require_once PFLOW_DIR . 'includes/class-pflow-channels.php';
 require_once PFLOW_DIR . 'includes/class-pflow-posts.php';
 require_once PFLOW_DIR . 'includes/class-pflow-schedule.php';
 require_once PFLOW_DIR . 'includes/class-pflow-media.php';
+require_once PFLOW_DIR . 'includes/class-pflow-drive.php';
 require_once PFLOW_DIR . 'includes/class-pflow-publisher.php';
 require_once PFLOW_DIR . 'includes/class-pflow-oauth.php';
 require_once PFLOW_DIR . 'includes/class-pflow-whatsapp-web.php';

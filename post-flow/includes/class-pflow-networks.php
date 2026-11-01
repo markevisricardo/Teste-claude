@@ -12,14 +12,18 @@ class PFlow_Networks {
 	/**
 	 * Tipos de canal.
 	 *
-	 * limit:     máximo de caracteres do texto;
-	 * max_media: máximo de imagens por post;
-	 * needs_media: o post precisa de ao menos uma imagem.
+	 * limit:        máximo de caracteres do texto;
+	 * max_media:    máximo de imagens por post;
+	 * needs_media:  o post precisa de ao menos uma imagem (ou um vídeo);
+	 * video:        a rede aceita vídeo pela API;
+	 * max_video_mb: tamanho máximo do vídeo.
 	 */
 	public static function types() {
 		return array(
 			'facebook'  => array(
 				'label'       => 'Facebook',
+				'video'       => true,
+				'max_video_mb' => 1024,
 				'provider'    => 'meta',
 				'limit'       => 63206,
 				'max_media'   => 10,
@@ -29,6 +33,8 @@ class PFlow_Networks {
 			),
 			'instagram' => array(
 				'label'       => 'Instagram',
+				'video'       => true,
+				'max_video_mb' => 300,
 				'provider'    => 'meta',
 				'limit'       => 2200,
 				'max_media'   => 10,
@@ -38,6 +44,8 @@ class PFlow_Networks {
 			),
 			'linkedin'  => array(
 				'label'       => 'LinkedIn',
+				'video'       => true,
+				'max_video_mb' => 5000,
 				'provider'    => 'linkedin',
 				'limit'       => 3000,
 				'max_media'   => 9,
@@ -47,6 +55,8 @@ class PFlow_Networks {
 			),
 			'x'         => array(
 				'label'       => 'X',
+				'video'       => true,
+				'max_video_mb' => 512,
 				'provider'    => 'x',
 				'limit'       => 280,
 				'max_media'   => 4,
@@ -56,6 +66,8 @@ class PFlow_Networks {
 			),
 			'threads'   => array(
 				'label'       => 'Threads',
+				'video'       => true,
+				'max_video_mb' => 1000,
 				'provider'    => 'threads',
 				'limit'       => 500,
 				'max_media'   => 10,
@@ -65,6 +77,8 @@ class PFlow_Networks {
 			),
 			'google_business' => array(
 				'label'       => 'Google Meu Negócio',
+				'video'       => false,
+				'max_video_mb' => 0,
 				'provider'    => 'google',
 				'limit'       => 1500,
 				'max_media'   => 1,
@@ -76,6 +90,8 @@ class PFlow_Networks {
 			),
 			'pinterest' => array(
 				'label'       => 'Pinterest',
+				'video'       => true,
+				'max_video_mb' => 2000,
 				'provider'    => 'pinterest',
 				'limit'       => 500,
 				'max_media'   => 5,
@@ -86,6 +102,8 @@ class PFlow_Networks {
 			),
 			'whatsapp_web' => array(
 				'label'       => 'WhatsApp',
+				'video'       => true,
+				'max_video_mb' => 64,
 				'provider'    => 'whatsapp_web',
 				'limit'       => 4096,
 				'max_media'   => 1,
@@ -95,6 +113,8 @@ class PFlow_Networks {
 			),
 			'whatsapp'  => array(
 				'label'       => 'WhatsApp (API oficial)',
+				'video'       => true,
+				'max_video_mb' => 16,
 				'provider'    => 'whatsapp',
 				'limit'       => 1000,
 				'max_media'   => 1,
@@ -198,23 +218,34 @@ class PFlow_Networks {
 	/**
 	 * Problemas de um post para um tipo de canal (lista de mensagens).
 	 *
-	 * @param string $network     Tipo de canal.
-	 * @param string $text        Texto final (já com o link, se for o caso).
-	 * @param int    $media_count Número de imagens.
+	 * @param string     $network     Tipo de canal.
+	 * @param string     $text        Texto final (já com o link, se for o caso).
+	 * @param int        $media_count Número de imagens.
+	 * @param array|null $video       array( 'bytes' => int ) se o post tem vídeo.
 	 */
-	public static function validate( $network, $text, $media_count ) {
+	public static function validate( $network, $text, $media_count, $video = null ) {
 		$type   = self::type( $network );
 		$errors = array();
 		if ( ! $type ) {
 			return array( __( 'Rede desconhecida.', 'post-flow' ) );
 		}
+		$has_media = $media_count > 0 || $video;
 		if ( self::text_length( $text ) > $type['limit'] ) {
 			/* translators: 1: rede, 2: limite */
 			$errors[] = sprintf( __( '%1$s aceita até %2$s caracteres.', 'post-flow' ), $type['label'], number_format_i18n( $type['limit'] ) );
 		}
-		if ( $type['needs_media'] && $media_count < 1 ) {
+		if ( $video ) {
+			if ( empty( $type['video'] ) ) {
+				/* translators: %s: rede */
+				$errors[] = sprintf( __( '%s não aceita vídeo pela API.', 'post-flow' ), $type['label'] );
+			} elseif ( ! empty( $video['bytes'] ) && $video['bytes'] > $type['max_video_mb'] * 1024 * 1024 ) {
+				/* translators: 1: rede, 2: tamanho em MB */
+				$errors[] = sprintf( __( '%1$s aceita vídeo de até %2$s MB.', 'post-flow' ), $type['label'], number_format_i18n( $type['max_video_mb'] ) );
+			}
+		}
+		if ( $type['needs_media'] && ! $has_media ) {
 			/* translators: %s: rede */
-			$errors[] = sprintf( __( '%s exige ao menos uma imagem.', 'post-flow' ), $type['label'] );
+			$errors[] = sprintf( __( '%s exige ao menos uma imagem ou um vídeo.', 'post-flow' ), $type['label'] );
 		}
 		if ( $media_count > $type['max_media'] ) {
 			/* translators: 1: rede, 2: máximo */
@@ -223,8 +254,8 @@ class PFlow_Networks {
 		if ( ! empty( $type['needs_text'] ) && '' === trim( (string) $text ) ) {
 			/* translators: %s: rede */
 			$errors[] = sprintf( __( '%s exige um texto.', 'post-flow' ), $type['label'] );
-		} elseif ( '' === trim( (string) $text ) && $media_count < 1 ) {
-			$errors[] = __( 'Escreva um texto ou adicione uma imagem.', 'post-flow' );
+		} elseif ( '' === trim( (string) $text ) && ! $has_media ) {
+			$errors[] = __( 'Escreva um texto ou adicione uma imagem ou um vídeo.', 'post-flow' );
 		}
 		return $errors;
 	}

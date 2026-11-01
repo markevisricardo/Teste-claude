@@ -134,10 +134,10 @@
 		<h1>Post Flow<br>Manual e Tutorial</h1>
 		<p class="sub">Agendamento de posts em redes sociais, multiusuário, num plugin WordPress. Guia completo para quem administra a plataforma e para quem publica.</p>
 		<div class="chips">
-			<span class="chip">Facebook</span><span class="chip">Instagram</span><span class="chip">LinkedIn</span><span class="chip">X</span><span class="chip">Threads</span><span class="chip">Google Meu Negócio</span><span class="chip">Pinterest</span><span class="chip">WhatsApp</span>
+			<span class="chip">Facebook</span><span class="chip">Instagram</span><span class="chip">LinkedIn</span><span class="chip">X</span><span class="chip">Threads</span><span class="chip">Google Meu Negócio</span><span class="chip">Pinterest</span><span class="chip">WhatsApp</span><span class="chip">Vídeo e Google Drive</span>
 		</div>
 	</div>
-	<div class="cover-meta">Versão 0.3.0<br>Outubro de 2026</div>
+	<div class="cover-meta">Versão 0.4.0<br>Novembro de 2026</div>
 	<img class="cover-shot" src="img/queue.png" alt="">
 </section>
 
@@ -153,11 +153,11 @@
 		<div class="grp"><a href="#c3"><span>3</span>Configurar as redes (administrador)</a><ul>
 			<li><a href="#c3-0">Antes de começar</a></li><li><a href="#c3-1">Meta: Facebook e Instagram</a></li><li><a href="#c3-2">LinkedIn</a></li><li><a href="#c3-3">X (Twitter)</a></li><li><a href="#c3-4">Threads</a></li><li><a href="#c3-5">Google Meu Negócio</a></li><li><a href="#c3-6">Pinterest</a></li><li><a href="#c3-7">WhatsApp por QR Code (grátis)</a></li><li><a href="#c3-8">WhatsApp API oficial (paga)</a></li><li><a href="#c3-9">Regras da plataforma e planos</a></li><li><a href="#c3-10">Publicador e usuários</a></li></ul></div>
 		<div class="grp"><a href="#c4"><span>4</span>Tutorial do usuário</a><ul>
-			<li><a href="#c4-1">Criar a conta</a></li><li><a href="#c4-2">Conectar os canais</a></li><li><a href="#c4-3">Definir os horários</a></li><li><a href="#c4-4">Criar o primeiro post</a></li><li><a href="#c4-5">Acompanhar as publicações</a></li></ul></div>
+			<li><a href="#c4-1">Criar a conta</a></li><li><a href="#c4-2">Conectar os canais</a></li><li><a href="#c4-3">Definir os horários</a></li><li><a href="#c4-4">Criar o primeiro post</a></li><li><a href="#c4-v">Publicar um vídeo (arquivo ou Google Drive)</a></li><li><a href="#c4-5">Acompanhar as publicações</a></li></ul></div>
 		<div class="grp"><a href="#c5"><span>5</span>Manual das telas</a><ul>
 			<li><a href="#c5-1">Fila</a></li><li><a href="#c5-2">Criar post</a></li><li><a href="#c5-3">Calendário</a></li><li><a href="#c5-4">Publicados</a></li><li><a href="#c5-5">Canais</a></li><li><a href="#c5-6">Horários</a></li><li><a href="#c5-7">Conta</a></li></ul></div>
 		<div class="grp"><a href="#c6"><span>6</span>Regras e funcionamento</a><ul>
-			<li><a href="#c6-1">Regras de cada rede</a></li><li><a href="#c6-2">Status dos posts</a></li><li><a href="#c6-3">Falhas e novas tentativas</a></li><li><a href="#c6-4">Renovação das conexões</a></li></ul></div>
+			<li><a href="#c6-1">Regras de cada rede</a></li><li><a href="#c6-2">Status dos posts</a></li><li><a href="#c6-3">Falhas e novas tentativas</a></li><li><a href="#c6-4">Renovação das conexões</a></li><li><a href="#c6-5">Vídeos: regras e processamento</a></li></ul></div>
 		<div class="grp"><a href="#c7"><span>7</span>Solução de problemas</a></div>
 		<div class="grp"><a href="#c8"><span>8</span>Segurança, privacidade e LGPD</a></div>
 		<div class="grp"><a href="#c9"><span>9</span>Limitações conhecidas</a></div>
@@ -183,7 +183,7 @@
 	<h2 id="c1-2"><span class="n">1.2</span>Como funciona</h2>
 	<div class="flow">
 		<div class="node"><b>1. Conectar</b>O usuário autoriza cada rede (ou lê o QR Code do WhatsApp).</div><div class="arrow">→</div>
-		<div class="node"><b>2. Escrever</b>Texto, link e imagens; escolhe os canais.</div><div class="arrow">→</div>
+		<div class="node"><b>2. Escrever</b>Texto, link, imagens ou vídeo (até por link do Google Drive); escolhe os canais.</div><div class="arrow">→</div>
 		<div class="node"><b>3. Agendar</b>Fila de horários, data e hora, ou agora.</div><div class="arrow">→</div>
 		<div class="node"><b>4. Publicar</b>O publicador roda a cada minuto e envia a cada rede.</div><div class="arrow">→</div>
 		<div class="node"><b>5. Acompanhar</b>Histórico com o link de cada post e o motivo das falhas.</div>
@@ -435,7 +435,27 @@
 	</ol>
 	<div class="box ok"><span class="t">Nada se perde</span><p>Se faltar algo (um canal, uma imagem, um horário), o post é guardado como <strong>rascunho</strong> e o editor mostra o que ajustar.</p></div>
 
-	<h2 id="c4-5"><span class="n">4.5</span>Acompanhar as publicações</h2>
+	<h2 id="c4-v"><span class="n">4.5</span>Publicar um vídeo (arquivo ou Google Drive)</h2>
+	<p>Um post pode ter <strong>imagens ou um vídeo</strong>, não os dois. O vídeo deve ser MP4 ou MOV, de preferência com vídeo H.264 e áudio AAC (o padrão do celular e da maioria dos editores).</p>
+	<h3>Opção A: enviar o arquivo</h3>
+	<ol class="steps">
+		<li>Em <strong>Criar post</strong>, no bloco <strong>Vídeo</strong>, clique em <strong>Escolher MP4 ou MOV</strong> e selecione o arquivo. O nome e o tamanho aparecem, e a prévia mostra o vídeo.</li>
+		<li>Confira os avisos em amarelo. Por exemplo, o Google Meu Negócio não aceita vídeo, e cada rede tem um tamanho máximo.</li>
+		<li>Escolha quando publicar e confirme. Vídeos muito grandes podem passar do limite de envio do servidor; nesse caso, use o Google Drive.</li>
+	</ol>
+	<h3>Opção B: link do Google Drive</h3>
+	<figure><img src="img/compose-drive.png" alt=""><figcaption>Bloco Vídeo do editor: enviar o arquivo ou colar o link do Google Drive.</figcaption></figure>
+	<ol class="steps">
+		<li>No Google Drive, clique com o botão direito no vídeo › <strong>Compartilhar</strong>.</li>
+		<li>Em <strong>Acesso geral</strong>, escolha <strong>Qualquer pessoa com o link</strong> (pode ser como Leitor) e clique em <strong>Copiar link</strong>.</li>
+		<li>No editor, cole o link no campo <strong>Ou link do Google Drive</strong>, escolha quando publicar e confirme.</li>
+		<li>O sistema confere na hora se o link é público e é um vídeo. Depois, baixa o vídeo para o servidor em segundo plano, para ele já estar pronto no horário.</li>
+	</ol>
+	<div class="box warn"><span class="t">Mantenha o link público até publicar</span><p>Se o compartilhamento for desligado ou o arquivo for apagado antes do download, a publicação falha com a explicação. Depois de publicado, o Drive pode voltar a ser privado.</p></div>
+	<figure class="half"><img src="img/compose-video-warn.png" alt=""><figcaption>Com vídeo, o editor avisa as redes que não aceitam ou que têm limite menor.</figcaption></figure>
+	<div class="box tip"><span class="t">“Publicar agora” com vídeo</span><p>As redes levam de segundos a alguns minutos para processar vídeos. Por isso, com vídeo, “Publicar agora” manda o post para a fila de envio imediato, e você acompanha o resultado em <strong>Publicados</strong>, sem ficar esperando na tela.</p></div>
+
+	<h2 id="c4-5"><span class="n">4.6</span>Acompanhar as publicações</h2>
 	<ul>
 		<li><strong>Fila</strong>: os próximos posts, por dia. Dá para editar, publicar agora, duplicar ou excluir.</li>
 		<li><strong>Calendário</strong>: a semana inteira, com os posts agendados e os já publicados.</li>
@@ -473,6 +493,8 @@
 			<tr><td>Texto</td><td>Um texto para todas as redes. Os contadores mostram o uso de cada rede marcada (veja <a href="#c6-1">6.1</a>).</td></tr>
 			<tr><td>Link (opcional)</td><td>No Facebook sem imagem, vira a prévia do link. No Google, vira o botão “Saiba mais”. No Pinterest, é o destino do pin. Nas outras redes, vai no fim do texto.</td></tr>
 			<tr><td>Imagens</td><td>JPG, PNG, WebP ou GIF, até 8 MB cada. São convertidas para JPG, o formato que todas as redes aceitam. Clique numa imagem já enviada para removê-la.</td></tr>
+			<tr><td>Vídeo › Enviar arquivo</td><td>Um vídeo MP4 ou MOV, até 500 MB (ou o limite definido pelo administrador) e dentro do limite de envio do servidor. Não pode ser usado junto com imagens.</td></tr>
+			<tr><td>Vídeo › Link do Google Drive</td><td>Link de compartilhamento de um vídeo público (“Qualquer pessoa com o link”). O vídeo é baixado antes de publicar. Use o arquivo <em>ou</em> o link, não os dois.</td></tr>
 			<tr><td>Adicionar à fila</td><td>Usa o próximo horário livre. Ao editar um post que já estava na fila, mantém o horário dele.</td></tr>
 			<tr><td>Escolher data e hora</td><td>Data e hora no seu fuso horário (mostrado abaixo dos campos).</td></tr>
 			<tr><td>Publicar agora</td><td>Pede confirmação e publica na hora. Você vai para Publicados, com o resultado.</td></tr>
@@ -522,17 +544,17 @@
 
 	<h2 id="c6-1"><span class="n">6.1</span>Regras de cada rede</h2>
 	<table>
-		<thead><tr><th>Rede</th><th>Texto</th><th>Imagens</th><th>Link</th><th>Exige</th></tr></thead>
+		<thead><tr><th>Rede</th><th>Texto</th><th>Imagens</th><th>Vídeo</th><th>Link</th><th>Exige</th></tr></thead>
 		<tbody>
-			<tr><td>Facebook</td><td>63.206</td><td>até 10 (álbum)</td><td>Prévia (sem imagem) ou no texto</td><td>Texto ou imagem</td></tr>
-			<tr><td>Instagram</td><td>2.200</td><td>1 a 10 (carrossel)</td><td>No texto (não clicável)</td><td><strong>Imagem</strong></td></tr>
-			<tr><td>LinkedIn</td><td>3.000</td><td>até 9</td><td>No texto</td><td>Texto ou imagem</td></tr>
-			<tr><td>X</td><td>280</td><td>até 4</td><td>No texto</td><td>Texto ou imagem</td></tr>
-			<tr><td>Threads</td><td>500</td><td>até 10 (carrossel)</td><td>No texto</td><td>Texto ou imagem</td></tr>
-			<tr><td>Google Meu Negócio</td><td>1.500</td><td>0 ou 1</td><td>Botão “Saiba mais”</td><td><strong>Texto</strong></td></tr>
-			<tr><td>Pinterest</td><td>500</td><td>1 a 5</td><td>Destino do pin</td><td><strong>Imagem</strong></td></tr>
-			<tr><td>WhatsApp (QR Code)</td><td>4.096</td><td>0 ou 1</td><td>No texto</td><td>Texto ou imagem</td></tr>
-			<tr><td>WhatsApp (API oficial)</td><td>1.000</td><td>0 ou 1</td><td>No texto</td><td><strong>Texto</strong></td></tr>
+			<tr><td>Facebook</td><td>63.206</td><td>até 10 (álbum)</td><td>até 1 GB</td><td>Prévia (sem mídia) ou no texto</td><td>Texto ou mídia</td></tr>
+			<tr><td>Instagram</td><td>2.200</td><td>1 a 10 (carrossel)</td><td>Reels, até 300 MB</td><td>No texto (não clicável)</td><td><strong>Imagem ou vídeo</strong></td></tr>
+			<tr><td>LinkedIn</td><td>3.000</td><td>até 9</td><td>até 5 GB</td><td>No texto</td><td>Texto ou mídia</td></tr>
+			<tr><td>X</td><td>280</td><td>até 4</td><td>até 512 MB</td><td>No texto</td><td>Texto ou mídia</td></tr>
+			<tr><td>Threads</td><td>500</td><td>até 10 (carrossel)</td><td>até 1 GB</td><td>No texto</td><td>Texto ou mídia</td></tr>
+			<tr><td>Google Meu Negócio</td><td>1.500</td><td>0 ou 1</td><td><strong>não aceita</strong></td><td>Botão “Saiba mais”</td><td><strong>Texto</strong></td></tr>
+			<tr><td>Pinterest</td><td>500</td><td>1 a 5</td><td>até 2 GB</td><td>Destino do pin</td><td><strong>Imagem ou vídeo</strong></td></tr>
+			<tr><td>WhatsApp (QR Code)</td><td>4.096</td><td>0 ou 1</td><td>até 64 MB</td><td>No texto</td><td>Texto ou mídia</td></tr>
+			<tr><td>WhatsApp (API oficial)</td><td>1.000</td><td>0 ou 1</td><td>até 16 MB</td><td>No texto</td><td><strong>Texto</strong></td></tr>
 		</tbody>
 	</table>
 	<ul>
@@ -577,8 +599,30 @@
 			<tr><td>WhatsApp (API oficial)</td><td>Token permanente</td><td>Não precisa</td></tr>
 		</tbody>
 	</table>
+
+	<h2 id="c6-5"><span class="n">6.5</span>Vídeos: regras e processamento</h2>
+	<table>
+		<thead><tr><th>Rede</th><th>Como o vídeo sai</th><th>Recomendações</th></tr></thead>
+		<tbody>
+			<tr><td>Facebook</td><td>Vídeo da página</td><td>A Meta baixa o vídeo do servidor e processa em segundo plano.</td></tr>
+			<tr><td>Instagram</td><td>Reels (também aparece no feed)</td><td>Vertical 9:16, de 3 segundos a 15 minutos, até 300 MB.</td></tr>
+			<tr><td>LinkedIn</td><td>Vídeo no post</td><td>Enviado em partes; o LinkedIn processa antes de publicar.</td></tr>
+			<tr><td>X</td><td>Vídeo no post</td><td>Até 2 min 20 s e 512 MB. Enviado em partes de 4 MB.</td></tr>
+			<tr><td>Threads</td><td>Vídeo no post</td><td>Até 5 minutos e 1 GB.</td></tr>
+			<tr><td>Pinterest</td><td>Pin de vídeo</td><td>A capa é o quadro do 1º segundo. A primeira linha do texto vira o título.</td></tr>
+			<tr><td>WhatsApp (QR Code)</td><td>Vídeo no Status ou no grupo</td><td>Prefira vídeos curtos (Status: até 60 s por trecho) e leves.</td></tr>
+			<tr><td>WhatsApp (API oficial)</td><td>Cabeçalho de vídeo do modelo</td><td>O modelo precisa ter cabeçalho de <strong>vídeo</strong>; até 16 MB.</td></tr>
+			<tr><td>Google Meu Negócio</td><td>—</td><td>A API do Google não aceita vídeo em posts. Desmarque a rede ou use imagens.</td></tr>
+		</tbody>
+	</table>
+	<ul>
+		<li>O publicador espera o processamento de cada rede por até 10 minutos. Se a rede ainda não terminou, a publicação fica “Agendado”, com o aviso “Vamos tentar de novo”, e tenta outra vez em 5 e depois em 20 minutos.</li>
+		<li>Vídeos do Google Drive são baixados <strong>uma vez só</strong> e usados em todas as redes do post.</li>
+		<li>O limite geral de vídeo da plataforma é de 500 MB. O administrador pode mudá-lo com <code>define( 'PFLOW_MAX_VIDEO_MB', 1000 );</code> no <code>wp-config.php</code>. Para envios diretos, o PHP também precisa permitir arquivos desse tamanho (<code>upload_max_filesize</code> e <code>post_max_size</code>).</li>
+	</ul>
 </section>
 
+<!-- 6.5 fica no fim do capítulo 6 -->
 <!-- ============================== 7. PROBLEMAS ============================== -->
 <section class="part" id="c7">
 	<div class="part-head"><div class="num">Capítulo 7</div><h1>Solução de problemas</h1><p>As situações mais comuns e o que fazer.</p></div>
@@ -594,6 +638,12 @@
 			<tr><td>Post agendado saiu atrasado</td><td>Sem a tarefa do cron no servidor</td><td>Criar a tarefa da seção <a href="#c2-4">2.4</a>.</td></tr>
 			<tr><td>“Instagram exige ao menos uma imagem” / “Pinterest exige…”</td><td>Regras da rede</td><td>Adicionar uma imagem ou desmarcar a rede.</td></tr>
 			<tr><td>Instagram recusou a imagem</td><td>Proporção fora do padrão ou imagem grande demais</td><td>Usar proporção entre 4:5 e 1,91:1 e até 8 MB.</td></tr>
+			<tr><td>“O vídeo do Google Drive não está público”</td><td>O link não está como “Qualquer pessoa com o link”</td><td>No Drive: Compartilhar › Acesso geral › Qualquer pessoa com o link. Depois, salvar o post de novo ou clicar em Tentar de novo.</td></tr>
+			<tr><td>“Cole o link de compartilhamento do Google Drive”</td><td>Link de pasta, de outro serviço ou incompleto</td><td>Usar o link de um <strong>arquivo</strong> de vídeo (drive.google.com/file/d/…).</td></tr>
+			<tr><td>“O arquivo passa do limite de envio do servidor”</td><td>Vídeo maior que o limite do PHP</td><td>Usar o link do Google Drive ou pedir ao administrador para aumentar o limite.</td></tr>
+			<tr><td>“A rede não conseguiu processar a mídia”</td><td>Formato, proporção ou duração fora das regras da rede</td><td>Exportar o vídeo em MP4 (H.264 + AAC), conferir a duração (seção <a href="#c6-5">6.5</a>) e tentar de novo.</td></tr>
+			<tr><td>“A rede demorou demais para processar a mídia”</td><td>Vídeo longo ou rede sobrecarregada</td><td>Nada a fazer: o sistema tenta de novo em alguns minutos.</td></tr>
+			<tr><td>“Google Meu Negócio não aceita vídeo pela API”</td><td>Limitação do Google</td><td>Desmarcar o Google no post de vídeo, ou criar outro post com imagem para ele (botão Duplicar).</td></tr>
 			<tr><td>X: “duplicate content”</td><td>O X não aceita o mesmo texto repetido</td><td>Mudar o texto e tentar de novo.</td></tr>
 			<tr><td>X: erro de permissão ou limite</td><td>Plano da API do X sem escrita, ou limite mensal atingido</td><td>Administrador: conferir o plano no portal do X.</td></tr>
 			<tr><td>LinkedIn ficou “Desconectado”</td><td>Os 60 dias da conexão terminaram</td><td>Clicar em Reconectar.</td></tr>
@@ -640,7 +690,8 @@
 <section class="part" id="c9" style="page-break-before: auto;">
 	<div class="part-head" style="margin-top: 10mm;"><div class="num">Capítulo 9</div><h1>Limitações conhecidas</h1></div>
 	<ul>
-		<li><strong>Vídeo</strong> (Reels e vídeos nas outras redes) ainda não é suportado; só texto e imagens.</li>
+		<li>Vídeo: um por post, sem misturar com imagens; sem escolha de capa nem legendas. O Google Meu Negócio não aceita vídeo pela API.</li>
+		<li>Google Drive: só links públicos de arquivos. Pastas, Dropbox, OneDrive e YouTube não são aceitos.</li>
 		<li>O mesmo texto vai para todas as redes do post. Para variar, use <strong>Duplicar</strong>.</li>
 		<li>LinkedIn: só perfil pessoal. Páginas de empresa exigem a Community Management API, que tem aprovação própria.</li>
 		<li>Google Meu Negócio: só posts do tipo “Novidade” (sem Evento nem Oferta).</li>

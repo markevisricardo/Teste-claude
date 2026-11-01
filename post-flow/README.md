@@ -13,6 +13,8 @@ Um plugin WordPress que vira uma plataforma de agendamento de posts, no estilo d
 
 Redes suportadas, todas pelas **APIs oficiais** (sem senha nem scraping):
 
+Todas as redes, menos o Google Meu Negócio, também aceitam **vídeo**: enviado do computador ou por **link do Google Drive** (veja [Vídeos](#vídeos)).
+
 | Rede | O que conecta | Texto | Imagens |
 |---|---|---|---|
 | Facebook | Páginas | até 63.206 caracteres; link vira prévia | 1 a 10 (álbum) |
@@ -44,6 +46,27 @@ Redes suportadas, todas pelas **APIs oficiais** (sem senha nem scraping):
 5. Acompanha em **Fila**, **Calendário** (semana) e **Publicados** (com o link de cada post e o motivo das falhas, com botão "Tentar de novo").
 
 O editor mostra o contador de caracteres de cada rede marcada e avisa antes de salvar (ex.: "Instagram exige ao menos uma imagem"). Se faltar algo, o post é guardado como rascunho, e nada se perde.
+
+## Vídeos
+
+Um post pode ter **imagens ou um vídeo** (MP4 ou MOV, de preferência H.264 com áudio AAC), de duas formas:
+
+- **Enviar o arquivo**, até `PFLOW_MAX_VIDEO_MB` (padrão 500 MB) e dentro do limite de envio do PHP (`upload_max_filesize` e `post_max_size`).
+- **Link do Google Drive**, para vídeos grandes ou que já estão no Drive. O arquivo precisa estar compartilhado como **"Qualquer pessoa com o link"**. Ao salvar, o plugin confere se o link é público e é um vídeo. Depois, baixa o vídeo para a biblioteca de mídia em segundo plano, logo após o agendamento, ou no máximo na hora de publicar. É preciso baixar porque o Instagram, o Facebook e o Threads pedem uma URL pública direta, e o LinkedIn, o X e o Pinterest pedem o próprio arquivo.
+
+| Rede | Como o vídeo sai | Tamanho máximo |
+|---|---|---|
+| Facebook | Vídeo da página | 1 GB |
+| Instagram | **Reels** (também no feed); vertical 9:16, de 3 s a 15 min | 300 MB |
+| LinkedIn | Vídeo no post (envio em partes) | 5 GB |
+| X | Vídeo no post (envio em partes); até 2 min 20 s | 512 MB |
+| Threads | Vídeo no post; até 5 min | 1 GB |
+| Pinterest | Pin de vídeo (capa no 1º segundo) | 2 GB |
+| WhatsApp (QR Code) | Vídeo no Status ou no grupo | 64 MB |
+| WhatsApp (API oficial) | Cabeçalho de vídeo do modelo | 16 MB |
+| Google Meu Negócio | — (a API não aceita vídeo em posts) | — |
+
+As redes levam de segundos a alguns minutos para processar vídeos. Por isso, **"Publicar agora" com vídeo** é feito em segundo plano pelo publicador: o usuário volta para a fila e acompanha em Publicados. O publicador espera o processamento por até 10 minutos por rede. Se a rede ainda não terminou, tenta de novo mais tarde.
 
 ## Requisitos
 
@@ -188,7 +211,8 @@ Os testes rodam com stubs do WordPress e um banco SQLite em memória. As APIs da
 
 ## Limitações conhecidas / próximos passos
 
-- **Vídeo** (Reels, vídeos no X/LinkedIn/Threads/Pinterest) ainda não é suportado, só texto e imagens.
+- Vídeo: um por post, sem misturar com imagens; sem escolha de capa nem legendas (SRT); o Google Meu Negócio não aceita vídeo pela API. O envio em partes do X segue a API v2 de mídia e o do LinkedIn, a API de vídeos; ainda não foram testados contra as APIs reais.
+- Google Drive: só links públicos ("Qualquer pessoa com o link"); pastas e links de outros serviços (Dropbox, OneDrive) não são aceitos.
 - WhatsApp por QR Code: depende do servidor Evolution API estar no ar, e o número pode ser bloqueado pelo WhatsApp (conexão não oficial).
 - WhatsApp (API oficial): a lista de contatos é digitada no canal (até 250). Não há importação de CSV, descadastro automático por "SAIR" (precisaria do webhook da Cloud API) nem Embedded Signup, que conectaria o número em um clique sem copiar o token.
 - Google Meu Negócio: só posts do tipo "Novidade" (sem Evento nem Oferta).

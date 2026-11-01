@@ -11,7 +11,7 @@
 defined( 'ABSPATH' ) || exit;
 
 $pflow_when  = PFlow_Schedule::to_local( 'sent' === $context ? $card['sent_at'] : $card['scheduled_at'], $tz );
-$pflow_media = array_slice( $card['media_ids'], 0, 4 );
+$pflow_media = PFlow_App::display_media( $card );
 $pflow_ids   = 'draft' === $context ? PFlow_Posts::channel_ids( $card ) : array();
 ?>
 <article class="rounded-2xl border border-solid border-neutral-800 bg-neutral-950 p-5 shadow-lg shadow-black/30 transition-colors hover:border-neutral-700">
@@ -57,7 +57,7 @@ $pflow_ids   = 'draft' === $context ? PFlow_Posts::channel_ids( $card ) : array(
 		<?php if ( $pflow_media ) : ?>
 			<div class="grid shrink-0 <?php echo count( $pflow_media ) > 1 ? 'grid-cols-2' : 'grid-cols-1'; ?> gap-1">
 				<?php foreach ( $pflow_media as $pflow_mid ) : ?>
-					<img src="<?php echo esc_url( PFlow_Media::thumb( $pflow_mid ) ); ?>" alt="" class="<?php echo count( $pflow_media ) > 1 ? 'h-11 w-11' : 'h-24 w-24'; ?> rounded-lg object-cover" loading="lazy">
+					<?php echo PFlow_App::media_thumb( $pflow_mid, count( $pflow_media ) > 1 ? 'h-11 w-11' : 'h-24 w-24' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				<?php endforeach; ?>
 			</div>
 		<?php endif; ?>

@@ -23,6 +23,8 @@ class PFlow_Posts {
 		$row['user_id']   = (int) $row['user_id'];
 		$row['in_queue']  = (int) $row['in_queue'];
 		$row['media_ids'] = self::parse_ids( $row['media_ids'] );
+		$row['video_url']   = (string) ( $row['video_url'] ?? '' );
+		$row['video_bytes'] = (int) ( $row['video_bytes'] ?? 0 );
 		return $row;
 	}
 
@@ -124,7 +126,8 @@ class PFlow_Posts {
 	/**
 	 * Cria ou atualiza um post e refaz os destinos que ainda não saíram.
 	 *
-	 * @param array    $data        content, link, media_ids (array), in_queue.
+	 * @param array    $data        content, link, media_ids (array), in_queue e,
+	 *                              opcionalmente, video_url (Google Drive) e video_bytes.
 	 * @param int[]    $channel_ids Canais do usuário atual.
 	 * @param string   $due         UTC 'Y-m-d H:i:s' para agendar, ou '' (rascunho).
 	 * @param int      $id          Post existente (do usuário atual) ou 0.
@@ -138,6 +141,8 @@ class PFlow_Posts {
 			'content'      => (string) $data['content'],
 			'link'         => (string) $data['link'],
 			'media_ids'    => implode( ',', self::parse_ids( $data['media_ids'] ) ),
+			'video_url'    => (string) ( $data['video_url'] ?? '' ),
+			'video_bytes'  => (int) ( $data['video_bytes'] ?? 0 ),
 			'in_queue'     => empty( $data['in_queue'] ) ? 0 : 1,
 			'scheduled_at' => '' !== $due ? $due : null,
 			// Rascunho: guarda a escolha de canais para quando for agendado.

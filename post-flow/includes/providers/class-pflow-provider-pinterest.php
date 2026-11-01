@@ -119,11 +119,22 @@ class PFlow_Provider_Pinterest extends PFlow_Provider {
 	}
 
 	public function publish( array $channel, array $post ) {
-		if ( ! $post['media'] ) {
-			return new WP_Error( 'pflow_pinterest_media', __( 'O Pinterest exige ao menos uma imagem.', 'post-flow' ) );
+		$video = self::video( $post );
+		if ( ! $post['media'] && ! $video ) {
+			return new WP_Error( 'pflow_pinterest_media', __( 'O Pinterest exige uma imagem ou um vídeo.', 'post-flow' ) );
 		}
 
-		if ( 1 === count( $post['media'] ) ) {
+		if ( $video ) {
+			$media_id = $this->upload_video( $channel['access_token'], $video );
+			if ( is_wp_error( $media_id ) ) {
+				return $media_id;
+			}
+			$source = array(
+				'source_type'               => 'video_id',
+				'media_id'                  => $media_id,
+				'cover_image_key_frame_time' => 1,
+			);
+		} elseif ( 1 === count( $post['media'] ) ) {
 			$source = array(
 				'source_type' => 'image_url',
 				'url'         => $post['media'][0]['url'],
@@ -159,6 +170,57 @@ class PFlow_Provider_Pinterest extends PFlow_Provider {
 			'remote_id'  => $id,
 			'remote_url' => '' !== $id ? 'https://www.pinterest.com/pin/' . rawurlencode( $id ) . '/' : '',
 		);
+	}
+
+	/**
+	 * Vídeo de pin: registra a mídia, envia o arquivo para o endereço que o
+	 * Pinterest indicar e espera o processamento.
+	 *
+	 * @return string|WP_Error media_id.
+	 */
+	private function upload_video( $token, array $video ) {
+		$auth = array( 'Authorization' => 'Bearer ' . $token );
+		$reg  = PFlow_Http::request( 'POST', self::API . 'media', array( 'headers' => $auth, 'json' => array( 'media_type' => 'video' ) ) );
+		if ( is_wp_error( $reg ) ) {
+			return $reg;
+		}
+		$media_id = (string) ( $reg['body']['media_id'] ?? '' );
+		$url      = (string) ( $reg['body']['upload_url'] ?? '' );
+		if ( '' === $media_id || '' === $url ) {
+			return new WP_Error( 'pflow_pinterest_video', __( 'O Pinterest não aceitou o envio do vídeo.', 'post-flow' ) );
+		}
+
+		$bytes = is_readable( $video['path'] ) ? file_get_contents( $video['path'] ) : false; // phpcs:ignore WordPress.WP.AlternativeFunctions
+		if ( false === $bytes ) {
+			return new WP_Error( 'pflow_pinterest_video', __( 'Vídeo não encontrado no servidor.', 'post-flow' ) );
+		}
+		$boundary = 'pflow' . wp_generate_password( 24, false );
+		$fields   = array_map( 'strval', (array) ( $reg['body']['upload_parameters'] ?? array() ) );
+		$upload   = PFlow_Http::request(
+			'POST',
+			$url,
+			array(
+				'headers' => array( 'Content-Type' => 'multipart/form-data; boundary=' . $boundary ),
+				'body'    => PFlow_Provider_X::multipart( $boundary, $fields, 'file', basename( $video['path'] ), $video['mime'], $bytes ),
+				'timeout' => 300,
+			)
+		);
+		unset( $bytes );
+		if ( is_wp_error( $upload ) ) {
+			return $upload;
+		}
+
+		$ready = self::wait_video(
+			static function () use ( $auth, $media_id ) {
+				$res = PFlow_Http::request( 'GET', self::API . 'media/' . rawurlencode( $media_id ), array( 'headers' => $auth ) );
+				if ( is_wp_error( $res ) ) {
+					return $res;
+				}
+				$status = (string) ( $res['body']['status'] ?? '' );
+				return 'succeeded' === $status ? 'ready' : ( 'failed' === $status ? 'error' : 'wait' );
+			}
+		);
+		return is_wp_error( $ready ) ? $ready : $media_id;
 	}
 
 	/**

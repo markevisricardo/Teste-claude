@@ -63,6 +63,8 @@ $pflow_min_date = ( new DateTimeImmutable( 'now', $tz ) )->format( 'Y-m-d' );
 								data-max-media="<?php echo (int) $pflow_type['max_media']; ?>"
 								data-needs-media="<?php echo $pflow_type['needs_media'] ? '1' : '0'; ?>"
 								data-needs-text="<?php echo empty( $pflow_type['needs_text'] ) ? '0' : '1'; ?>"
+								data-video="<?php echo empty( $pflow_type['video'] ) ? '0' : '1'; ?>"
+								data-max-video-mb="<?php echo (int) $pflow_type['max_video_mb']; ?>"
 								<?php checked( in_array( $pflow_channel['id'], $selected, true ) ); ?>
 								<?php disabled( $pflow_off ); ?>>
 							<span class="flex items-center gap-2 rounded-full border border-solid border-neutral-800 bg-black py-1.5 pl-1.5 pr-3 text-sm text-neutral-300 transition-colors peer-checked:border-violet-500 peer-checked:bg-violet-500/10 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-violet-400">
@@ -85,11 +87,23 @@ $pflow_min_date = ( new DateTimeImmutable( 'now', $tz ) )->format( 'Y-m-d' );
 				<input type="url" id="pflow-link" name="link" value="<?php echo esc_attr( $post['link'] ); ?>" placeholder="https://" class="<?php echo esc_attr( PFlow_App::INPUT ); ?> mt-2">
 				<p class="<?php echo esc_attr( PFlow_App::HELP ); ?>"><?php esc_html_e( 'No Facebook sem imagem vira a prévia do link; no Google vira o botão "Saiba mais"; no Pinterest é o destino do pin; nas outras redes vai no fim do texto. No Instagram, links no texto não são clicáveis.', 'post-flow' ); ?></p>
 
+				<?php
+				$pflow_images = array();
+				$pflow_video  = 0;
+				foreach ( $post['media_ids'] as $pflow_mid ) {
+					if ( PFlow_Media::is_video( $pflow_mid ) ) {
+						// Vídeo baixado do Drive aparece como o link, não como arquivo.
+						$pflow_video = '' === $post['video_url'] ? $pflow_mid : 0;
+					} else {
+						$pflow_images[] = $pflow_mid;
+					}
+				}
+				?>
 				<p class="<?php echo esc_attr( PFlow_App::LABEL ); ?> mt-6"><?php esc_html_e( 'Imagens', 'post-flow' ); ?></p>
 				<div class="mt-2 flex flex-wrap gap-3" data-pflow-media>
-					<?php foreach ( $post['media_ids'] as $pflow_mid ) : ?>
+					<?php foreach ( $pflow_images as $pflow_mid ) : ?>
 						<label class="group relative block h-24 w-24 cursor-pointer overflow-hidden rounded-xl border border-solid border-neutral-800">
-							<input type="checkbox" name="keep_media[]" value="<?php echo (int) $pflow_mid; ?>" class="peer sr-only" checked data-pflow-keep>
+							<input type="checkbox" name="keep_media[]" value="<?php echo (int) $pflow_mid; ?>" class="peer sr-only" checked data-pflow-keep data-kind="image">
 							<img src="<?php echo esc_url( PFlow_Media::thumb( $pflow_mid ) ); ?>" alt="" class="h-full w-full object-cover peer-[:not(:checked)]:opacity-25">
 							<span class="absolute right-1 top-1 rounded-md bg-black/70 px-1.5 py-0.5 text-[10px] font-semibold text-white"><?php esc_html_e( 'remover', 'post-flow' ); ?></span>
 						</label>
@@ -101,6 +115,37 @@ $pflow_min_date = ( new DateTimeImmutable( 'now', $tz ) )->format( 'Y-m-d' );
 					</label>
 				</div>
 				<p class="<?php echo esc_attr( PFlow_App::HELP ); ?>"><?php esc_html_e( 'JPG, PNG, WebP ou GIF até 8 MB (convertidos para JPG). Várias imagens viram carrossel. No Instagram, use proporção entre 4:5 e 1,91:1.', 'post-flow' ); ?></p>
+
+				<p class="<?php echo esc_attr( PFlow_App::LABEL ); ?> mt-6"><?php esc_html_e( 'Vídeo', 'post-flow' ); ?> <span class="font-normal text-neutral-500"><?php esc_html_e( '(no lugar das imagens)', 'post-flow' ); ?></span></p>
+				<div class="mt-2 grid gap-3 sm:grid-cols-2">
+					<div class="rounded-xl border border-solid border-neutral-800 p-4">
+						<p class="m-0 text-xs font-semibold uppercase tracking-wider text-neutral-500"><?php esc_html_e( 'Enviar arquivo', 'post-flow' ); ?></p>
+						<?php if ( $pflow_video ) : ?>
+							<label class="mt-3 block cursor-pointer">
+								<input type="checkbox" name="keep_media[]" value="<?php echo (int) $pflow_video; ?>" class="peer sr-only" checked data-pflow-keep data-kind="video" data-bytes="<?php echo (int) $post['video_bytes']; ?>">
+								<video src="<?php echo esc_url( PFlow_Media::thumb( $pflow_video ) ); ?>" class="max-h-40 w-full rounded-lg bg-black peer-[:not(:checked)]:opacity-25" muted preload="metadata" data-pflow-kept-video></video>
+								<span class="mt-1 block text-xs text-neutral-400"><?php esc_html_e( 'Clique para remover este vídeo', 'post-flow' ); ?></span>
+							</label>
+						<?php endif; ?>
+						<label class="mt-3 flex cursor-pointer items-center gap-2 text-sm text-neutral-300 hover:text-violet-300">
+							<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="m17 10 5-3v10l-5-3"/></svg>
+							<span data-pflow-video-name><?php esc_html_e( 'Escolher MP4 ou MOV', 'post-flow' ); ?></span>
+							<input type="file" name="video[]" accept="video/mp4,video/quicktime" class="sr-only" data-pflow-video-file>
+						</label>
+						<p class="<?php echo esc_attr( PFlow_App::HELP ); ?>">
+							<?php
+							/* translators: %d: MB */
+							echo esc_html( sprintf( __( 'Até %d MB (e dentro do limite de envio do servidor).', 'post-flow' ), PFLOW_MAX_VIDEO_MB ) );
+							?>
+						</p>
+					</div>
+					<div class="rounded-xl border border-solid border-neutral-800 p-4">
+						<label for="pflow-video-url" class="m-0 block text-xs font-semibold uppercase tracking-wider text-neutral-500"><?php esc_html_e( 'Ou link do Google Drive', 'post-flow' ); ?></label>
+						<input type="url" id="pflow-video-url" name="video_url" value="<?php echo esc_attr( $post['video_url'] ); ?>" placeholder="https://drive.google.com/file/d/…/view" data-bytes="<?php echo (int) $post['video_bytes']; ?>" class="<?php echo esc_attr( PFlow_App::INPUT ); ?> mt-3">
+						<p class="<?php echo esc_attr( PFlow_App::HELP ); ?>"><?php esc_html_e( 'No Drive: Compartilhar › Acesso geral › "Qualquer pessoa com o link" › Copiar link. Bom para vídeos grandes: baixamos o vídeo antes de publicar.', 'post-flow' ); ?></p>
+					</div>
+				</div>
+				<p class="<?php echo esc_attr( PFlow_App::HELP ); ?>"><?php esc_html_e( 'Use MP4 (H.264 + AAC). Instagram publica como Reels (vertical 9:16, até 15 min); X aceita até 2 min 20 s; Google Meu Negócio não aceita vídeo.', 'post-flow' ); ?></p>
 			</section>
 		</div>
 
@@ -187,16 +232,32 @@ $pflow_min_date = ( new DateTimeImmutable( 'now', $tz ) )->format( 'Y-m-d' );
 	var preview   = form.querySelector( '[data-pflow-preview]' );
 	var previewM  = form.querySelector( '[data-pflow-preview-media]' );
 	var file      = form.querySelector( '[data-pflow-file]' );
+	var vfile     = form.querySelector( '[data-pflow-video-file]' );
+	var vname     = form.querySelector( '[data-pflow-video-name]' );
+	var drive     = form.querySelector( '#pflow-video-url' );
 	var submit    = form.querySelector( '[data-pflow-submit]' );
 	var datetime  = form.querySelector( '[data-pflow-datetime]' );
 	var labels    = <?php echo wp_json_encode( array( 'queue' => __( 'Adicionar à fila', 'post-flow' ), 'schedule' => __( 'Agendar', 'post-flow' ), 'now' => __( 'Publicar agora', 'post-flow' ) ) ); ?>;
-	var i18n      = <?php echo wp_json_encode( array( 'needs' => __( '%s exige ao menos uma imagem.', 'post-flow' ), 'max' => __( '%1$s aceita até %2$d imagem(ns).', 'post-flow' ), 'long' => __( 'O texto passa do limite do %s.', 'post-flow' ), 'none' => __( 'Escolha ao menos um canal.', 'post-flow' ), 'text' => __( '%s exige um texto.', 'post-flow' ) ) ); ?>;
+	var i18n      = <?php echo wp_json_encode( array( 'needs' => __( '%s exige ao menos uma imagem ou um vídeo.', 'post-flow' ), 'max' => __( '%1$s aceita até %2$d imagem(ns).', 'post-flow' ), 'long' => __( 'O texto passa do limite do %s.', 'post-flow' ), 'none' => __( 'Escolha ao menos um canal.', 'post-flow' ), 'text' => __( '%s exige um texto.', 'post-flow' ), 'novideo' => __( '%s não aceita vídeo pela API: desmarque a rede ou use imagens.', 'post-flow' ), 'bigvideo' => __( '%1$s aceita vídeo de até %2$d MB.', 'post-flow' ), 'mix' => __( 'Use imagens ou um vídeo, não os dois.', 'post-flow' ), 'twovideos' => __( 'Escolha um só vídeo: o arquivo ou o link do Google Drive.', 'post-flow' ) ) ); ?>;
 
 	function len( value ) { return Array.from( value ).length; }
 
-	function mediaCount() {
-		var kept = form.querySelectorAll( '[data-pflow-keep]:checked' ).length;
+	function imageCount() {
+		var kept = form.querySelectorAll( '[data-pflow-keep][data-kind="image"]:checked' ).length;
 		return kept + ( file && file.files ? file.files.length : 0 );
+	}
+
+	// Vídeo do post: { bytes } ou null.
+	function videoInfo() {
+		if ( vfile && vfile.files && vfile.files.length ) { return { bytes: vfile.files[0].size }; }
+		var kept = form.querySelector( '[data-pflow-keep][data-kind="video"]:checked' );
+		if ( kept ) { return { bytes: parseInt( kept.getAttribute( 'data-bytes' ), 10 ) || 0 }; }
+		if ( drive && drive.value.trim() ) { return { bytes: drive.value.trim() === drive.defaultValue ? ( parseInt( drive.getAttribute( 'data-bytes' ), 10 ) || 0 ) : 0 }; }
+		return null;
+	}
+
+	function mediaCount() {
+		return imageCount() + ( videoInfo() ? 1 : 0 );
 	}
 
 	function finalText( network, media ) {
@@ -209,6 +270,8 @@ $pflow_min_date = ( new DateTimeImmutable( 'now', $tz ) )->format( 'Y-m-d' );
 
 	function update() {
 		var media    = mediaCount();
+		var images   = imageCount();
+		var video    = videoInfo();
 		var selected = Array.prototype.filter.call( form.querySelectorAll( 'input[name="channels[]"]' ), function ( c ) { return c.checked; } );
 		var seen     = {};
 		var problems = [];
@@ -229,9 +292,15 @@ $pflow_min_date = ( new DateTimeImmutable( 'now', $tz ) )->format( 'Y-m-d' );
 			if ( c.getAttribute( 'data-needs-media' ) === '1' && media === 0 ) { problems.push( i18n.needs.replace( '%s', label ) ); }
 			if ( c.getAttribute( 'data-needs-text' ) === '1' && ! text.value.trim() ) { problems.push( i18n.text.replace( '%s', label ) ); }
 			var max = parseInt( c.getAttribute( 'data-max-media' ), 10 );
-			if ( media > max ) { problems.push( i18n.max.replace( '%1$s', label ).replace( '%2$d', max ) ); }
+			if ( images > max ) { problems.push( i18n.max.replace( '%1$s', label ).replace( '%2$d', max ) ); }
+			if ( video && c.getAttribute( 'data-video' ) !== '1' ) { problems.push( i18n.novideo.replace( '%s', label ) ); }
+			var maxMb = parseInt( c.getAttribute( 'data-max-video-mb' ), 10 );
+			if ( video && c.getAttribute( 'data-video' ) === '1' && video.bytes > maxMb * 1048576 ) { problems.push( i18n.bigvideo.replace( '%1$s', label ).replace( '%2$d', maxMb ) ); }
 		} );
 		if ( ! selected.length ) { problems.push( i18n.none ); }
+		if ( video && images ) { problems.unshift( i18n.mix ); }
+		var both = ( vfile && vfile.files && vfile.files.length ) || form.querySelector( '[data-pflow-keep][data-kind="video"]:checked' );
+		if ( both && drive && drive.value.trim() ) { problems.unshift( i18n.twovideos ); }
 
 		warnings.innerHTML = '';
 		problems.forEach( function ( p ) {
@@ -251,11 +320,32 @@ $pflow_min_date = ( new DateTimeImmutable( 'now', $tz ) )->format( 'Y-m-d' );
 
 	function previewImages() {
 		previewM.innerHTML = '';
-		form.querySelectorAll( '[data-pflow-keep]:checked' ).forEach( function ( input ) {
+		form.querySelectorAll( '[data-pflow-keep][data-kind="image"]:checked' ).forEach( function ( input ) {
 			var img = input.parentNode.querySelector( 'img' ).cloneNode();
 			img.className = 'h-24 w-full rounded-lg object-cover';
 			previewM.appendChild( img );
 		} );
+		var vid = null;
+		if ( vfile && vfile.files && vfile.files.length ) {
+			vid = URL.createObjectURL( vfile.files[0] );
+			vname.textContent = vfile.files[0].name + ' (' + Math.max( 0.1, vfile.files[0].size / 1048576 ).toFixed( 1 ).replace( '.', ',' ) + ' MB)';
+		} else {
+			var kv = form.querySelector( '[data-pflow-keep][data-kind="video"]:checked' );
+			if ( kv ) { vid = kv.parentNode.querySelector( 'video' ).src; }
+		}
+		if ( vid ) {
+			var v = document.createElement( 'video' );
+			v.src = vid;
+			v.controls = true;
+			v.muted = true;
+			v.className = 'col-span-2 max-h-64 w-full rounded-lg bg-black';
+			previewM.appendChild( v );
+		} else if ( drive && drive.value.trim() ) {
+			var d = document.createElement( 'div' );
+			d.className = 'col-span-2 flex items-center gap-2 rounded-lg bg-white/5 px-3 py-3 text-xs text-neutral-300';
+			d.textContent = <?php echo wp_json_encode( __( '▶ Vídeo do Google Drive', 'post-flow' ) ); ?>;
+			previewM.appendChild( d );
+		}
 		if ( file && file.files ) {
 			Array.prototype.forEach.call( file.files, function ( f ) {
 				var img = document.createElement( 'img' );

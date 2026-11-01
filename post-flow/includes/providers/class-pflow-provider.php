@@ -7,8 +7,10 @@
  *   access_token, refresh_token, token_expires_at (timestamp ou 0), meta (array).
  *
  * Post recebido por publish():
- *   text  (texto final daquela rede), link, media (lista de
- *   array( 'url' => URL pública, 'path' => arquivo local, 'mime' => tipo )).
+ *   text  (texto final daquela rede), link, media (lista de imagens:
+ *   array( 'url' => URL pública, 'path' => arquivo local, 'mime' => tipo )),
+ *   video (o vídeo do post, no mesmo formato e com 'bytes', ou null).
+ *   Um post tem imagens ou um vídeo, nunca os dois.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -74,6 +76,35 @@ abstract class PFlow_Provider {
 		return (string) PFlow_Settings::get( $key );
 	}
 
+	/** Vídeo do post (ou null). */
+	protected static function video( array $post ) {
+		return empty( $post['video'] ) ? null : $post['video'];
+	}
+
+	/**
+	 * Espera o processamento de um vídeo: até 10 minutos, consultando a cada 10 s.
+	 */
+	protected static function wait_video( $check ) {
+		return self::wait_until_ready( $check, (int) apply_filters( 'pflow_video_wait_tries', 60 ), (int) apply_filters( 'pflow_video_wait_seconds', 10 ) );
+	}
+
+	/**
+	 * Lê um pedaço de um arquivo (para envios em partes, sem carregar o
+	 * vídeo inteiro na memória).
+	 *
+	 * @return string|false
+	 */
+	protected static function read_chunk( $path, $offset, $length ) {
+		$fh = fopen( $path, 'rb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+		if ( ! $fh ) {
+			return false;
+		}
+		fseek( $fh, $offset );
+		$data = fread( $fh, $length ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+		fclose( $fh ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+		return $data;
+	}
+
 	/**
 	 * Espera um contêiner de mídia (Instagram/Threads) ficar pronto.
 	 *
@@ -90,7 +121,7 @@ abstract class PFlow_Provider {
 				return true;
 			}
 			if ( 'error' === $state ) {
-				return new WP_Error( 'pflow_media', __( 'A rede não conseguiu processar a imagem. Confira o formato (JPG) e a proporção.', 'post-flow' ) );
+				return new WP_Error( 'pflow_media', __( 'A rede não conseguiu processar a mídia. Confira o formato (JPG para imagens, MP4 H.264 para vídeos), a proporção e a duração.', 'post-flow' ) );
 			}
 			sleep( $seconds );
 		}

@@ -120,8 +120,11 @@ class PFlow_Provider_Threads extends PFlow_Provider {
 		$user  = $channel['external_id'];
 		$token = $channel['access_token'];
 		$media = $post['media'];
+		$video = self::video( $post );
 
-		if ( ! $media ) {
+		if ( $video ) {
+			$container = $this->container( $user, $token, array( 'media_type' => 'VIDEO', 'video_url' => $video['url'], 'text' => $post['text'] ) );
+		} elseif ( ! $media ) {
 			$container = $this->container( $user, $token, array( 'media_type' => 'TEXT', 'text' => $post['text'] ) );
 		} elseif ( 1 === count( $media ) ) {
 			$container = $this->container( $user, $token, array( 'media_type' => 'IMAGE', 'image_url' => $media[0]['url'], 'text' => $post['text'] ) );
@@ -148,17 +151,16 @@ class PFlow_Provider_Threads extends PFlow_Provider {
 			return $container;
 		}
 
-		if ( $media ) {
-			$ready = self::wait_until_ready(
-				static function () use ( $container, $token ) {
-					$res = PFlow_Http::request( 'GET', self::API . 'v1.0/' . $container, array( 'query' => array( 'fields' => 'status', 'access_token' => $token ) ) );
-					if ( is_wp_error( $res ) ) {
-						return $res;
-					}
-					$status = (string) ( $res['body']['status'] ?? '' );
-					return 'FINISHED' === $status ? 'ready' : ( in_array( $status, array( 'ERROR', 'EXPIRED' ), true ) ? 'error' : 'wait' );
+		if ( $media || $video ) {
+			$check = static function () use ( $container, $token ) {
+				$res = PFlow_Http::request( 'GET', self::API . 'v1.0/' . $container, array( 'query' => array( 'fields' => 'status', 'access_token' => $token ) ) );
+				if ( is_wp_error( $res ) ) {
+					return $res;
 				}
-			);
+				$status = (string) ( $res['body']['status'] ?? '' );
+				return 'FINISHED' === $status ? 'ready' : ( in_array( $status, array( 'ERROR', 'EXPIRED' ), true ) ? 'error' : 'wait' );
+			};
+			$ready = $video ? self::wait_video( $check ) : self::wait_until_ready( $check );
 			if ( is_wp_error( $ready ) ) {
 				return $ready;
 			}

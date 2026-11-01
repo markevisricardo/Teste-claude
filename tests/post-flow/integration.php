@@ -184,10 +184,48 @@ PFlow_Publisher::run();
 check( 'post falha', 'failed', PFlow_Posts::get( $id5 )['status'] );
 check( 'canal pede novo QR', 'expired', PFlow_Channels::get( $wq )['status'] );
 
+echo "Vídeo do Google Drive pelo publicador\n";
+$GLOBALS['pflow_test_filters'] = array( 'pflow_video_wait_tries' => 2, 'pflow_video_wait_seconds' => 0 );
+$fb2   = PFlow_Channels::upsert( account( 'facebook', 'PAGEV' ) );
+$th2   = PFlow_Channels::upsert( account( 'threads', 'THV', array( 'token_expires_at' => time() + 40 * DAY_IN_SECONDS ) ) );
+PFlow_Settings::update( array( 'threads_app_id' => 't', 'threads_app_secret' => 's' ) );
+$drive = 'https://drive.google.com/file/d/1DriveVideoId123/view?usp=sharing';
+$idv   = PFlow_Posts::save( array( 'content' => 'Bastidores em vídeo', 'link' => '', 'media_ids' => array(), 'video_url' => $drive, 'video_bytes' => 2048, 'in_queue' => 0 ), array( $fb2, $th2 ), $past );
+check( 'post com vídeo do Drive', true, PFlow_Publisher::has_video( PFlow_Posts::get( $idv ) ) );
+$GLOBALS['pflow_test_requests'] = array();
+respond( 200, "\x00\x00\x00\x18ftypmp42" . str_repeat( 'v', 2000 ), array( 'Content-Type' => 'video/mp4' ) ); // Download do Drive.
+respond( 200, array( 'id' => 'FBV' ) );                                                                        // Facebook /videos.
+respond( 200, array( 'id' => 'TC' ) );                                                                         // Threads contêiner.
+respond( 200, array( 'status' => 'FINISHED' ) );
+respond( 200, array( 'id' => 'TP' ) );
+respond( 200, array( 'permalink' => 'https://www.threads.net/@x/post/v' ) );
+PFlow_Publisher::run();
+$r    = $GLOBALS['pflow_test_requests'];
+$post = PFlow_Posts::get( $idv );
+check( 'baixou do endereço direto do Drive', 'https://drive.usercontent.google.com/download?id=1DriveVideoId123&export=download&confirm=t', $r[0]['url'] );
+check( 'vídeo virou anexo do post', true, 1 === count( $post['media_ids'] ) && PFlow_Media::is_video( $post['media_ids'][0] ) );
+check( 'baixou só uma vez para os dois canais', 1, count( array_filter( $r, static function ( $q ) { return false !== strpos( $q['url'], 'drive.usercontent' ); } ) ) );
+check( 'Facebook recebeu a URL do vídeo baixado', true, 0 === strpos( (string) $r[1]['args']['body']['file_url'], 'https://app.exemplo.com.br/wp-content/uploads/' ) );
+check( 'publicado nos dois', 'sent', $post['status'] );
+
+$idp = PFlow_Posts::save( array( 'content' => 'Privado', 'link' => '', 'media_ids' => array(), 'video_url' => $drive, 'video_bytes' => 0, 'in_queue' => 0 ), array( $fb2 ), $past );
+respond( 200, '<!DOCTYPE html><html>login</html>', array( 'Content-Type' => 'text/html' ) );
+PFlow_Publisher::run();
+check( 'Drive privado: falha com a explicação', true, false !== strpos( (string) target_of( $idp, $fb2 )['error'], 'Qualquer pessoa com o link' ) );
+
+$idl = PFlow_Posts::save( array( 'content' => 'Baixando', 'link' => '', 'media_ids' => array(), 'video_url' => $drive, 'video_bytes' => 0, 'in_queue' => 0 ), array( $fb2 ), $past );
+set_transient( 'pflow_dl_' . $idl, 1 );
+PFlow_Publisher::run();
+check( 'download em andamento: tenta de novo depois', 'pending', target_of( $idl, $fb2 )['status'] );
+delete_transient( 'pflow_dl_' . $idl );
+
+PFlow_Drive::schedule_prefetch( 55 );
+check( 'download agendado em segundo plano', array( 'pflow_prefetch_video', array( 55 ) ), end( $GLOBALS['pflow_test_events'] ) );
+
 echo "Exclusão da conta\n";
 PFlow_Posts::delete_user_data( 1 );
 check( 'canais apagados', 0, PFlow_Channels::count() );
-check( 'imagens apagadas', array( 7 ), $GLOBALS['pflow_test_deleted'] ?? array() );
+check( 'imagens e vídeo baixado apagados', array( 7, 1000 ), $GLOBALS['pflow_test_deleted'] ?? array() );
 check( 'posts apagados', 0, (int) $GLOBALS['wpdb']->get_var( 'SELECT COUNT(*) FROM wp_pflow_posts WHERE user_id = 1' ) );
 PFlow_Tenant::set( 2 );
 check( 'outro usuário intacto', 1, PFlow_Channels::count() );

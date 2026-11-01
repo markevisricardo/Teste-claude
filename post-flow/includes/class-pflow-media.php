@@ -1,16 +1,30 @@
 <?php
 /**
- * Imagens dos posts: enviadas pelo painel, guardadas na biblioteca de mídia
- * (autor = o usuário) e convertidas para JPG, o formato que todas as redes
- * aceitam (o Instagram só publica JPG pela API).
+ * Imagens e vídeos dos posts: enviados pelo painel (ou baixados do Google
+ * Drive, em PFlow_Drive) e guardados na biblioteca de mídia, com o usuário
+ * como autor.
+ *
+ * Imagens são convertidas para JPG, o formato que todas as redes aceitam
+ * (o Instagram só publica JPG pela API). Vídeos ficam como vieram (MP4 ou
+ * MOV, de preferência H.264 com áudio AAC).
  */
 
 defined( 'ABSPATH' ) || exit;
 
 class PFlow_Media {
 
-	const MAX_BYTES = 8 * 1024 * 1024; // Limite do Instagram para imagens.
-	const MIMES     = array( 'image/jpeg', 'image/png', 'image/webp', 'image/gif' );
+	const MAX_BYTES   = 8 * 1024 * 1024; // Limite do Instagram para imagens.
+	const MIMES       = array( 'image/jpeg', 'image/png', 'image/webp', 'image/gif' );
+	const VIDEO_MIMES = array( 'video/mp4', 'video/quicktime' );
+
+	/** Tamanho máximo de vídeo, em bytes. */
+	public static function max_video_bytes() {
+		return (int) PFLOW_MAX_VIDEO_MB * 1024 * 1024;
+	}
+
+	public static function is_video( $id ) {
+		return 0 === strpos( (string) get_post_mime_type( $id ), 'video/' );
+	}
 
 	/**
 	 * Processa os arquivos de $_FILES[$field] (múltiplos).
@@ -54,18 +68,40 @@ class PFlow_Media {
 	 * @return int|WP_Error ID do anexo.
 	 */
 	private static function store( array $file ) {
+		if ( in_array( $file['error'], array( UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE ), true ) ) {
+			return new WP_Error( 'pflow_upload', __( 'o arquivo passa do limite de envio do servidor. Para vídeos grandes, use um link do Google Drive.', 'post-flow' ) );
+		}
 		if ( UPLOAD_ERR_OK !== $file['error'] ) {
 			return new WP_Error( 'pflow_upload', __( 'o envio falhou.', 'post-flow' ) );
 		}
-		if ( $file['size'] > self::MAX_BYTES ) {
+		$check = wp_check_filetype_and_ext( $file['tmp_name'], $file['name'] );
+		$type  = empty( $check['type'] ) ? '' : $check['type'];
+		$video = in_array( $type, self::VIDEO_MIMES, true );
+		if ( ! $video && ! in_array( $type, self::MIMES, true ) ) {
+			return new WP_Error( 'pflow_upload', __( 'envie imagem (JPG, PNG, WebP ou GIF) ou vídeo (MP4 ou MOV).', 'post-flow' ) );
+		}
+		if ( ! $video && $file['size'] > self::MAX_BYTES ) {
 			return new WP_Error( 'pflow_upload', __( 'a imagem passa de 8 MB.', 'post-flow' ) );
 		}
-		$check = wp_check_filetype_and_ext( $file['tmp_name'], $file['name'] );
-		if ( empty( $check['type'] ) || ! in_array( $check['type'], self::MIMES, true ) ) {
-			return new WP_Error( 'pflow_upload', __( 'envie JPG, PNG, WebP ou GIF.', 'post-flow' ) );
+		if ( $video && $file['size'] > self::max_video_bytes() ) {
+			/* translators: %d: MB */
+			return new WP_Error( 'pflow_upload', sprintf( __( 'o vídeo passa de %d MB. Use um link do Google Drive ou comprima o vídeo.', 'post-flow' ), PFLOW_MAX_VIDEO_MB ) );
 		}
 
-		$uploaded = wp_handle_upload( $file, array( 'test_form' => false, 'mimes' => array( 'jpg|jpeg|jpe' => 'image/jpeg', 'png' => 'image/png', 'webp' => 'image/webp', 'gif' => 'image/gif' ) ) );
+		$uploaded = wp_handle_upload(
+			$file,
+			array(
+				'test_form' => false,
+				'mimes'     => array(
+					'jpg|jpeg|jpe' => 'image/jpeg',
+					'png'          => 'image/png',
+					'webp'         => 'image/webp',
+					'gif'          => 'image/gif',
+					'mp4|m4v'      => 'video/mp4',
+					'mov|qt'       => 'video/quicktime',
+				),
+			)
+		);
 		if ( isset( $uploaded['error'] ) ) {
 			return new WP_Error( 'pflow_upload', $uploaded['error'] );
 		}
@@ -74,7 +110,7 @@ class PFlow_Media {
 		$url  = $uploaded['url'];
 		$mime = $uploaded['type'];
 
-		if ( 'image/jpeg' !== $mime ) {
+		if ( ! $video && 'image/jpeg' !== $mime ) {
 			$jpeg = self::to_jpeg( $path );
 			if ( is_wp_error( $jpeg ) ) {
 				wp_delete_file( $path );
@@ -86,10 +122,19 @@ class PFlow_Media {
 			$mime = 'image/jpeg';
 		}
 
+		return self::insert( $path, $url, $mime, pathinfo( $file['name'], PATHINFO_FILENAME ) );
+	}
+
+	/**
+	 * Registra um arquivo já salvo em uploads como anexo do usuário atual.
+	 *
+	 * @return int|WP_Error ID do anexo.
+	 */
+	public static function insert( $path, $url, $mime, $title ) {
 		$id = wp_insert_attachment(
 			array(
 				'post_mime_type' => $mime,
-				'post_title'     => sanitize_text_field( pathinfo( $file['name'], PATHINFO_FILENAME ) ),
+				'post_title'     => sanitize_text_field( $title ),
 				'post_status'    => 'inherit',
 				'post_author'    => PFlow_Tenant::id(),
 				'guid'           => $url,
@@ -128,7 +173,8 @@ class PFlow_Media {
 	}
 
 	/**
-	 * Mantém só imagens do usuário atual (impede usar anexos de outra pessoa).
+	 * Mantém só imagens e vídeos do usuário atual (impede usar anexos de
+	 * outra pessoa).
 	 */
 	public static function owned( array $ids ) {
 		return array_values(
@@ -136,14 +182,16 @@ class PFlow_Media {
 				PFlow_Posts::parse_ids( $ids ),
 				static function ( $id ) {
 					$post = get_post( $id );
-					return $post && 'attachment' === $post->post_type && (int) $post->post_author === PFlow_Tenant::id() && wp_attachment_is_image( $id );
+					return $post && 'attachment' === $post->post_type && (int) $post->post_author === PFlow_Tenant::id() && ( wp_attachment_is_image( $id ) || self::is_video( $id ) );
 				}
 			)
 		);
 	}
 
 	/**
-	 * Dados das imagens para o publicador.
+	 * Dados das mídias para o publicador.
+	 *
+	 * @return array Itens com url, path, mime, kind ('image' ou 'video') e bytes.
 	 */
 	public static function for_publish( array $ids ) {
 		$out = array();
@@ -151,17 +199,41 @@ class PFlow_Media {
 			$path = get_attached_file( $id );
 			$url  = wp_get_attachment_url( $id );
 			if ( $path && $url ) {
+				$mime  = (string) get_post_mime_type( $id );
 				$out[] = array(
-					'url'  => set_url_scheme( $url, 'https' ),
-					'path' => $path,
-					'mime' => (string) get_post_mime_type( $id ),
+					'url'   => set_url_scheme( $url, 'https' ),
+					'path'  => $path,
+					'mime'  => $mime,
+					'kind'  => 0 === strpos( $mime, 'video/' ) ? 'video' : 'image',
+					'bytes' => is_readable( $path ) ? (int) filesize( $path ) : 0,
 				);
 			}
 		}
 		return $out;
 	}
 
+	/**
+	 * Separa as mídias de um post em imagens e vídeo.
+	 *
+	 * @return array array( 'images' => array, 'video' => array|null )
+	 */
+	public static function split( array $items ) {
+		$images = array();
+		$video  = null;
+		foreach ( $items as $item ) {
+			if ( 'video' === $item['kind'] ) {
+				$video = $video ? $video : $item;
+			} else {
+				$images[] = $item;
+			}
+		}
+		return array( 'images' => $images, 'video' => $video );
+	}
+
 	public static function thumb( $id ) {
+		if ( self::is_video( $id ) ) {
+			return (string) wp_get_attachment_url( $id );
+		}
 		$src = wp_get_attachment_image_src( $id, 'medium' );
 		return $src ? $src[0] : (string) wp_get_attachment_url( $id );
 	}

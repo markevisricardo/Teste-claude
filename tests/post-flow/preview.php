@@ -77,6 +77,15 @@ $save( 'Webinar gratuito: como montar a rotina de higiene bucal da família. Ins
 $save( 'Rascunho: depoimento da Dona Maria sobre a prótese nova', '', array( 3 ), array( $ch['ig'] ), '' );
 $save( 'Ideia de post: perguntas frequentes sobre aparelho invisível', '', array(), array( $ch['fb'], $ch['ig'], $ch['li'] ), '' );
 
+// Posts com vídeo: um enviado (MP4 gerado com ffmpeg, se houver) e um por link do Google Drive.
+$mp4 = $out . '/video.mp4';
+if ( ! file_exists( $mp4 ) ) {
+	exec( 'ffmpeg -loglevel error -y -f lavfi -i "gradients=s=720x1280:c0=0x7c3aed:c1=0xec4899:d=3" -f lavfi -i anullsrc -shortest -c:v libx264 -pix_fmt yuv420p -c:a aac ' . escapeshellarg( $mp4 ) . ' 2>&1' );
+}
+$GLOBALS['pflow_test_files'][50] = array( 'path' => $mp4, 'mime' => 'video/mp4', 'url' => 'video.mp4' );
+$save( 'Tour de 30 segundos pela clínica nova 🎬 Vem conhecer!', '', array( 50 ), array( $ch['ig'], $ch['fb'], $ch['th'], $ch['ws'] ), $at( 1, '18:00' ) );
+PFlow_Posts::save( array( 'content' => 'Depoimento em vídeo: como foi o tratamento da Juliana 💜', 'link' => '', 'media_ids' => array(), 'video_url' => 'https://drive.google.com/file/d/1AbCdEfGhIjKlMnOpQr/view?usp=sharing', 'video_bytes' => 48 * 1048576, 'in_queue' => 1 ), array( $ch['ig'], $ch['li'], $ch['x'] ), $at( 2, '09:00' ) );
+
 // Publicados (marcados direto no banco).
 global $wpdb;
 $sent = static function ( $content, $media, $map, $ago ) use ( $save, $wpdb ) {
@@ -122,6 +131,7 @@ function respond_preview( $code, $body ) {
 function pflow_page( $body ) {
 	return "<!DOCTYPE html><html lang=\"pt-BR\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link rel=\"stylesheet\" href=\"app.css\"></head><body class=\"pflow-screen\">{$body}</body></html>";
 }
+// Editor com um post de vídeo do Google Drive aberto.
 foreach ( $pages as $view => $args ) {
 	$_GET = array( 'pf' => $view ) + $args;
 	if ( isset( $notices[ $view ] ) ) {
@@ -129,6 +139,12 @@ foreach ( $pages as $view => $args ) {
 	}
 	file_put_contents( $out . '/' . $view . '.html', pflow_page( PFlow_App::render() ) );
 }
+
+// Editor com vídeo do Google Drive.
+global $wpdb;
+$drive_post = (int) $wpdb->get_var( "SELECT id FROM wp_pflow_posts WHERE video_url <> '' LIMIT 1" );
+$_GET       = array( 'pf' => 'compose', 'id' => $drive_post );
+file_put_contents( $out . '/compose-video.html', pflow_page( PFlow_App::render() ) );
 
 // Tela do QR Code do WhatsApp (QR de mentira, gerado aqui).
 $qr = imagecreatetruecolor( 290, 290 );

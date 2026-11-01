@@ -95,6 +95,26 @@ function wp_remote_request( $url, $args ) {
 	}
 	return $next;
 }
+function wp_remote_get( $url, $args = array() ) {
+	$res = wp_remote_request( $url, $args + array( 'method' => 'GET' ) );
+	if ( ! is_wp_error( $res ) && ! empty( $args['stream'] ) && ! empty( $args['filename'] ) ) {
+		file_put_contents( $args['filename'], is_string( $res['body'] ) ? $res['body'] : json_encode( $res['body'] ) );
+	}
+	return $res;
+}
+function wp_remote_retrieve_header( $r, $h ) {
+	$headers = array_change_key_case( $r['headers'] ?? array() );
+	return $headers[ strtolower( $h ) ] ?? '';
+}
+function apply_filters( $tag, $value ) {
+	return $GLOBALS['pflow_test_filters'][ $tag ] ?? $value;
+}
+function wp_parse_url( $url, $component = -1 ) {
+	return parse_url( $url, $component );
+}
+function trailingslashit( $s ) {
+	return rtrim( $s, '/' ) . '/';
+}
 function wp_remote_retrieve_response_code( $r ) {
 	return $r['code'];
 }
@@ -122,3 +142,8 @@ require PFLOW_DIR . 'includes/providers/class-pflow-provider-whatsapp-web.php';
 require PFLOW_DIR . 'includes/class-pflow-posts.php';
 require PFLOW_DIR . 'includes/class-pflow-schedule.php';
 require PFLOW_DIR . 'includes/class-pflow-oauth.php';
+if ( ! defined( 'PFLOW_MAX_VIDEO_MB' ) ) {
+	define( 'PFLOW_MAX_VIDEO_MB', 500 );
+}
+require PFLOW_DIR . 'includes/class-pflow-media.php';
+require PFLOW_DIR . 'includes/class-pflow-drive.php';
