@@ -46,87 +46,13 @@ $tab = $can_register ? $tab : 'login';
 				<span class="text-lg font-semibold text-white">Post Flow</span>
 			</div>
 
-			<div class="<?php echo esc_attr( PFlow_App::CARD ); ?> p-8">
-				<?php if ( $can_register ) : ?>
-					<div class="mb-8 grid grid-cols-2 gap-1 rounded-xl bg-black p-1" role="tablist">
-						<button type="button" data-pflow-tab="login" class="cursor-pointer rounded-lg border-0 px-3 py-2 text-sm font-semibold transition-colors"><?php esc_html_e( 'Entrar', 'post-flow' ); ?></button>
-						<button type="button" data-pflow-tab="register" class="cursor-pointer rounded-lg border-0 px-3 py-2 text-sm font-semibold transition-colors"><?php esc_html_e( 'Criar conta', 'post-flow' ); ?></button>
-					</div>
-				<?php else : ?>
-					<h2 class="m-0 mb-6 p-0 text-xl font-semibold text-white"><?php esc_html_e( 'Entrar', 'post-flow' ); ?></h2>
-				<?php endif; ?>
-
-				<?php if ( '' !== $error_message ) : ?>
-					<div role="alert" class="mb-6 rounded-xl border border-solid border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200"><?php echo esc_html( $error_message ); ?></div>
-				<?php endif; ?>
-
-				<!-- Entrar -->
-				<form data-pflow-panel="login" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="space-y-5">
-					<input type="hidden" name="action" value="pflow_login">
-					<?php wp_nonce_field( 'pflow_login' ); ?>
-					<div>
-						<label for="pflow-login-email" class="<?php echo esc_attr( PFlow_App::LABEL ); ?>"><?php esc_html_e( 'E-mail', 'post-flow' ); ?></label>
-						<input type="email" id="pflow-login-email" name="email" required autocomplete="email" value="<?php echo esc_attr( $email ); ?>" class="<?php echo esc_attr( PFlow_App::INPUT ); ?> mt-2">
-					</div>
-					<div>
-						<div class="flex items-center justify-between">
-							<label for="pflow-login-password" class="<?php echo esc_attr( PFlow_App::LABEL ); ?>"><?php esc_html_e( 'Senha', 'post-flow' ); ?></label>
-							<a href="<?php echo esc_url( wp_lostpassword_url( PFlow_App::url() ) ); ?>" class="text-xs <?php echo esc_attr( PFlow_App::LINK ); ?>"><?php esc_html_e( 'Esqueci a senha', 'post-flow' ); ?></a>
-						</div>
-						<input type="password" id="pflow-login-password" name="password" required autocomplete="current-password" class="<?php echo esc_attr( PFlow_App::INPUT ); ?> mt-2">
-					</div>
-					<button type="submit" class="<?php echo esc_attr( PFlow_App::BTN_PRIMARY ); ?> w-full"><?php esc_html_e( 'Entrar', 'post-flow' ); ?></button>
-				</form>
-
-				<?php if ( $can_register ) : ?>
-					<!-- Criar conta -->
-					<form data-pflow-panel="register" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="space-y-5">
-						<input type="hidden" name="action" value="pflow_register">
-						<?php wp_nonce_field( 'pflow_register' ); ?>
-						<div class="absolute -left-[9999px]" aria-hidden="true">
-							<label for="pflow-website">Website</label>
-							<input type="text" id="pflow-website" name="website" tabindex="-1" autocomplete="off">
-						</div>
-						<div>
-							<label for="pflow-name" class="<?php echo esc_attr( PFlow_App::LABEL ); ?>"><?php esc_html_e( 'Seu nome', 'post-flow' ); ?></label>
-							<input type="text" id="pflow-name" name="name" required autocomplete="name" class="<?php echo esc_attr( PFlow_App::INPUT ); ?> mt-2">
-						</div>
-						<div>
-							<label for="pflow-email" class="<?php echo esc_attr( PFlow_App::LABEL ); ?>"><?php esc_html_e( 'E-mail', 'post-flow' ); ?></label>
-							<input type="email" id="pflow-email" name="email" required autocomplete="email" value="<?php echo esc_attr( $email ); ?>" class="<?php echo esc_attr( PFlow_App::INPUT ); ?> mt-2">
-						</div>
-						<div>
-							<label for="pflow-password" class="<?php echo esc_attr( PFlow_App::LABEL ); ?>"><?php esc_html_e( 'Senha', 'post-flow' ); ?></label>
-							<input type="password" id="pflow-password" name="password" required minlength="8" autocomplete="new-password" class="<?php echo esc_attr( PFlow_App::INPUT ); ?> mt-2">
-							<p class="<?php echo esc_attr( PFlow_App::HELP ); ?>"><?php esc_html_e( 'Pelo menos 8 caracteres.', 'post-flow' ); ?></p>
-						</div>
-						<button type="submit" class="<?php echo esc_attr( PFlow_App::BTN_PRIMARY ); ?> w-full"><?php esc_html_e( 'Criar conta grátis', 'post-flow' ); ?></button>
-						<p class="text-center text-xs leading-5 text-neutral-500"><?php esc_html_e( 'Depois você conecta os seus canais em poucos cliques.', 'post-flow' ); ?></p>
-					</form>
-				<?php endif; ?>
-			</div>
+			<?php
+			$pf_uid       = 'painel';
+			$return_url   = PFlow_App::url();
+			$redirect_url = '';
+			$card_title   = '';
+			include PFLOW_DIR . 'app/views/partials/auth-card.php';
+			?>
 		</div>
 	</div>
 </div>
-<?php if ( $can_register ) : ?>
-<script>
-( function () {
-	var tabs   = document.querySelectorAll( '[data-pflow-tab]' );
-	var panels = document.querySelectorAll( '[data-pflow-panel]' );
-	function show( name ) {
-		panels.forEach( function ( panel ) {
-			panel.hidden = panel.getAttribute( 'data-pflow-panel' ) !== name;
-		} );
-		tabs.forEach( function ( tab ) {
-			var on = tab.getAttribute( 'data-pflow-tab' ) === name;
-			tab.className = tab.className.replace( / ?(bg-violet-600 text-white|bg-transparent text-neutral-400)/g, '' ) + ( on ? ' bg-violet-600 text-white' : ' bg-transparent text-neutral-400' );
-			tab.setAttribute( 'aria-selected', on ? 'true' : 'false' );
-		} );
-	}
-	tabs.forEach( function ( tab ) {
-		tab.addEventListener( 'click', function () { show( tab.getAttribute( 'data-pflow-tab' ) ); } );
-	} );
-	show( <?php echo wp_json_encode( $tab ); ?> );
-} )();
-</script>
-<?php endif; ?>

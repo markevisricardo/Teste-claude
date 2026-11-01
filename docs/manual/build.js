@@ -31,7 +31,7 @@ const { chromium } = require('playwright');
 		headerTemplate: '<div></div>',
 		footerTemplate:
 			'<div style="width:100%;font-family:Inter,Arial,sans-serif;font-size:7.5pt;color:#8a8499;padding:0 18mm;display:flex;justify-content:space-between;">' +
-			'<span>Post Flow — Manual e Tutorial · v0.4.0</span><span class="pageNumber"></span></div>',
+			'<span>Post Flow — Manual e Tutorial · v0.4.1</span><span class="pageNumber"></span></div>',
 	});
 	await browser.close();
 

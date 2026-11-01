@@ -137,7 +137,7 @@
 			<span class="chip">Facebook</span><span class="chip">Instagram</span><span class="chip">LinkedIn</span><span class="chip">X</span><span class="chip">Threads</span><span class="chip">Google Meu Negócio</span><span class="chip">Pinterest</span><span class="chip">WhatsApp</span><span class="chip">Vídeo e Google Drive</span>
 		</div>
 	</div>
-	<div class="cover-meta">Versão 0.4.0<br>Novembro de 2026</div>
+	<div class="cover-meta">Versão 0.4.1<br>Novembro de 2026</div>
 	<img class="cover-shot" src="img/queue.png" alt="">
 </section>
 
@@ -149,7 +149,7 @@
 		<div class="grp"><a href="#c1"><span>1</span>Visão geral</a><ul>
 			<li><a href="#c1-1">O que é o Post Flow</a></li><li><a href="#c1-2">Como funciona</a></li><li><a href="#c1-3">Redes suportadas</a></li><li><a href="#c1-4">Quanto custa cada rede</a></li></ul></div>
 		<div class="grp"><a href="#c2"><span>2</span>Instalação (administrador)</a><ul>
-			<li><a href="#c2-1">Requisitos</a></li><li><a href="#c2-2">Instalar o plugin</a></li><li><a href="#c2-3">Página do painel</a></li><li><a href="#c2-4">Cron do servidor</a></li><li><a href="#c2-5">Envio de e-mails</a></li></ul></div>
+			<li><a href="#c2-1">Requisitos</a></li><li><a href="#c2-2">Instalar o plugin</a></li><li><a href="#c2-3">Página do painel</a></li><li><a href="#c2-4">Cron do servidor</a></li><li><a href="#c2-5">Envio de e-mails</a></li><li><a href="#c2-6">Shortcodes</a></li></ul></div>
 		<div class="grp"><a href="#c3"><span>3</span>Configurar as redes (administrador)</a><ul>
 			<li><a href="#c3-0">Antes de começar</a></li><li><a href="#c3-1">Meta: Facebook e Instagram</a></li><li><a href="#c3-2">LinkedIn</a></li><li><a href="#c3-3">X (Twitter)</a></li><li><a href="#c3-4">Threads</a></li><li><a href="#c3-5">Google Meu Negócio</a></li><li><a href="#c3-6">Pinterest</a></li><li><a href="#c3-7">WhatsApp por QR Code (grátis)</a></li><li><a href="#c3-8">WhatsApp API oficial (paga)</a></li><li><a href="#c3-9">Regras da plataforma e planos</a></li><li><a href="#c3-10">Publicador e usuários</a></li></ul></div>
 		<div class="grp"><a href="#c4"><span>4</span>Tutorial do usuário</a><ul>
@@ -267,6 +267,27 @@
 
 	<h2 id="c2-5"><span class="n">2.5</span>Envio de e-mails</h2>
 	<p>A recuperação de senha usa o fluxo padrão do WordPress, que envia um link por e-mail. Instale um plugin de SMTP (por exemplo, WP Mail SMTP) com um provedor de e-mail transacional, para as mensagens não caírem no spam.</p>
+
+	<h2 id="c2-6"><span class="n">2.6</span>Shortcodes</h2>
+	<table>
+		<thead><tr><th>Shortcode</th><th>O que mostra</th></tr></thead>
+		<tbody>
+			<tr><td class="mono" style="font-weight:400">[post_flow]</td><td>O painel completo. Visitantes veem Entrar / Criar conta. Fica na página criada na ativação.</td></tr>
+			<tr><td class="mono" style="font-weight:400">[post_flow_login]</td><td>Só o formulário de Entrar / Criar conta, para qualquer página do site (landing page, Elementor, blocos). Depois do login, leva ao painel. Quem já entrou vê “Olá, Nome” e o botão <strong>Ir para o painel</strong>. Os erros (senha errada, e-mail já cadastrado) voltam para a mesma página.</td></tr>
+		</tbody>
+	</table>
+	<p>Atributos do <code>[post_flow_login]</code>, todos opcionais:</p>
+	<table>
+		<thead><tr><th>Atributo</th><th>Exemplo</th><th>Efeito</th></tr></thead>
+		<tbody>
+			<tr><td>aba</td><td class="mono" style="font-weight:400">aba="cadastro"</td><td>Abre na aba Criar conta (padrão: Entrar).</td></tr>
+			<tr><td>redirecionar</td><td class="mono" style="font-weight:400">redirecionar="/boas-vindas"</td><td>Para onde ir depois de entrar ou criar a conta. Padrão: o painel (depois do cadastro, a tela Canais). Por segurança, só aceita endereços do próprio site.</td></tr>
+			<tr><td>titulo</td><td class="mono" style="font-weight:400">titulo="Comece grátis"</td><td>Título acima do formulário.</td></tr>
+			<tr><td>botao</td><td class="mono" style="font-weight:400">botao="Abrir meu painel"</td><td>Texto do botão para quem já entrou.</td></tr>
+		</tbody>
+	</table>
+	<div class="box tip"><span class="t">No Elementor</span><p>Use o widget <strong>Shortcode</strong> e cole o código. O formulário tem fundo escuro próprio e funciona sobre qualquer cor de página.</p></div>
+	<figure><img src="img/shortcode-login.png" alt=""><figcaption>Exemplo: <code>[post_flow_login aba="cadastro" titulo="Comece grátis"]</code> numa landing page do site.</figcaption></figure>
 </section>
 
 <!-- ============================== 3. REDES ============================== -->

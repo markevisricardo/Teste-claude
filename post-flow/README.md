@@ -47,6 +47,26 @@ Todas as redes, menos o Google Meu Negócio, também aceitam **vídeo**: enviado
 
 O editor mostra o contador de caracteres de cada rede marcada e avisa antes de salvar (ex.: "Instagram exige ao menos uma imagem"). Se faltar algo, o post é guardado como rascunho, e nada se perde.
 
+## Shortcodes
+
+| Shortcode | O que mostra |
+|---|---|
+| `[post_flow]` | O painel completo. Visitantes veem Entrar / Criar conta. Fica na página criada na ativação. |
+| `[post_flow_login]` | Só o formulário de **Entrar / Criar conta**, para qualquer página (landing page, Elementor, blocos). Depois do login, leva ao painel; quem já entrou vê "Olá, Nome" e o botão **Ir para o painel**. Erros (senha errada, e-mail já cadastrado) voltam para a mesma página. |
+
+Atributos do `[post_flow_login]` (todos opcionais):
+
+| Atributo | Exemplo | Efeito |
+|---|---|---|
+| `aba` | `aba="cadastro"` | Abre na aba Criar conta (padrão: Entrar). |
+| `redirecionar` | `redirecionar="/boas-vindas"` | Para onde ir depois de entrar ou criar a conta. Padrão: o painel (depois do cadastro, a tela Canais). Só aceita endereços do próprio site. |
+| `titulo` | `titulo="Comece grátis"` | Título acima do formulário. |
+| `botao` | `botao="Abrir meu painel"` | Texto do botão para quem já entrou. |
+
+Exemplo: `[post_flow_login aba="cadastro" titulo="Comece grátis"]`
+
+![Shortcode de login numa landing page](../docs/screenshots/post-flow/shortcode-login.png)
+
 ## Vídeos
 
 Um post pode ter **imagens ou um vídeo** (MP4 ou MOV, de preferência H.264 com áudio AAC), de duas formas:

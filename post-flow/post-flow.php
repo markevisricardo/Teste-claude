@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Post Flow – Agendamento de posts em redes sociais
- * Description:       Plataforma multiusuário para agendar e publicar posts no Facebook, Instagram, LinkedIn, X, Threads, Google Meu Negócio, Pinterest e WhatsApp (Status e grupos por QR Code, ou API oficial). Cada usuário se cadastra, conecta os próprios canais e vê só os seus dados. Painel no shortcode [post_flow].
- * Version:           0.4.0
+ * Description:       Plataforma multiusuário para agendar e publicar posts no Facebook, Instagram, LinkedIn, X, Threads, Google Meu Negócio, Pinterest e WhatsApp (Status e grupos por QR Code, ou API oficial). Cada usuário se cadastra, conecta os próprios canais e vê só os seus dados. Painel no shortcode [post_flow]; formulário de login/cadastro avulso em [post_flow_login].
+ * Version:           0.4.1
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Author:            Post Flow
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PFLOW_VERSION', '0.4.0' );
+define( 'PFLOW_VERSION', '0.4.1' );
 define( 'PFLOW_DB_VERSION', '2' );
 define( 'PFLOW_FILE', __FILE__ );
 define( 'PFLOW_DIR', plugin_dir_path( __FILE__ ) );
@@ -56,6 +56,7 @@ require_once PFLOW_DIR . 'includes/class-pflow-whatsapp-web.php';
 require_once PFLOW_DIR . 'app/class-pflow-app.php';
 require_once PFLOW_DIR . 'app/class-pflow-auth.php';
 require_once PFLOW_DIR . 'app/class-pflow-frontend.php';
+require_once PFLOW_DIR . 'app/class-pflow-login-shortcode.php';
 
 if ( is_admin() ) {
 	require_once PFLOW_DIR . 'admin/class-pflow-admin.php';
@@ -78,6 +79,7 @@ add_action(
 		PFlow_App::init();
 		PFlow_Auth::init();
 		PFlow_Frontend::init();
+		PFlow_Login_Shortcode::init();
 
 		if ( is_admin() ) {
 			PFlow_Admin::init();

@@ -73,6 +73,26 @@ $copy    = static function ( $id, $value ) {
 			</div>
 		</section>
 
+		<section class="<?php echo esc_attr( PFlow_App::CARD ); ?>">
+			<h2 class="m-0 mb-2 p-0 text-lg font-semibold text-white"><?php esc_html_e( 'Shortcodes', 'post-flow' ); ?></h2>
+			<table class="w-full border-collapse text-sm">
+				<tbody>
+					<tr class="border-0 border-b border-solid border-neutral-900">
+						<td class="py-3 pr-4 align-top"><code>[post_flow]</code></td>
+						<td class="py-3 text-neutral-400"><?php esc_html_e( 'O painel completo (já está na página do painel). Visitantes veem Entrar / Criar conta.', 'post-flow' ); ?></td>
+					</tr>
+					<tr class="border-0 border-b border-solid border-neutral-900">
+						<td class="py-3 pr-4 align-top"><code>[post_flow_login]</code></td>
+						<td class="py-3 text-neutral-400"><?php esc_html_e( 'Só o formulário de Entrar / Criar conta, para qualquer página (landing page, Elementor). Depois do login, leva ao painel; quem já entrou vê o botão "Ir para o painel".', 'post-flow' ); ?></td>
+					</tr>
+					<tr>
+						<td class="py-3 pr-4 align-top"><code>[post_flow_login aba="cadastro" redirecionar="/boas-vindas" titulo="Comece grátis"]</code></td>
+						<td class="py-3 text-neutral-400"><?php esc_html_e( 'Abre na aba Criar conta, leva a outra página do site depois do login e mostra um título. Também aceita botao="Texto" para o botão de quem já entrou.', 'post-flow' ); ?></td>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+
 		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="space-y-6">
 			<input type="hidden" name="action" value="pflow_save_settings">
 			<?php wp_nonce_field( 'pflow_save_settings' ); ?>

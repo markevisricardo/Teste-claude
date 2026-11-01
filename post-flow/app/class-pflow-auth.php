@@ -78,7 +78,7 @@ class PFlow_Auth {
 		// phpcs:enable
 
 		$fail = static function ( $code ) use ( $email ) {
-			wp_safe_redirect( add_query_arg( array( 'pf_tab' => 'register', 'pf_error' => $code, 'pf_email' => rawurlencode( $email ) ), PFlow_App::url() ) );
+			wp_safe_redirect( self::back_url( array( 'pf_tab' => 'register', 'pf_error' => $code, 'pf_email' => rawurlencode( $email ) ) ) );
 			exit;
 		};
 
@@ -110,7 +110,7 @@ class PFlow_Auth {
 		wp_set_current_user( $user_id );
 		wp_set_auth_cookie( $user_id, true );
 		PFlow_App::notice( $user_id, 'success', __( 'Conta criada! Agora conecte os seus canais.', 'post-flow' ) );
-		wp_safe_redirect( PFlow_App::url( 'channels' ) );
+		wp_safe_redirect( self::after_url( PFlow_App::url( 'channels' ) ) );
 		exit;
 	}
 
@@ -158,11 +158,37 @@ class PFlow_Auth {
 			is_ssl()
 		);
 		if ( is_wp_error( $user ) ) {
-			wp_safe_redirect( add_query_arg( array( 'pf_error' => 'login', 'pf_email' => rawurlencode( $email ) ), PFlow_App::url() ) );
+			wp_safe_redirect( self::back_url( array( 'pf_error' => 'login', 'pf_email' => rawurlencode( $email ) ) ) );
 			exit;
 		}
-		wp_safe_redirect( PFlow_App::url() );
+		wp_safe_redirect( self::after_url( PFlow_App::url() ) );
 		exit;
+	}
+
+	/**
+	 * Endereço enviado pelo formulário, se for do próprio site (evita
+	 * redirecionar para fora: wp_validate_redirect só aceita o domínio do site).
+	 */
+	private static function posted_url( $field ) {
+		$url = esc_url_raw( (string) wp_unslash( $_POST[ $field ] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification -- verificado antes.
+		return '' !== $url ? (string) wp_validate_redirect( $url, '' ) : '';
+	}
+
+	/**
+	 * Volta para a página do formulário (painel ou [post_flow_login]) com o erro.
+	 */
+	private static function back_url( array $args ) {
+		$page = self::posted_url( 'pf_return' );
+		$page = '' !== $page ? remove_query_arg( array( 'pf_error', 'pf_tab', 'pf_email' ), $page ) : PFlow_App::url();
+		return add_query_arg( $args, $page ) . '#pflow-entrar';
+	}
+
+	/**
+	 * Para onde ir depois de entrar ou criar a conta.
+	 */
+	private static function after_url( $default ) {
+		$url = self::posted_url( 'pf_redirect' );
+		return '' !== $url ? $url : $default;
 	}
 
 	public static function to_app() {
