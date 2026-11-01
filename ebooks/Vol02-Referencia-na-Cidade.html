@@ -1,0 +1,321 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Referência na Cidade · Acelerador de Clínicas</title>
+<style>:root{--accent:#2F6BF0;}
+@page { size: A4; margin: 18mm 17mm 20mm 17mm; }
+@page :first { margin: 0; }
+* { box-sizing: border-box; }
+:root { --navy:#0B1B33; --ink:#1B2433; --muted:#5B6576; --line:#E3E7EE; --soft:#F5F7FA; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { margin:0; font-family: Inter, "Liberation Sans", sans-serif; color: var(--ink); font-size: 10.4pt; line-height: 1.55; background:#fff; }
+h1,h2,h3,h4 { font-family: "Inter Display", Inter, sans-serif; color: var(--navy); margin: 0; line-height: 1.15; }
+h2 { font-size: 23pt; font-weight: 800; letter-spacing: -0.02em; margin: 2mm 0 5mm; }
+h3 { font-size: 13.5pt; font-weight: 700; margin: 6mm 0 3mm; }
+h4 { font-size: 10.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); margin: 5mm 0 2mm; }
+p { margin: 0 0 3mm; }
+b { color: var(--navy); }
+.mt { margin-top: 8mm; }
+.muted { color: var(--muted); }
+.small { font-size: 9pt; }
+.eyebrow { font-size: 8.5pt; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.page-start { break-before: page; }
+ul { margin: 0 0 3mm; padding-left: 0; list-style: none; }
+ul li { position: relative; padding-left: 6mm; margin-bottom: 1.6mm; }
+ul li::before { content: ""; position: absolute; left: 1mm; top: 2.1mm; width: 2mm; height: 2mm; border-radius: 50%; background: var(--accent); }
+ul.check li::before { content: "✓"; background: none; color: var(--accent); font-weight: 800; top: 0; width: auto; height: auto; }
+ul.arrow li::before { content: "→"; background: none; color: var(--accent); font-weight: 800; top: 0; width: auto; height: auto; }
+ul.steps { counter-reset: s; }
+ul.steps li { counter-increment: s; padding-left: 8mm; }
+ul.steps li::before { content: counter(s); background: var(--accent); color: #fff; font-size: 7.5pt; font-weight: 800; width: 5mm; height: 5mm; top: .6mm; left: 0; display: flex; align-items: center; justify-content: center; }
+
+/* COVER */
+.cover { position: relative; width: 210mm; height: 297mm; background: var(--navy); color: #fff; overflow: hidden; padding: 22mm 20mm; display: flex; flex-direction: column; }
+.cover-shape { position: absolute; border-radius: 50%; }
+.cover-shape.s1 { width: 170mm; height: 170mm; right: -60mm; top: -50mm; background: radial-gradient(circle at 30% 30%, var(--accent), transparent 70%); opacity: .55; }
+.cover-shape.s2 { width: 120mm; height: 120mm; left: -50mm; bottom: 40mm; border: 1.2mm solid var(--accent); opacity: .25; }
+.cover-top, .cover-mid, .cover-puv, .cover-foot { position: relative; z-index: 2; }
+.brandmark { display: inline-flex; align-items: center; gap: 2.5mm; font-family: "Inter Display"; font-weight: 800; font-size: 12pt; letter-spacing: -.01em; }
+.brandmark.big { font-size: 20pt; }
+.bm-dot { width: 4mm; height: 4mm; border-radius: 1mm; background: var(--accent); transform: rotate(45deg); display: inline-block; }
+.cover-vol { margin-top: 3mm; font-size: 8.5pt; letter-spacing: .16em; text-transform: uppercase; opacity: .75; }
+.cover-mid { margin-top: 48mm; }
+.cover-kicker { display: inline-block; background: var(--accent); color: #fff; font-weight: 800; font-size: 9pt; letter-spacing: .12em; text-transform: uppercase; padding: 1.6mm 3.5mm; border-radius: 1.5mm; }
+.cover-title { color: #fff; font-size: 50pt; font-weight: 900; letter-spacing: -.035em; line-height: .98; margin: 6mm 0 6mm; }
+.cover-sub { font-size: 15pt; line-height: 1.35; opacity: .9; max-width: 150mm; }
+.cover-puv { margin-top: auto; background: rgba(255,255,255,.07); border-left: 1.6mm solid var(--accent); padding: 5mm 6mm; border-radius: 0 2mm 2mm 0; }
+.cover-puv p { margin: 0; font-size: 11.5pt; line-height: 1.45; }
+.puv-label { font-size: 7.5pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5mm; }
+.cover-foot { display: flex; justify-content: space-between; margin-top: 10mm; font-size: 9pt; opacity: .85; }
+.cover-foot b { color: #fff; }
+.cover-foot .site { font-weight: 700; color: #fff; }
+
+/* PUV / cards */
+.puv-box { background: var(--soft); border: 1px solid var(--line); border-left: 1.6mm solid var(--accent); border-radius: 0 3mm 3mm 0; padding: 5mm 6mm; margin: 5mm 0; break-inside: avoid; }
+.puv-big { font-family: "Inter Display"; font-size: 13.5pt; font-weight: 700; color: var(--navy); line-height: 1.35; }
+.puv-dif { margin: 2mm 0 0; font-size: 9.8pt; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+.card { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm 5mm; break-inside: avoid; }
+.card h4 { margin-top: 0; }
+
+/* journey */
+.journey { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2mm; margin-top: 3mm; }
+.j-item { border: 1px solid var(--line); border-top: 1.4mm solid var(--c); border-radius: 2mm; padding: 2.5mm; opacity: .55; }
+.j-item.on { opacity: 1; background: color-mix(in srgb, var(--c) 9%, white); border-color: var(--c); }
+.j-n { display: block; font-weight: 900; color: var(--c); font-size: 11pt; }
+.j-t { display: block; font-weight: 800; font-size: 8pt; color: var(--navy); line-height: 1.2; margin: .5mm 0 1mm; }
+.j-d { display: block; font-size: 7pt; color: var(--muted); line-height: 1.25; }
+
+/* diagnóstico */
+ol.diag { list-style: none; padding: 0; margin: 4mm 0; }
+ol.diag li { display: flex; gap: 3mm; padding: 2.4mm 0; border-bottom: 1px dashed var(--line); }
+.box { flex: 0 0 4.2mm; height: 4.2mm; border: .5mm solid var(--accent); border-radius: 1mm; margin-top: .6mm; }
+.bands { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-top: 5mm; }
+.band { display: flex; gap: 3mm; background: var(--soft); border-radius: 2.5mm; padding: 3mm 4mm; font-size: 9.5pt; break-inside: avoid; }
+.band-r { flex: 0 0 auto; background: var(--accent); color: #fff; font-weight: 800; font-size: 8.5pt; border-radius: 1.5mm; padding: .8mm 2.2mm; height: fit-content; white-space: nowrap; }
+
+/* raciocínio */
+.chain { margin: 5mm 0; position: relative; }
+.chain-item { display: flex; gap: 4mm; position: relative; padding-bottom: 3mm; break-inside: avoid; }
+.chain-item:not(:last-child)::after { content: ""; position: absolute; left: 4.2mm; top: 9mm; bottom: 0; width: .5mm; background: color-mix(in srgb, var(--accent) 40%, white); }
+.chain-n { flex: 0 0 9mm; height: 9mm; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.chain-lab { font-weight: 800; color: var(--navy); font-size: 10.5pt; margin-top: 1.5mm; }
+.chain-item p { margin: .5mm 0 0; }
+.tese { background: var(--navy); color: #fff; border-radius: 3mm; padding: 5mm 6mm; font-family: "Inter Display"; font-size: 12.5pt; font-weight: 600; line-height: 1.4; break-inside: avoid; }
+.tese span { display: block; font-family: Inter; font-size: 7.5pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5mm; }
+
+/* método */
+.m-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5mm; margin: 5mm 0; }
+.m-cell { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm; display: grid; grid-template-columns: 13mm 1fr; column-gap: 3mm; break-inside: avoid; }
+.m-letter { grid-row: span 2; width: 13mm; height: 13mm; border-radius: 2.5mm; background: var(--accent); color: #fff; font-family: "Inter Display"; font-weight: 900; font-size: 20pt; display: flex; align-items: center; justify-content: center; }
+.m-name { font-weight: 800; color: var(--navy); font-size: 10.5pt; }
+.m-desc { font-size: 9pt; color: var(--muted); line-height: 1.4; }
+
+/* passos */
+.step-head { display: flex; gap: 5mm; align-items: center; margin-bottom: 3mm; }
+.step-letter { flex: 0 0 22mm; height: 22mm; border-radius: 4mm; background: var(--accent); color: #fff; font-family: "Inter Display"; font-weight: 900; font-size: 38pt; display: flex; align-items: center; justify-content: center; }
+.step-head h2 { margin: 1mm 0 0; }
+.obj { background: color-mix(in srgb, var(--accent) 10%, white); border-radius: 2.5mm; padding: 3mm 4.5mm; margin-bottom: 2mm; }
+.tool { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm 5mm; margin: 4mm 0; background: var(--soft); break-inside: avoid; }
+.tool-h { font-weight: 800; color: var(--navy); margin-bottom: 2mm; font-size: 10.5pt; }
+.tool p:last-child, .tool ul:last-child { margin-bottom: 0; }
+.tool table { margin: 1mm 0 0; background: #fff; }
+.erro { border-left: 1.2mm solid #D64545; background: #FDF1F1; padding: 3mm 4.5mm; border-radius: 0 2.5mm 2.5mm 0; font-size: 9.8pt; break-inside: avoid; }
+.erro b { color: #B12E2E; }
+
+/* roadmap */
+.rm { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.5mm; margin-top: 4mm; }
+.rm-col { border: 1px solid var(--line); border-top: 1.6mm solid var(--accent); border-radius: 2.5mm; padding: 4mm; font-size: 9.3pt; display: flex; flex-direction: column; break-inside: avoid; }
+.rm-per { font-weight: 900; color: var(--accent); font-size: 10pt; letter-spacing: .04em; text-transform: uppercase; }
+.rm-nome { font-family: "Inter Display"; font-weight: 800; color: var(--navy); font-size: 12pt; margin: 1mm 0 3mm; line-height: 1.2; }
+.rm-ent { margin-top: auto; background: var(--soft); border-radius: 2mm; padding: 2.5mm 3mm; font-size: 8.8pt; }
+
+/* tables */
+table { width: 100%; border-collapse: collapse; font-size: 9.3pt; margin-bottom: 3mm; }
+th { background: var(--navy); color: #fff; text-align: left; padding: 2.4mm 3mm; font-weight: 700; font-size: 8.6pt; letter-spacing: .03em; }
+td { border-bottom: 1px solid var(--line); padding: 2.4mm 3mm; vertical-align: top; }
+tr { break-inside: avoid; }
+tbody tr:nth-child(even) td { background: #FAFBFC; }
+
+/* scripts */
+.script { border: 1px solid var(--line); border-radius: 3mm; margin: 4mm 0; overflow: hidden; break-inside: avoid; }
+.script-h { background: var(--accent); color: #fff; font-weight: 800; padding: 2.4mm 4.5mm; font-size: 9.8pt; }
+.script-b { padding: 4mm 5mm; font-size: 10pt; white-space: pre-line; background: #fff; }
+.script-obs { padding: 2.6mm 5mm; background: var(--soft); border-top: 1px solid var(--line); font-size: 9pt; color: var(--muted); }
+
+/* cross ref */
+.xref { background: var(--navy); color: #fff; border-radius: 4mm; padding: 8mm; position: relative; overflow: hidden; margin: 3mm 0 6mm; break-inside: avoid; }
+.xref::after { content: ""; position: absolute; right: -25mm; top: -25mm; width: 80mm; height: 80mm; border-radius: 50%; background: radial-gradient(circle, var(--c), transparent 70%); opacity: .7; }
+.xref-tag { font-size: 8pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--c); position: relative; z-index: 1; filter: brightness(1.35); }
+.xref-title { font-family: "Inter Display"; font-size: 28pt; font-weight: 900; letter-spacing: -.02em; margin: 2mm 0 1mm; position: relative; z-index: 1; }
+.xref-desc { opacity: .85; position: relative; z-index: 1; }
+.sec-ref { margin-top: 5mm; border: 1px solid var(--line); border-left: 1.4mm solid var(--c); border-radius: 0 2.5mm 2.5mm 0; padding: 3.5mm 4.5mm; font-size: 9.6pt; break-inside: avoid; }
+
+.compliance { margin-top: 8mm; font-size: 8.6pt; color: var(--muted); border-top: 1px solid var(--line); padding-top: 3mm; }
+
+/* back */
+.back { break-before: page; position: relative; height: 255mm; background: var(--navy); color: #fff; border-radius: 4mm; overflow: hidden; }
+.back-in { position: relative; z-index: 2; padding: 22mm 16mm; height: 100%; display: flex; flex-direction: column; }
+.back-tag { font-size: 13pt; line-height: 1.45; opacity: .9; margin: 6mm 0 14mm; max-width: 140mm; }
+.back-cta { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15); border-radius: 4mm; padding: 7mm; }
+.back-cta-h { font-family: "Inter Display"; font-size: 16pt; font-weight: 800; margin-bottom: 2mm; }
+.back-cta p { opacity: .85; }
+.back-site { display: inline-block; margin-top: 2mm; background: var(--accent); color: #fff; font-weight: 800; padding: 2.5mm 5mm; border-radius: 2mm; font-size: 12pt; }
+.back-list { display: flex; flex-wrap: wrap; gap: 2mm; margin-top: auto; }
+.back-list span { border: 1px solid var(--c); color: #fff; border-radius: 10mm; padding: 1.2mm 3.5mm; font-size: 8.4pt; font-weight: 700; }
+.back-sig { margin-top: 6mm; font-size: 8pt; opacity: .6; }
+
+.keep{break-inside:avoid;}
+</style></head><body>
+<section class="cover">
+  <div class="cover-shape s1"></div><div class="cover-shape s2"></div>
+  <div class="cover-top">
+    <div class="brandmark"><span class="bm-dot"></span>Acelerador de Clínicas</div>
+    <div class="cover-vol">Coleção Acelerador de Clínicas · Volume 02</div>
+  </div>
+  <div class="cover-mid">
+    <div class="cover-kicker">Método BUSCA</div>
+    <h1 class="cover-title">Referência na Cidade</h1>
+    <p class="cover-sub">Como ser o nome que o Google, as inteligências artificiais e a imprensa recomendam quando alguém pesquisa o seu procedimento.</p>
+  </div>
+  <div class="cover-puv">
+    <div class="puv-label">Proposta Única de Valor</div>
+    <p>Construir uma autoridade que pertence à clínica — e não ao anúncio do mês: um sistema de 90 dias para ser encontrado, verificado e escolhido por quem pesquisa o seu procedimento na sua cidade, sem depender de indicação e sem brigar por preço.</p>
+  </div>
+  <div class="cover-foot">
+    <div>Uma metodologia <b>Acelerador de Clínicas</b></div>
+    <div class="site">aceleradordeclinicas.com.br</div>
+  </div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Antes de começar</div>
+  <h2>Por que este e-book existe</h2>
+  <p>Antes de marcar, o paciente pesquisa. Digita o sintoma no Google, abre o mapa para ver quem está perto, lê avaliações e, cada vez mais, pergunta a uma inteligência artificial quem é referência na cidade. Quem aparece nessas respostas recebe o paciente já meio convencido. Quem não aparece precisa convencer do zero — ou comprar atenção com anúncio todo mês.</p><p>Anúncio funciona, mas é aluguel: parou de pagar, parou de aparecer, e o concorrente pode comprar o mesmo espaço amanhã. Autoridade é patrimônio: uma página bem feita, um perfil do Google ativo ou uma citação na imprensa continuam trabalhando por meses e anos.</p><p>Este volume mostra quais ações constroem esse patrimônio mais rápido, em que ordem executá-las e como fazer isso dentro das regras de publicidade em saúde — sem prometer resultado e sem transformar o profissional em produtor de conteúdo em tempo integral.</p>
+  <div class="puv-box">
+    <div class="puv-label">A promessa deste volume (PUV)</div>
+    <p class="puv-big">Construir uma autoridade que pertence à clínica — e não ao anúncio do mês: um sistema de 90 dias para ser encontrado, verificado e escolhido por quem pesquisa o seu procedimento na sua cidade, sem depender de indicação e sem brigar por preço.</p>
+    <p class="puv-dif"><b>O que torna este método único:</b> o BUSCA trata autoridade como um ativo que se acumula. Em vez de “postar mais”, ele organiza cinco frentes na ordem certa — bandeira, utilidade, sinais de busca, citações de terceiros e auditoria — para que cada peça publicada trabalhe ao mesmo tempo no Google, no mapa, no ChatGPT e na percepção do paciente.</p>
+  </div>
+  <div class="two-col">
+    <div class="card"><h4>Para quem é</h4><ul class="check"><li>Clínicas que dependem quase só de indicação e sentem a agenda oscilar</li><li>Quem gasta com anúncio e sente o custo por paciente subir a cada mês</li><li>Profissionais competentes que “ninguém sabe que existem”</li><li>Quem já tem agência mas não sabe se ela está construindo autoridade ou só postando</li></ul></div>
+    <div class="card"><h4>O que você conquista</h4><ul class="arrow"><li>Uma frase de posicionamento única, usada igual em todos os canais</li><li>Perfil do Google e páginas de procedimento que trabalham sozinhos</li><li>Um rastro consistente que as IAs conseguem verificar e recomendar</li><li>Um caminho simples para aparecer como fonte na imprensa</li><li>Métricas que mostram de onde vem cada paciente novo</li></ul></div>
+  </div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Diagnóstico rápido · 3 minutos</div>
+  <h2>Onde sua clínica está hoje</h2>
+  <p>Marque cada afirmação verdadeira. Cada marcação vale 1 ponto. A pontuação diz por onde começar — e o que ainda não adianta fazer.</p>
+  <ol class="diag"><li><span class="box"></span>Consigo dizer em uma frase qual procedimento é a bandeira da clínica.</li><li><span class="box"></span>Essa frase está idêntica no Instagram, no site e no perfil do Google.</li><li><span class="box"></span>Existe uma lista escrita das dúvidas que os pacientes fazem antes de marcar.</li><li><span class="box"></span>Publicamos conteúdo em todas as semanas do último mês.</li><li><span class="box"></span>Nosso perfil do Google recebeu ao menos uma avaliação nova nos últimos 30 dias.</li><li><span class="box"></span>Existe uma página no site explicando o procedimento-bandeira do começo ao fim.</li><li><span class="box"></span>Ao pesquisar o procedimento + cidade, aparecemos na primeira página do Google.</li><li><span class="box"></span>Ao perguntar a uma IA “quem é referência em [procedimento] em [cidade]”, nosso nome aparece.</li><li><span class="box"></span>Já fomos citados como fonte em algum veículo de imprensa ou portal relevante.</li><li><span class="box"></span>Sabemos quantos pacientes novos entraram no mês passado e por qual canal.</li></ol>
+  <div class="bands"><div class="band"><div class="band-r">0–3</div><div><b>Problema de bandeira</b><br>Publicar mais agora só espalha uma mensagem confusa. Comece pela Etapa B.</div></div><div class="band"><div class="band-r">4–6</div><div><b>Base sem consistência</b><br>A estrutura existe, falta rotina. Foque nas Etapas U e S.</div></div><div class="band"><div class="band-r">7–8</div><div><b>Já é encontrado</b><br>O próximo salto vem de prova de terceiros. Vá para a Etapa C.</div></div><div class="band"><div class="band-r">9–10</div><div><b>Operação madura</b><br>Transforme o que funciona em número semanal. Aprofunde a Etapa A.</div></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Linha de raciocínio</div>
+  <h2>A lógica por trás do método</h2>
+  <p>Antes da técnica, o porquê. Se você entender esta sequência, consegue adaptar o método a qualquer especialidade, tamanho de equipe ou cidade.</p>
+  <div class="chain"><div class="chain-item"><div class="chain-n">1</div><div><div class="chain-lab">O paciente decide antes de falar com você</div><p>A maior parte da comparação acontece em pesquisas silenciosas: Google, mapa, avaliações, redes sociais e IAs. A primeira consulta começa na tela.</p></div></div><div class="chain-item"><div class="chain-n">2</div><div><div class="chain-lab">Buscadores e IAs recomendam o que conseguem verificar</div><p>Eles não sabem quem é melhor tecnicamente. Recomendam quem deixa rastro consistente: mesmo nome, mesma especialidade, mesma cidade, conteúdo útil e menções em fontes diferentes.</p></div></div><div class="chain-item"><div class="chain-n">3</div><div><div class="chain-lab">Rastro só se forma com foco</div><p>Quem tenta ser lembrado por tudo deixa um rastro fraco em cada assunto. Quem escolhe uma bandeira concentra sinais e passa a concorrer com poucos nomes, não com a cidade inteira.</p></div></div><div class="chain-item"><div class="chain-n">4</div><div><div class="chain-lab">Conteúdo útil é o que responde a dúvida que trava a decisão</div><p>Não é o que o profissional acha interessante; é o que o paciente pergunta na recepção antes de marcar. Cada dúvida respondida publicamente é uma objeção a menos na consulta.</p></div></div><div class="chain-item"><div class="chain-n">5</div><div><div class="chain-lab">Prova de terceiros vale mais que autoelogio</div><p>Avaliações, imprensa e citações são outras fontes confirmando o que você diz. É isso que tira a clínica da comparação por preço.</p></div></div><div class="chain-item"><div class="chain-n">6</div><div><div class="chain-lab">O que não é medido vira opinião</div><p>Sem saber de onde vem cada paciente, a clínica não sabe o que funciona — e corta justamente o canal que estava dando resultado.</p></div></div></div>
+  <div class="tese"><span>Tese central</span>Anúncio traz o paciente de hoje. Autoridade faz o paciente de amanhã chegar sozinho — e mais barato a cada mês. O BUSCA constrói o segundo sem abandonar o primeiro.</div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">O método</div>
+  <h2>Método BUSCA</h2>
+  <p>BUSCA organiza a construção de autoridade em cinco frentes, executadas nesta ordem. Cada letra é um tipo diferente de sinal que faz a sua clínica ser encontrada, confirmada e escolhida.</p>
+  <div class="m-grid"><div class="m-cell"><div class="m-letter">B</div><div class="m-name">Bandeira</div><div class="m-desc">Um procedimento e uma frase que o mercado consiga lembrar.</div></div><div class="m-cell"><div class="m-letter">U</div><div class="m-name">Utilidade</div><div class="m-desc">Conteúdo que elimina a dúvida que faz o paciente adiar.</div></div><div class="m-cell"><div class="m-letter">S</div><div class="m-name">Sinais de Busca</div><div class="m-desc">Perfil do Google, páginas próprias e consistência de dados.</div></div><div class="m-cell"><div class="m-letter">C</div><div class="m-name">Citações</div><div class="m-desc">Outras fontes confirmando quem você é: IAs, imprensa e parceiros.</div></div><div class="m-cell"><div class="m-letter">A</div><div class="m-name">Auditoria da Agenda</div><div class="m-desc">Números que dizem se a autoridade está virando paciente.</div></div></div>
+  <p class="muted small">Regra de ouro: cada etapa pressupõe a anterior resolvida. Pular etapas é a forma mais rápida de concluir que “isso não funciona na minha área”.</p>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">B</div>
+    <div><div class="eyebrow">Etapa 1 de 5</div><h2>Bandeira</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> definir o procedimento-bandeira e a frase de posicionamento que vão aparecer, palavra por palavra, em todos os canais.</div>
+  <h4>Raciocínio</h4>
+  <p>Autoridade começa quando alguém consegue completar a frase “a doutora é a referência em ___”. Você pode atender dez coisas, mas precisa comunicar uma primeiro. A bandeira concentra todos os sinais — conteúdo, avaliações, páginas, imprensa — no mesmo assunto, e é essa concentração que faz buscadores e pessoas associarem seu nome ao tema.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Escolha um procedimento que reúna quatro critérios: é procurado pelo nome, tem margem que sustenta a aquisição, você tem diferencial real nele e ele leva a outros cuidados.</li><li>Escreva a frase no formato: <b>[Especialidade] em [cidade], referência em [procedimento-bandeira] para [tipo de paciente]</b>.</li><li>Inclua um filtro no final da frase — algo que afaste o curioso e atraia o paciente certo (ex.: “para quem já tentou outros tratamentos”).</li><li>Aplique a frase, idêntica, na bio do Instagram, no topo do site, na descrição do perfil do Google e na assinatura de e-mail.</li><li>Liste o que o seu conselho restringe (garantia de resultado, superlativos, sensacionalismo) e revise a frase contra essa lista.</li></ul>
+  <div class="tool"><div class="tool-h">Exemplo de frase de bandeira</div><p>“Dermatologista em Curitiba, referência em tratamento de melasma para mulheres que já tentaram cremes sem sucesso.”</p><p class='small muted'>Repare: especialidade, cidade, procedimento e um filtro de público. Nenhuma promessa de resultado, nenhum superlativo.</p></div>
+  <div class="erro"><b>Erro comum:</b> querer ser encontrado como “clínica completa”. Quem fala de tudo concorre com todas as clínicas da cidade; quem fala de uma coisa concorre com três ou quatro nomes — e costuma ganhar.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">U</div>
+    <div><div class="eyebrow">Etapa 2 de 5</div><h2>Utilidade</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> criar uma rotina de conteúdo que responda às dúvidas reais dos pacientes e caiba na agenda de quem atende.</div>
+  <h4>Raciocínio</h4>
+  <p>A pergunta certa não é “o que eu posto hoje?”, mas “que dúvida faz o paciente adiar a decisão?”. Conteúdo útil reduz o medo, explica critérios e responde objeções antes da consulta. Ele também é o combustível das próximas etapas: vídeos com transcrição viram texto indexável, perguntas viram páginas, e o acervo inteiro vira prova de domínio do assunto.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Peça à recepção para anotar, por 30 dias, toda pergunta feita antes de marcar. Essa lista vale mais que qualquer calendário pronto.</li><li>Distribua as pautas em quatro formatos: <b>Sintoma → nome</b> (descreve o que a pessoa sente e nomeia o problema), <b>Para quem é e para quem não é</b>, <b>Bastidor de decisão</b> (como você escolhe a técnica) e <b>Objeção direta</b> (dor, recuperação, medo, custo).</li><li>Faça um bloco de gravação mensal de 90 minutos: 8 a 12 vídeos curtos, um por dúvida.</li><li>Produza um conteúdo longo por mês respondendo a dúvida principal por completo (artigo ou vídeo de 8 a 12 minutos).</li><li>Termine todo conteúdo com um caminho claro: link de WhatsApp, formulário ou telefone.</li></ul>
+  <div class="tool"><div class="tool-h">Rotina que cabe na agenda</div><table><tr><th>Quando</th><th>O quê</th><th>Tempo do profissional</th></tr><tr><td>1× por mês</td><td>Bloco de gravação (8–12 vídeos curtos)</td><td>90 min</td></tr><tr><td>1× por mês</td><td>Conteúdo longo sobre a dúvida principal</td><td>60 min</td></tr><tr><td>Semanal</td><td>Publicação distribuída (Instagram, YouTube, blog)</td><td>Equipe</td></tr><tr><td>Diário</td><td>Lista de dúvidas alimentada pela recepção</td><td>5 min (equipe)</td></tr></table></div>
+  <div class="erro"><b>Erro comum:</b> conteúdo que educa mas não diz o que fazer em seguida. Ele gera elogio, não consulta. Toda peça precisa terminar em um próximo passo.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">S</div>
+    <div><div class="eyebrow">Etapa 3 de 5</div><h2>Sinais de Busca</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> fazer a clínica aparecer quando alguém pesquisa o sintoma, o procedimento ou “perto de mim”.</div>
+  <h4>Raciocínio</h4>
+  <p>Busca é o único canal que continua trabalhando quando a verba de anúncio acaba. Ela se apoia em três pilares: o perfil do Google (mapa e avaliações), páginas próprias por procedimento e consistência de nome, endereço e especialidade em todos os lugares. Uma página institucional de três parágrafos não ranqueia; uma página que responde a dúvida inteira, sim.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Perfil do Google: categoria correta, endereço, horário, telefone, fotos reais da estrutura e da equipe, descrição com a frase de bandeira.</li><li>Coloque o pedido de avaliação no fluxo de alta (não como campanha eventual): toda semana devem entrar avaliações novas.</li><li>Responda a todas as avaliações — positivas e negativas — com educação e sem expor dados do paciente.</li><li>Publique uma página por procedimento-bandeira respondendo: o que é, para quem é indicado, como é feito, recuperação, riscos e perguntas frequentes.</li><li>Garanta nome, especialidade, endereço e telefone idênticos no site, Google, Instagram, diretórios e plataformas de agendamento.</li><li>Publique vídeos com transcrição ou legenda: o texto vira conteúdo indexável.</li></ul>
+  <div class="tool"><div class="tool-h">Checklist de 90 dias para busca</div><ul><li>Perfil do Google 100% preenchido e com avaliações entrando toda semana</li><li>3 páginas de procedimento publicadas e revisadas</li><li>Dados da clínica idênticos em todos os lugares</li><li>Vídeos publicados com transcrição</li></ul></div>
+  <div class="erro"><b>Erro comum:</b> tratar o perfil do Google como algo que se cria uma vez. Ele é um canal vivo: fotos, avaliações, respostas e atualizações são sinais contínuos.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">C</div>
+    <div><div class="eyebrow">Etapa 4 de 5</div><h2>Citações</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> gerar menções de terceiros que provem autoridade para pacientes, buscadores e inteligências artificiais.</div>
+  <h4>Raciocínio</h4>
+  <p>Autoridade não é o que você diz sobre si; é o que outras fontes confirmam. Uma matéria em que você aparece como especialista, uma aula em congresso ou uma menção em portal de saúde alimentam três frentes ao mesmo tempo: são prova para o paciente, sinal para o Google e fonte verificável para as IAs. É o esforço com melhor retorno por hora investida.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Faça o teste: pergunte a uma IA “quem é referência em [procedimento] em [cidade]?”. Anote quem aparece e por quê — é o rastro que você precisa construir.</li><li>Liste três temas em que você é fonte legítima, de preferência com algum dado do seu dia a dia de atendimento.</li><li>Monte um kit de imprensa de uma página: quem é você, especialidade, três temas que domina, contato e uma boa foto.</li><li>Identifique jornalistas que já escreveram sobre saúde nos veículos da sua cidade (nome, editoria, e-mail).</li><li>Ofereça pauta, não divulgação: “tenho um dado sobre X e posso comentar hoje”.</li><li>Registre provas permitidas: anos de atuação, formação, produção técnica, participação em sociedades, aulas e congressos.</li></ul>
+  <div class="tool"><div class="tool-h">Provas que você pode usar com segurança</div><table><tr><th>Prova</th><th>Como usar sem infringir regras</th></tr><tr><td>Experiência</td><td>Anos de atuação, formação, volume — quando verificável e sem tom de superioridade</td></tr><tr><td>Produção técnica</td><td>Artigos, aulas, congressos, sociedades da especialidade</td></tr><tr><td>Imprensa</td><td>Aparecer como fonte em veículo de terceiro</td></tr><tr><td>Estrutura</td><td>Fotos reais da clínica, equipe e processos</td></tr><tr><td>Acervo</td><td>Histórico de conteúdo educativo sobre o tema</td></tr></table></div>
+  <div class="erro"><b>Erro comum:</b> abordar jornalista pedindo para “divulgar o trabalho”. Jornalista precisa de fonte para fechar matéria hoje, não de propaganda.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">A</div>
+    <div><div class="eyebrow">Etapa 5 de 5</div><h2>Auditoria da Agenda</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> medir, toda semana, se o esforço de autoridade está gerando contatos, consultas e tratamentos.</div>
+  <h4>Raciocínio</h4>
+  <p>Curtida não paga a folha. Alcance subindo com agenda parada quase sempre indica conteúdo falando com o público errado ou sem destino claro. Por isso o método fecha com auditoria: seis números simples, acompanhados semanalmente, que mostram onde o funil está vazando — e evitam que a clínica corte o canal que funciona.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Na hora de marcar, a recepção pergunta “como nos encontrou?” e anota exatamente o que o paciente disser.</li><li>Acompanhe semanalmente: contatos recebidos, origem, consultas agendadas, comparecimento, conversão em tratamento e custo por paciente novo.</li><li>Se o alcance sobe e a agenda não, volte à Etapa B: o problema costuma ser bandeira, não frequência.</li><li>Reavalie a cada 90 dias quais formatos e canais geram pacientes — e dobre a aposta neles.</li></ul>
+  <div class="tool"><div class="tool-h">A pergunta de uma linha</div><p>Se você medir uma única coisa, meça esta: <b>quantos pacientes novos entraram este mês e por qual caminho?</b></p></div>
+  <div class="erro"><b>Erro comum:</b> esperar resultado de autoridade em 30 dias. Perfil do Google e avaliações mexem no volume em semanas; conteúdo e busca mostram efeito consistente entre o segundo e o quarto mês. Quem precisa de paciente amanhã precisa de anúncio — as duas coisas convivem.</div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Roadmap de implementação</div>
+  <h2>Plano de 90 dias</h2>
+  <p>Execute na ordem. Cada fase termina com um entregável concreto — se ele não existir, a fase não acabou.</p>
+  <div class="rm"><div class="rm-col"><div class="rm-per">Dias 1–30</div><div class="rm-nome">Bandeira e base</div><ul class=""><li>Procedimento-bandeira e frase definidos</li><li>Frase aplicada em todos os perfis</li><li>Perfil do Google completo</li><li>Lista de dúvidas em coleta pela recepção</li><li>Planilha de origem do paciente ativa</li></ul><div class="rm-ent"><b>Entregável:</b> Bandeira publicada e dados consistentes</div></div><div class="rm-col"><div class="rm-per">Dias 31–60</div><div class="rm-nome">Produção e busca</div><ul class=""><li>Primeiro bloco de gravação</li><li>Publicação semanal rodando</li><li>3 páginas de procedimento no ar</li><li>Avaliações entrando toda semana</li></ul><div class="rm-ent"><b>Entregável:</b> Rotina de conteúdo e páginas ativas</div></div><div class="rm-col"><div class="rm-per">Dias 61–90</div><div class="rm-nome">Prova e medição</div><ul class=""><li>Kit de imprensa pronto</li><li>3 pautas oferecidas a jornalistas</li><li>Teste mensal nas IAs registrado</li><li>Primeira leitura de custo por paciente novo</li></ul><div class="rm-ent"><b>Entregável:</b> Relatório de origem e próximos 90 dias</div></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Aplicabilidade</div>
+  <h2>Como aplicar na sua realidade</h2>
+  <h3>Por perfil de clínica</h3>
+  <table><thead><tr><th style="width:28%">Perfil</th><th>Como adaptar</th></tr></thead><tbody><tr><td><b>Consultório solo</b></td><td>Foque em B, S e A. Perfil do Google e uma página de procedimento bem feita costumam trazer os primeiros resultados mais rápido do que redes sociais.</td></tr><tr><td><b>Clínica com vários profissionais</b></td><td>Uma bandeira por profissional e uma para a marca da clínica. Cada profissional tem sua página e seu perfil de autor.</td></tr><tr><td><b>Cirurgião ou procedimento de alto ticket</b></td><td>Invista mais em conteúdo longo e páginas completas: o paciente pesquisa por semanas antes de decidir.</td></tr><tr><td><b>Odontologia</b></td><td>Perfil do Google e avaliações têm peso enorme na busca local. Peça avaliação na entrega de cada etapa do tratamento.</td></tr><tr><td><b>Estética</b></td><td>As regras sobre imagem de resultado costumam ser mais restritivas. Dê peso maior a conteúdo educativo, estrutura e formação.</td></tr></tbody></table>
+  <h3 class="mt">Quem faz o quê</h3>
+  <table><thead><tr><th style="width:28%">Papel</th><th>Responsabilidade</th></tr></thead><tbody><tr><td><b>Profissional de saúde</b></td><td>Escolhe a bandeira, grava o bloco mensal, valida conteúdo técnico e atende jornalistas.</td></tr><tr><td><b>Recepção / CRC</b></td><td>Anota dúvidas, pede avaliações no fluxo de alta e registra a origem de cada paciente.</td></tr><tr><td><b>Marketing / agência</b></td><td>Edita, publica, cuida de páginas, SEO, perfil do Google e envio de pautas.</td></tr><tr><td><b>Gestor(a)</b></td><td>Acompanha os seis indicadores semanalmente e decide onde reforçar.</td></tr></tbody></table>
+  <div class="keep"><h3 class="mt">Indicadores que provam que está funcionando</h3>
+  <table><thead><tr><th style="width:26%">Indicador</th><th>O que responde</th><th style="width:26%">Como medir</th></tr></thead><tbody><tr><td><b>Contatos por semana</b></td><td>O conteúdo está gerando conversa?</td><td>WhatsApp, formulário e telefone</td></tr><tr><td><b>Origem do contato</b></td><td>Qual canal trabalha de verdade?</td><td>“Como nos encontrou?” na recepção</td></tr><tr><td><b>Avaliações novas no mês</b></td><td>O fluxo de prova social está ativo?</td><td>Painel do perfil do Google</td></tr><tr><td><b>Posição nas buscas-alvo</b></td><td>Estamos sendo encontrados?</td><td>Pesquisa mensal em aba anônima</td></tr><tr><td><b>Custo por paciente novo</b></td><td>A aquisição está ficando mais barata?</td><td>Investimento ÷ pacientes novos</td></tr></tbody></table></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Modelos prontos</div>
+  <h2>Copie, adapte e use hoje</h2>
+  <p>Troque apenas o que está entre colchetes. Ajuste o tom ao seu público — e valide sempre com as regras do seu conselho profissional.</p>
+  <div class="script"><div class="script-h">Roteiro de vídeo curto (60–90 segundos)</div><div class="script-b">Gancho (0–5s): “Se você tem [sintoma], provavelmente já ouviu que é [crença comum errada].”
+Contexto (5–20s): o que realmente causa o problema, em linguagem de paciente.
+Critério (20–50s): quando vale tratar e quando não vale.
+Próximo passo (50–70s): “Se isso acontece há mais de [tempo], vale uma avaliação. O contato está aqui embaixo.”</div><div class="script-obs"><b>Por que funciona:</b> mostra competência sem prometer resultado e termina com um caminho claro.</div></div><div class="script"><div class="script-h">E-mail para jornalista</div><div class="script-b">Assunto: Fonte para pauta sobre [tema] — [especialidade]
+
+“Olá, [nome]. Li sua matéria sobre [assunto] no [veículo]. Sou [nome], [especialidade] em [cidade], e atendo [tipo de caso] há [x] anos. Tenho observado [dado concreto do consultório]. Se for útil para alguma pauta, posso comentar hoje mesmo, por telefone ou por escrito. [nome · telefone · cidade]”</div><div class="script-obs"><b>Por que funciona:</b> a última frase. Jornalista costuma fechar matéria no mesmo dia — disponibilidade imediata é o seu diferencial.</div></div><div class="script"><div class="script-h">Pedido de avaliação no Google (recepção)</div><div class="script-b">“Oi, [nome]! Aqui é a [nome] da [clínica]. Esperamos que esteja tudo bem depois do atendimento com [Dr(a). nome]. Se puder deixar uma avaliação contando como foi, isso ajuda outras pessoas que procuram o mesmo cuidado a decidir: [link]. Leva um minuto. Obrigada!”</div><div class="script-obs"><b>Por que funciona:</b> pede no momento certo, explica por que importa e reduz o esforço com o link direto.</div></div><div class="script"><div class="script-h">Planilha de origem do paciente</div><div class="script-b">Data · Paciente · Como nos encontrou (Indicação / Google / Instagram / IA / Anúncio / Convênio / Outro) · Marcou? (sim/não) · Fechou tratamento? (sim/não)</div><div class="script-obs"><b>Por que funciona:</b> com três meses de dados, a clínica sabe exatamente onde investir.</div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Conexão com a coleção</div>
+  <h2>Leia em seguida</h2>
+  <div class="xref" style="--c:#E0457B">
+    <div class="xref-tag">Volume 03 · Coleção Acelerador de Clínicas</div>
+    <div class="xref-title">Vitrine Magnética</div>
+    <div class="xref-desc">Instagram que vende a consulta</div>
+  </div>
+  <h3>Como ele potencializa o que você acabou de aprender</h3>
+  <p>O Referência na Cidade faz a clínica ser <b>encontrada</b>. O Volume 03, <b>Vitrine Magnética</b>, faz o paciente que chegou ao seu Instagram <b>entender, confiar e agendar</b>. É lá que a bandeira definida aqui vira bio, destaques, grade de conteúdo, stories e mensagens de direct que convertem.</p><p>Muitos pacientes encontram você no Google e conferem no Instagram antes de chamar no WhatsApp. Se a vitrine não confirma o que a busca prometeu, o paciente volta para a lista de resultados — e escolhe o próximo nome.</p>
+  <h4>Combinações práticas</h4>
+  <ul class="arrow"><li>Use a frase de bandeira (Etapa B) como linha 1 da bio da Vitrine Magnética.</li><li>Reaproveite os vídeos do bloco mensal (Etapa U) no conteúdo de topo e meio da grade do Instagram.</li><li>Transforme matérias e citações (Etapa C) em destaques fixos de prova no perfil.</li></ul>
+  <div class="sec-ref" style="--c:#7B4DE0"><b>Também combina com o Volume 01 · DNA Comercial:</b> o procedimento-bandeira fica mais fácil de escolher depois da Matriz do Item de Ouro do DNA Comercial — ela usa dados de margem, demanda e diferencial.</div>
+  <h3 class="mt">Onde este volume entra na jornada da clínica</h3>
+  <p class="muted">A coleção segue a ordem em que um paciente descobre, decide e volta. Cada volume resolve um elo — e conversa com os outros.</p>
+  <div class="journey"><div class="j-item" style="--c:#7B4DE0"><span class="j-n">01</span><span class="j-t">DNA Comercial</span><span class="j-d">Defina o que vender e como explicar</span></div><div class="j-item on" style="--c:#2F6BF0"><span class="j-n">02</span><span class="j-t">Referência na Cidade</span><span class="j-d">Seja encontrado no Google, nas IAs e na imprensa</span></div><div class="j-item" style="--c:#E0457B"><span class="j-n">03</span><span class="j-t">Vitrine Magnética</span><span class="j-d">Instagram que vende a consulta</span></div><div class="j-item" style="--c:#0E9C9C"><span class="j-n">04</span><span class="j-t">Recepção que Fatura</span><span class="j-d">Converta interessados em pacientes</span></div><div class="j-item" style="--c:#C8932B"><span class="j-n">05</span><span class="j-t">Consulta Assinatura</span><span class="j-d">Entregue uma consulta de alto valor</span></div><div class="j-item" style="--c:#E07B1F"><span class="j-n">06</span><span class="j-t">Resgate de Ouro</span><span class="j-d">Reative quem já confiou em você</span></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Para terminar</div>
+  <h2>O que separa quem executa de quem só lê</h2>
+  <p>Autoridade não é um projeto com data para acabar; é um hábito da clínica. O profissional entra com o que só ele tem — o conhecimento e a cara na câmera. A equipe entra com o que se aprende — publicar, pedir avaliação, registrar a origem, enviar a pauta.</p><p>Se for executar por conta própria, resista à tentação de abrir todas as frentes de uma vez. Uma bandeira clara com um perfil do Google ativo já muda o volume de contatos; as outras frentes vêm por cima dessa base.</p><p>Daqui a um ano, a pergunta não será se você postou. Será se, quando alguém pesquisar o seu procedimento na sua cidade, o seu nome é a resposta.</p>
+  <div class="compliance"><b>Nota ética e legal:</b> este material é educativo sobre gestão, comunicação e vendas em saúde. Não constitui orientação clínica nem parecer jurídico. Regras de publicidade variam por conselho (CFM, CFO, CFN, COFFITO e outros) e mudam com o tempo — confirme cada peça antes de publicar e trate dados de pacientes conforme a LGPD.</div>
+</section>
+<section class="back">
+  <div class="cover-shape s1"></div>
+  <div class="back-in">
+    <div class="brandmark big"><span class="bm-dot"></span>Acelerador de Clínicas</div>
+    <p class="back-tag">Estratégia, processo e vendas para clínicas e consultórios que querem crescer com previsibilidade — e sem perder a essência do cuidado.</p>
+    <div class="back-cta">
+      <div class="back-cta-h">Quer implementar o Método BUSCA com acompanhamento?</div>
+      <p>Agende um diagnóstico da sua clínica: onde o faturamento está vazando, o que priorizar nos próximos 90 dias e qual volume da coleção aplicar primeiro.</p>
+      <div class="back-site">aceleradordeclinicas.com.br</div>
+    </div>
+    <div class="back-list"><span style="--c:#7B4DE0">01 · DNA Comercial</span><span style="--c:#2F6BF0">02 · Referência na Cidade</span><span style="--c:#E0457B">03 · Vitrine Magnética</span><span style="--c:#0E9C9C">04 · Recepção que Fatura</span><span style="--c:#C8932B">05 · Consulta Assinatura</span><span style="--c:#E07B1F">06 · Resgate de Ouro</span></div>
+    <div class="back-sig">© Acelerador de Clínicas · Coleção Acelerador de Clínicas · Volume 02 — Referência na Cidade</div>
+  </div>
+</section></body></html>

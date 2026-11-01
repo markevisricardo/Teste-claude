@@ -1,0 +1,336 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Vitrine Magnética · Acelerador de Clínicas</title>
+<style>:root{--accent:#E0457B;}
+@page { size: A4; margin: 18mm 17mm 20mm 17mm; }
+@page :first { margin: 0; }
+* { box-sizing: border-box; }
+:root { --navy:#0B1B33; --ink:#1B2433; --muted:#5B6576; --line:#E3E7EE; --soft:#F5F7FA; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { margin:0; font-family: Inter, "Liberation Sans", sans-serif; color: var(--ink); font-size: 10.4pt; line-height: 1.55; background:#fff; }
+h1,h2,h3,h4 { font-family: "Inter Display", Inter, sans-serif; color: var(--navy); margin: 0; line-height: 1.15; }
+h2 { font-size: 23pt; font-weight: 800; letter-spacing: -0.02em; margin: 2mm 0 5mm; }
+h3 { font-size: 13.5pt; font-weight: 700; margin: 6mm 0 3mm; }
+h4 { font-size: 10.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); margin: 5mm 0 2mm; }
+p { margin: 0 0 3mm; }
+b { color: var(--navy); }
+.mt { margin-top: 8mm; }
+.muted { color: var(--muted); }
+.small { font-size: 9pt; }
+.eyebrow { font-size: 8.5pt; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.page-start { break-before: page; }
+ul { margin: 0 0 3mm; padding-left: 0; list-style: none; }
+ul li { position: relative; padding-left: 6mm; margin-bottom: 1.6mm; }
+ul li::before { content: ""; position: absolute; left: 1mm; top: 2.1mm; width: 2mm; height: 2mm; border-radius: 50%; background: var(--accent); }
+ul.check li::before { content: "✓"; background: none; color: var(--accent); font-weight: 800; top: 0; width: auto; height: auto; }
+ul.arrow li::before { content: "→"; background: none; color: var(--accent); font-weight: 800; top: 0; width: auto; height: auto; }
+ul.steps { counter-reset: s; }
+ul.steps li { counter-increment: s; padding-left: 8mm; }
+ul.steps li::before { content: counter(s); background: var(--accent); color: #fff; font-size: 7.5pt; font-weight: 800; width: 5mm; height: 5mm; top: .6mm; left: 0; display: flex; align-items: center; justify-content: center; }
+
+/* COVER */
+.cover { position: relative; width: 210mm; height: 297mm; background: var(--navy); color: #fff; overflow: hidden; padding: 22mm 20mm; display: flex; flex-direction: column; }
+.cover-shape { position: absolute; border-radius: 50%; }
+.cover-shape.s1 { width: 170mm; height: 170mm; right: -60mm; top: -50mm; background: radial-gradient(circle at 30% 30%, var(--accent), transparent 70%); opacity: .55; }
+.cover-shape.s2 { width: 120mm; height: 120mm; left: -50mm; bottom: 40mm; border: 1.2mm solid var(--accent); opacity: .25; }
+.cover-top, .cover-mid, .cover-puv, .cover-foot { position: relative; z-index: 2; }
+.brandmark { display: inline-flex; align-items: center; gap: 2.5mm; font-family: "Inter Display"; font-weight: 800; font-size: 12pt; letter-spacing: -.01em; }
+.brandmark.big { font-size: 20pt; }
+.bm-dot { width: 4mm; height: 4mm; border-radius: 1mm; background: var(--accent); transform: rotate(45deg); display: inline-block; }
+.cover-vol { margin-top: 3mm; font-size: 8.5pt; letter-spacing: .16em; text-transform: uppercase; opacity: .75; }
+.cover-mid { margin-top: 48mm; }
+.cover-kicker { display: inline-block; background: var(--accent); color: #fff; font-weight: 800; font-size: 9pt; letter-spacing: .12em; text-transform: uppercase; padding: 1.6mm 3.5mm; border-radius: 1.5mm; }
+.cover-title { color: #fff; font-size: 50pt; font-weight: 900; letter-spacing: -.035em; line-height: .98; margin: 6mm 0 6mm; }
+.cover-sub { font-size: 15pt; line-height: 1.35; opacity: .9; max-width: 150mm; }
+.cover-puv { margin-top: auto; background: rgba(255,255,255,.07); border-left: 1.6mm solid var(--accent); padding: 5mm 6mm; border-radius: 0 2mm 2mm 0; }
+.cover-puv p { margin: 0; font-size: 11.5pt; line-height: 1.45; }
+.puv-label { font-size: 7.5pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5mm; }
+.cover-foot { display: flex; justify-content: space-between; margin-top: 10mm; font-size: 9pt; opacity: .85; }
+.cover-foot b { color: #fff; }
+.cover-foot .site { font-weight: 700; color: #fff; }
+
+/* PUV / cards */
+.puv-box { background: var(--soft); border: 1px solid var(--line); border-left: 1.6mm solid var(--accent); border-radius: 0 3mm 3mm 0; padding: 5mm 6mm; margin: 5mm 0; break-inside: avoid; }
+.puv-big { font-family: "Inter Display"; font-size: 13.5pt; font-weight: 700; color: var(--navy); line-height: 1.35; }
+.puv-dif { margin: 2mm 0 0; font-size: 9.8pt; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+.card { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm 5mm; break-inside: avoid; }
+.card h4 { margin-top: 0; }
+
+/* journey */
+.journey { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2mm; margin-top: 3mm; }
+.j-item { border: 1px solid var(--line); border-top: 1.4mm solid var(--c); border-radius: 2mm; padding: 2.5mm; opacity: .55; }
+.j-item.on { opacity: 1; background: color-mix(in srgb, var(--c) 9%, white); border-color: var(--c); }
+.j-n { display: block; font-weight: 900; color: var(--c); font-size: 11pt; }
+.j-t { display: block; font-weight: 800; font-size: 8pt; color: var(--navy); line-height: 1.2; margin: .5mm 0 1mm; }
+.j-d { display: block; font-size: 7pt; color: var(--muted); line-height: 1.25; }
+
+/* diagnóstico */
+ol.diag { list-style: none; padding: 0; margin: 4mm 0; }
+ol.diag li { display: flex; gap: 3mm; padding: 2.4mm 0; border-bottom: 1px dashed var(--line); }
+.box { flex: 0 0 4.2mm; height: 4.2mm; border: .5mm solid var(--accent); border-radius: 1mm; margin-top: .6mm; }
+.bands { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-top: 5mm; }
+.band { display: flex; gap: 3mm; background: var(--soft); border-radius: 2.5mm; padding: 3mm 4mm; font-size: 9.5pt; break-inside: avoid; }
+.band-r { flex: 0 0 auto; background: var(--accent); color: #fff; font-weight: 800; font-size: 8.5pt; border-radius: 1.5mm; padding: .8mm 2.2mm; height: fit-content; white-space: nowrap; }
+
+/* raciocínio */
+.chain { margin: 5mm 0; position: relative; }
+.chain-item { display: flex; gap: 4mm; position: relative; padding-bottom: 3mm; break-inside: avoid; }
+.chain-item:not(:last-child)::after { content: ""; position: absolute; left: 4.2mm; top: 9mm; bottom: 0; width: .5mm; background: color-mix(in srgb, var(--accent) 40%, white); }
+.chain-n { flex: 0 0 9mm; height: 9mm; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.chain-lab { font-weight: 800; color: var(--navy); font-size: 10.5pt; margin-top: 1.5mm; }
+.chain-item p { margin: .5mm 0 0; }
+.tese { background: var(--navy); color: #fff; border-radius: 3mm; padding: 5mm 6mm; font-family: "Inter Display"; font-size: 12.5pt; font-weight: 600; line-height: 1.4; break-inside: avoid; }
+.tese span { display: block; font-family: Inter; font-size: 7.5pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5mm; }
+
+/* método */
+.m-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5mm; margin: 5mm 0; }
+.m-cell { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm; display: grid; grid-template-columns: 13mm 1fr; column-gap: 3mm; break-inside: avoid; }
+.m-letter { grid-row: span 2; width: 13mm; height: 13mm; border-radius: 2.5mm; background: var(--accent); color: #fff; font-family: "Inter Display"; font-weight: 900; font-size: 20pt; display: flex; align-items: center; justify-content: center; }
+.m-name { font-weight: 800; color: var(--navy); font-size: 10.5pt; }
+.m-desc { font-size: 9pt; color: var(--muted); line-height: 1.4; }
+
+/* passos */
+.step-head { display: flex; gap: 5mm; align-items: center; margin-bottom: 3mm; }
+.step-letter { flex: 0 0 22mm; height: 22mm; border-radius: 4mm; background: var(--accent); color: #fff; font-family: "Inter Display"; font-weight: 900; font-size: 38pt; display: flex; align-items: center; justify-content: center; }
+.step-head h2 { margin: 1mm 0 0; }
+.obj { background: color-mix(in srgb, var(--accent) 10%, white); border-radius: 2.5mm; padding: 3mm 4.5mm; margin-bottom: 2mm; }
+.tool { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm 5mm; margin: 4mm 0; background: var(--soft); break-inside: avoid; }
+.tool-h { font-weight: 800; color: var(--navy); margin-bottom: 2mm; font-size: 10.5pt; }
+.tool p:last-child, .tool ul:last-child { margin-bottom: 0; }
+.tool table { margin: 1mm 0 0; background: #fff; }
+.erro { border-left: 1.2mm solid #D64545; background: #FDF1F1; padding: 3mm 4.5mm; border-radius: 0 2.5mm 2.5mm 0; font-size: 9.8pt; break-inside: avoid; }
+.erro b { color: #B12E2E; }
+
+/* roadmap */
+.rm { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.5mm; margin-top: 4mm; }
+.rm-col { border: 1px solid var(--line); border-top: 1.6mm solid var(--accent); border-radius: 2.5mm; padding: 4mm; font-size: 9.3pt; display: flex; flex-direction: column; break-inside: avoid; }
+.rm-per { font-weight: 900; color: var(--accent); font-size: 10pt; letter-spacing: .04em; text-transform: uppercase; }
+.rm-nome { font-family: "Inter Display"; font-weight: 800; color: var(--navy); font-size: 12pt; margin: 1mm 0 3mm; line-height: 1.2; }
+.rm-ent { margin-top: auto; background: var(--soft); border-radius: 2mm; padding: 2.5mm 3mm; font-size: 8.8pt; }
+
+/* tables */
+table { width: 100%; border-collapse: collapse; font-size: 9.3pt; margin-bottom: 3mm; }
+th { background: var(--navy); color: #fff; text-align: left; padding: 2.4mm 3mm; font-weight: 700; font-size: 8.6pt; letter-spacing: .03em; }
+td { border-bottom: 1px solid var(--line); padding: 2.4mm 3mm; vertical-align: top; }
+tr { break-inside: avoid; }
+tbody tr:nth-child(even) td { background: #FAFBFC; }
+
+/* scripts */
+.script { border: 1px solid var(--line); border-radius: 3mm; margin: 4mm 0; overflow: hidden; break-inside: avoid; }
+.script-h { background: var(--accent); color: #fff; font-weight: 800; padding: 2.4mm 4.5mm; font-size: 9.8pt; }
+.script-b { padding: 4mm 5mm; font-size: 10pt; white-space: pre-line; background: #fff; }
+.script-obs { padding: 2.6mm 5mm; background: var(--soft); border-top: 1px solid var(--line); font-size: 9pt; color: var(--muted); }
+
+/* cross ref */
+.xref { background: var(--navy); color: #fff; border-radius: 4mm; padding: 8mm; position: relative; overflow: hidden; margin: 3mm 0 6mm; break-inside: avoid; }
+.xref::after { content: ""; position: absolute; right: -25mm; top: -25mm; width: 80mm; height: 80mm; border-radius: 50%; background: radial-gradient(circle, var(--c), transparent 70%); opacity: .7; }
+.xref-tag { font-size: 8pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--c); position: relative; z-index: 1; filter: brightness(1.35); }
+.xref-title { font-family: "Inter Display"; font-size: 28pt; font-weight: 900; letter-spacing: -.02em; margin: 2mm 0 1mm; position: relative; z-index: 1; }
+.xref-desc { opacity: .85; position: relative; z-index: 1; }
+.sec-ref { margin-top: 5mm; border: 1px solid var(--line); border-left: 1.4mm solid var(--c); border-radius: 0 2.5mm 2.5mm 0; padding: 3.5mm 4.5mm; font-size: 9.6pt; break-inside: avoid; }
+
+.compliance { margin-top: 8mm; font-size: 8.6pt; color: var(--muted); border-top: 1px solid var(--line); padding-top: 3mm; }
+
+/* back */
+.back { break-before: page; position: relative; height: 255mm; background: var(--navy); color: #fff; border-radius: 4mm; overflow: hidden; }
+.back-in { position: relative; z-index: 2; padding: 22mm 16mm; height: 100%; display: flex; flex-direction: column; }
+.back-tag { font-size: 13pt; line-height: 1.45; opacity: .9; margin: 6mm 0 14mm; max-width: 140mm; }
+.back-cta { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15); border-radius: 4mm; padding: 7mm; }
+.back-cta-h { font-family: "Inter Display"; font-size: 16pt; font-weight: 800; margin-bottom: 2mm; }
+.back-cta p { opacity: .85; }
+.back-site { display: inline-block; margin-top: 2mm; background: var(--accent); color: #fff; font-weight: 800; padding: 2.5mm 5mm; border-radius: 2mm; font-size: 12pt; }
+.back-list { display: flex; flex-wrap: wrap; gap: 2mm; margin-top: auto; }
+.back-list span { border: 1px solid var(--c); color: #fff; border-radius: 10mm; padding: 1.2mm 3.5mm; font-size: 8.4pt; font-weight: 700; }
+.back-sig { margin-top: 6mm; font-size: 8pt; opacity: .6; }
+
+.keep{break-inside:avoid;}
+</style></head><body>
+<section class="cover">
+  <div class="cover-shape s1"></div><div class="cover-shape s2"></div>
+  <div class="cover-top">
+    <div class="brandmark"><span class="bm-dot"></span>Acelerador de Clínicas</div>
+    <div class="cover-vol">Coleção Acelerador de Clínicas · Volume 03</div>
+  </div>
+  <div class="cover-mid">
+    <div class="cover-kicker">Método PRISMA</div>
+    <h1 class="cover-title">Vitrine Magnética</h1>
+    <p class="cover-sub">O Instagram que explica, prova e vende a sua consulta antes mesmo da primeira mensagem no direct.</p>
+  </div>
+  <div class="cover-puv">
+    <div class="puv-label">Proposta Única de Valor</div>
+    <p>Transformar o perfil da clínica em uma vitrine que trabalha 24 horas: atrai o paciente certo, responde as dúvidas que travam a decisão e entrega no direct alguém que já entende o valor da consulta — para você parar de explicar tudo do zero e de competir por preço.</p>
+  </div>
+  <div class="cover-foot">
+    <div>Uma metodologia <b>Acelerador de Clínicas</b></div>
+    <div class="site">aceleradordeclinicas.com.br</div>
+  </div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Antes de começar</div>
+  <h2>Por que este e-book existe</h2>
+  <p>O paciente ideal já está no Instagram. Ele pesquisa, compara perfis, assiste stories, lê comentários e decide boa parte da escolha antes de mandar a primeira mensagem. A pergunta que importa é: quando ele chega ao seu perfil, encontra uma vitrine que vende o valor da consulta — ou um portfólio confuso que obriga a recepção a explicar tudo do zero?</p><p>A maioria dos perfis de saúde sofre de um de dois problemas: ou parece um catálogo de procedimentos sem personalidade, ou parece um diário pessoal sem direção comercial. Os dois geram curtidas e pouca agenda.</p><p>Este volume entrega um método para alinhar o perfil à forma como o paciente decide — com conteúdo que atrai, aprofunda e converte, sempre dentro das regras de publicidade em saúde.</p>
+  <div class="puv-box">
+    <div class="puv-label">A promessa deste volume (PUV)</div>
+    <p class="puv-big">Transformar o perfil da clínica em uma vitrine que trabalha 24 horas: atrai o paciente certo, responde as dúvidas que travam a decisão e entrega no direct alguém que já entende o valor da consulta — para você parar de explicar tudo do zero e de competir por preço.</p>
+    <p class="puv-dif"><b>O que torna este método único:</b> o PRISMA não começa pelo calendário de posts, e sim pela decisão do paciente. Ele organiza o perfil em camadas — posicionamento, bio, intenção de cada conteúdo, stories de confiança, mensagens que convertem e métricas de negócio — para que cada elemento empurre o seguidor um passo mais perto da agenda.</p>
+  </div>
+  <div class="two-col">
+    <div class="card"><h4>Para quem é</h4><ul class="check"><li>Profissionais com bom número de seguidores e poucos agendamentos</li><li>Quem posta sem estratégia e sente que “o Instagram não dá retorno”</li><li>Clínicas que querem que a recepção receba pacientes mais preparados</li><li>Quem está começando o perfil profissional do zero</li></ul></div>
+    <div class="card"><h4>O que você conquista</h4><ul class="arrow"><li>Uma bio que diz, em 4 linhas, para quem você é e o que fazer</li><li>Uma grade de conteúdo distribuída por intenção (atrair, aprofundar, converter)</li><li>Sequências de stories que constroem confiança toda semana</li><li>Roteiros de resposta a comentários e direct que viram agendamento</li><li>Um painel com as métricas que importam para o caixa</li></ul></div>
+  </div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Diagnóstico rápido · 3 minutos</div>
+  <h2>Onde sua clínica está hoje</h2>
+  <p>Marque cada afirmação verdadeira. Cada marcação vale 1 ponto. A pontuação diz por onde começar — e o que ainda não adianta fazer.</p>
+  <ol class="diag"><li><span class="box"></span>Quem entra no meu perfil entende em 5 segundos o que eu faço, para quem e onde.</li><li><span class="box"></span>Minha bio tem um único call to action claro e um link que funciona.</li><li><span class="box"></span>Meus destaques respondem: quem sou, como é a consulta, provas e como agendar.</li><li><span class="box"></span>Sei qual é a intenção de cada post: atrair, aprofundar ou converter.</li><li><span class="box"></span>Publico com frequência constante há pelo menos 8 semanas.</li><li><span class="box"></span>Faço stories pelo menos 4 dias por semana com algum tipo de interação.</li><li><span class="box"></span>Respondo comentários e direct no mesmo dia, com roteiro definido.</li><li><span class="box"></span>Existe um caminho claro do direct para a recepção ou o WhatsApp.</li><li><span class="box"></span>Sei quantos agendamentos vieram do Instagram no último mês.</li><li><span class="box"></span>Não meço sucesso por número de seguidores ou curtidas.</li></ol>
+  <div class="bands"><div class="band"><div class="band-r">0–3</div><div><b>Perfil-portfólio</b><br>O perfil existe, mas não vende. Comece por P e R antes de produzir mais conteúdo.</div></div><div class="band"><div class="band-r">4–6</div><div><b>Conteúdo sem direção</b><br>Há produção, falta intenção. Foque em I e S.</div></div><div class="band"><div class="band-r">7–8</div><div><b>Vitrine ativa</b><br>O gargalo está na conversão. Vá para M.</div></div><div class="band"><div class="band-r">9–10</div><div><b>Vitrine madura</b><br>Otimize com A e replique o modelo para outros profissionais.</div></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Linha de raciocínio</div>
+  <h2>A lógica por trás do método</h2>
+  <p>Antes da técnica, o porquê. Se você entender esta sequência, consegue adaptar o método a qualquer especialidade, tamanho de equipe ou cidade.</p>
+  <div class="chain"><div class="chain-item"><div class="chain-n">1</div><div><div class="chain-lab">O paciente digital passa por três estados</div><p>Descoberta (ele ainda está entendendo o problema), consideração (compara caminhos e profissionais) e decisão (procura informações sobre a consulta e prova de credibilidade). Cada estado precisa de um tipo diferente de conteúdo.</p></div></div><div class="chain-item"><div class="chain-n">2</div><div><div class="chain-lab">Três forças pesam na escolha</div><p>Confiança (casos, processos e transparência), autoridade (conhecimento técnico acessível e consistência) e proximidade (bastidores, humanidade e acessibilidade percebida). Perfis que vendem equilibram as três.</p></div></div><div class="chain-item"><div class="chain-n">3</div><div><div class="chain-lab">O perfil é julgado em segundos</div><p>Bio, foto, destaques e os nove primeiros posts formam a primeira impressão. Se ela não for clara, o conteúdo bom nunca é visto.</p></div></div><div class="chain-item"><div class="chain-n">4</div><div><div class="chain-lab">Conteúdo sem intenção vira entretenimento</div><p>Postar “o que deu vontade” agrada o algoritmo de vez em quando, mas não conduz ninguém à consulta. Cada peça precisa saber a que estado do paciente serve.</p></div></div><div class="chain-item"><div class="chain-n">5</div><div><div class="chain-lab">A venda acontece na conversa</div><p>O Instagram gera interesse; o direct e o WhatsApp convertem. Sem roteiro de resposta, o interesse esfria.</p></div></div><div class="chain-item"><div class="chain-n">6</div><div><div class="chain-lab">Seguidor não paga conta</div><p>Se a métrica principal não for agendamento, o perfil vai otimizar para a coisa errada.</p></div></div></div>
+  <div class="tese"><span>Tese central</span>Um perfil bem posicionado para de competir por preço porque o paciente chega ao direct já sabendo por que escolheu você.</div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">O método</div>
+  <h2>Método PRISMA</h2>
+  <p>PRISMA decompõe o perfil em seis camadas, como a luz que atravessa um prisma. Juntas, elas transformam atenção em agendamento.</p>
+  <div class="m-grid"><div class="m-cell"><div class="m-letter">P</div><div class="m-name">Posicionamento em uma frase</div><div class="m-desc">Especialidade + público + resultado + lugar.</div></div><div class="m-cell"><div class="m-letter">R</div><div class="m-name">Roteiro da Bio e dos Destaques</div><div class="m-desc">A primeira impressão que decide se o seguidor fica.</div></div><div class="m-cell"><div class="m-letter">I</div><div class="m-name">Intenção de cada conteúdo</div><div class="m-desc">Grade dividida entre atrair, aprofundar e converter.</div></div><div class="m-cell"><div class="m-letter">S</div><div class="m-name">Stories de Confiança</div><div class="m-desc">A conversa diária que transforma seguidor em paciente.</div></div><div class="m-cell"><div class="m-letter">M</div><div class="m-name">Mensagens que Convertem</div><div class="m-desc">Comentário → direct → agendamento.</div></div><div class="m-cell"><div class="m-letter">A</div><div class="m-name">Análise de Métricas de Negócio</div><div class="m-desc">O painel que conecta Instagram ao caixa.</div></div></div>
+  <p class="muted small">Regra de ouro: cada etapa pressupõe a anterior resolvida. Pular etapas é a forma mais rápida de concluir que “isso não funciona na minha área”.</p>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">P</div>
+    <div><div class="eyebrow">Etapa 1 de 6</div><h2>Posicionamento em uma frase</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> definir a frase que organiza todo o perfil — e que deve ser a mesma do site e do Google.</div>
+  <h4>Raciocínio</h4>
+  <p>Antes de pensar em post, o perfil precisa responder a uma pergunta: “por que eu, e para quem?”. Sem isso, cada conteúdo puxa para um lado e o seguidor não consegue associar seu nome a nada específico. Especialidade genérica (“dermatologia geral”) atrai todo mundo e convence ninguém.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Defina a especialidade específica (não a área ampla): “acne e melasma”, não “dermatologia”.</li><li>Defina o público principal e a transformação que ele busca, sem prometer resultado.</li><li>Some a cidade e a credencial principal (registro profissional).</li><li>Escolha um território de identidade visual: duas cores, uma tipografia e um estilo de foto — e mantenha.</li></ul>
+  <div class="tool"><div class="tool-h">Fórmula do posicionamento</div><p><b>Eu ajudo [público] com [problema específico] a [transformação desejada], em [cidade], com [diferencial/método].</b></p></div>
+  <div class="erro"><b>Erro comum:</b> listar cinco especialidades para “não perder ninguém”. A vitrine que tenta atrair todos não atrai ninguém.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">R</div>
+    <div><div class="eyebrow">Etapa 2 de 6</div><h2>Roteiro da Bio e dos Destaques</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> transformar bio e destaques em uma página de vendas compacta.</div>
+  <h4>Raciocínio</h4>
+  <p>A bio é a única parte do perfil que todo visitante lê. Ela precisa responder em quatro linhas: o que você faz, para quem, onde e o que fazer agora. Os destaques são a segunda dobra: funcionam como um site em miniatura para quem quer saber mais antes de chamar.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li><b>Linha 1:</b> especialidade + diferencial (ou nome do seu método).</li><li><b>Linha 2:</b> para quem + principal transformação.</li><li><b>Linha 3:</b> cidade + registro profissional.</li><li><b>Linha 4:</b> um único call to action (“agende sua avaliação”) + link funcional que leva direto ao WhatsApp ou agenda.</li><li>Organize até 6 destaques nesta ordem: <b>Comece aqui</b> (quem sou), <b>A consulta</b> (como funciona), <b>Dúvidas</b>, <b>Provas</b> (formação, estrutura, imprensa), <b>Bastidores</b>, <b>Agendar</b>.</li><li>Evite: lista de serviços, jargão técnico, “atendo convênio” como destaque, links genéricos e mais de 3 a 4 emojis.</li></ul>
+  <div class="tool"><div class="tool-h">Três modelos de bio</div><table><tr><th>Foco</th><th>Exemplo</th></tr><tr><td>Resultado</td><td>Especialista em acne e melasma · Ajudo mulheres a voltarem a gostar da própria pele · Brasília-DF · CRM 00000 · Agende sua avaliação ↓</td></tr><tr><td>Método</td><td>Criadora do Método [Nome] · Tratamento personalizado para manchas resistentes · São Paulo-SP · CRM 00000 · Agende aqui ↓</td></tr><tr><td>Autoridade</td><td>Dr. [Nome] · Cirurgião-dentista · [x] anos em reabilitação oral · Rio de Janeiro-RJ · CRO 00000 · Agendamento no link ↓</td></tr></table></div>
+  <div class="erro"><b>Erro comum:</b> colocar o link para uma página genérica ou um agregador com 12 botões. O visitante decide em segundos; um caminho, um clique.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">I</div>
+    <div><div class="eyebrow">Etapa 3 de 6</div><h2>Intenção de cada conteúdo</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> planejar o conteúdo pela intenção que ele cumpre no caminho do paciente.</div>
+  <h4>Raciocínio</h4>
+  <p>Conteúdo de atração traz gente nova, mas não vende sozinho. Conteúdo de conversão vende, mas cansa quem acabou de chegar. A proporção certa mantém o perfil crescendo e convertendo ao mesmo tempo. Como ponto de partida, use cerca de metade para atrair, um terço para aprofundar e o restante para converter — e ajuste conforme seus números.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li><b>Atrair (~50%):</b> mitos e verdades, causas do problema, sinais de alerta, prevenção, opinião sobre assunto em alta.</li><li><b>Aprofundar (~30%):</b> como você decide um tratamento, comparação entre técnicas, bastidores do processo, casos explicados (dentro das regras).</li><li><b>Converter (~20%):</b> como é a consulta, o que está incluído, diferenciais da clínica, convite direto para agendar.</li><li>Planeje 4 semanas por vez e grave em blocos.</li><li>Em cada post, escreva antes de produzir: “intenção = …” e “próximo passo do seguidor = …”.</li></ul>
+  <div class="tool"><div class="tool-h">Semana-modelo</div><table><tr><th>Dia</th><th>Feed</th><th>Intenção</th></tr><tr><td>Seg</td><td>Mito ou verdade</td><td>Atrair</td></tr><tr><td>Ter</td><td>Conteúdo técnico acessível</td><td>Aprofundar</td></tr><tr><td>Qua</td><td>Processo / caso explicado</td><td>Aprofundar → Converter</td></tr><tr><td>Qui</td><td>Prevenção e sinais de alerta</td><td>Atrair</td></tr><tr><td>Sex</td><td>Bastidores e rotina</td><td>Aprofundar (proximidade)</td></tr><tr><td>Sáb/Dom</td><td>Como é a consulta / convite</td><td>Converter</td></tr></table></div>
+  <div class="erro"><b>Erro comum:</b> postar só conteúdo de conversão porque “preciso de pacientes agora”. Sem atração, o público encolhe e a conversão cai junto.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">S</div>
+    <div><div class="eyebrow">Etapa 4 de 6</div><h2>Stories de Confiança</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> usar os stories como o canal de relacionamento que constrói confiança e proximidade todos os dias.</div>
+  <h4>Raciocínio</h4>
+  <p>O feed atrai; os stories aproximam. É nos stories que o seguidor vê a rotina, ouve a voz do profissional, percebe o cuidado e começa a imaginar como seria ser atendido. Uma estrutura simples de cinco quadros transforma qualquer tema em uma pequena história com começo, meio e próximo passo.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li><b>Educativos (diários):</b> resposta a dúvidas, dicas rápidas, curiosidades.</li><li><b>Bastidores (3×/semana):</b> preparação da sala, rotina, equipe, cuidado com biossegurança.</li><li><b>Prova e processo (2×/semana):</b> etapas de tratamento, depoimentos permitidos, celebração de marcos.</li><li><b>Pessoais (1×/semana):</b> aprendizados, valores, vida fora do consultório — com limite.</li><li>Use a sequência de 5 quadros: <b>gancho visual → contexto/problema → solução ou insight → lição → convite sutil</b>.</li><li>Inclua ao menos uma interação por dia (enquete, caixa de pergunta, quiz).</li></ul>
+  <div class="tool"><div class="tool-h">Sequência de 5 stories</div><ul><li><b>1. Gancho:</b> “Você sabia que [fato surpreendente]?”</li><li><b>2. Contexto:</b> por que isso acontece / quem sofre com isso</li><li><b>3. Insight:</b> o que muda o jogo</li><li><b>4. Lição:</b> o que fazer a partir de hoje</li><li><b>5. Convite:</b> “Quer saber se é o seu caso? Me chama aqui.”</li></ul></div>
+  <div class="erro"><b>Erro comum:</b> usar stories só para repostar marcações e mensagens de parabéns. Isso não constrói autoridade nem gera conversa.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">M</div>
+    <div><div class="eyebrow">Etapa 5 de 6</div><h2>Mensagens que Convertem</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> transformar comentários e mensagens em conversas qualificadas que terminam em consulta marcada.</div>
+  <h4>Raciocínio</h4>
+  <p>O conteúdo gera a faísca; a conversa acende o fogo. Comentários são oportunidades públicas de mostrar atenção, e o direct é onde a confiança vira ação. Uma sequência simples — agradecer, qualificar, descobrir, direcionar e convidar — evita tanto a frieza do “chame no WhatsApp” quanto o erro de dar consulta pelo direct.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li><b>Comentário neutro:</b> agradeça e convide para o direct.</li><li><b>Comentário com pergunta:</b> responda parcialmente e indique que cada caso exige avaliação.</li><li><b>Comentário negativo:</b> responda com educação e informação, nunca com defesa emocional.</li><li><b>Comentário positivo:</b> agradeça e amplifique (com autorização, vira prova social).</li><li>No direct, siga 5 passos: <b>agradecimento → qualificação → descoberta → direcionamento → convite</b>.</li><li>Defina quem responde, em que horários e o prazo máximo de resposta.</li></ul>
+  <div class="tool"><div class="tool-h">Perguntas que geram comentário</div><ul><li>“Qual dessas opções você já tentou?”</li><li>“Conta aí: qual sua maior dificuldade com [problema]?”</li><li>“Verdade ou mito: você acredita em [crença comum]?”</li><li>“Qual dessas dúvidas você quer que eu responda no próximo vídeo?”</li></ul></div>
+  <div class="erro"><b>Erro comum:</b> fazer diagnóstico ou prescrição pelo direct. Além do risco ético, tira o motivo para a consulta. Acolha, oriente em linhas gerais e convide para a avaliação.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">A</div>
+    <div><div class="eyebrow">Etapa 6 de 6</div><h2>Análise de Métricas de Negócio</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> medir o perfil pelo que ele gera em agenda e faturamento, não em vaidade.</div>
+  <h4>Raciocínio</h4>
+  <p>Seguidores, curtidas e alcance são métricas de vaidade: podem crescer sem um único agendamento. O que interessa é quantas conversas qualificadas chegam, quantas viram consulta e quanto vale cada paciente que veio do digital. Com esses números, você decide o que repetir e o que cortar.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li><b>Semanal:</b> direct qualificado (pessoas com interesse real), agendamentos vindos do Instagram, engajamento real (comentários e salvamentos ÷ alcance).</li><li><b>Mensal:</b> taxa de conversão contato → paciente, ticket médio do paciente digital, tempo investido versus resultado.</li><li>Marque a origem de todo paciente que chega pelo Instagram (pergunta na recepção ou link com identificação).</li><li>No fim do mês, liste os 3 conteúdos que mais geraram conversa e produza variações deles.</li></ul>
+  <div class="tool"><div class="tool-h">Vaidade × negócio</div><table><tr><th>Ignore como meta</th><th>Acompanhe de perto</th></tr><tr><td>Número de seguidores</td><td>Conversão direct → agendamento</td></tr><tr><td>Curtidas por post</td><td>Custo por contato qualificado</td></tr><tr><td>Alcance total</td><td>Valor do paciente que veio do digital</td></tr></table></div>
+  <div class="erro"><b>Erro comum:</b> comemorar um vídeo viral que não trouxe nenhum agendamento. Viral sem bandeira atrai o público errado.</div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Roadmap de implementação</div>
+  <h2>Implementação em 30 dias</h2>
+  <p>Quatro semanas para sair do perfil-portfólio e ter uma vitrine que conversa e converte. A semana 4 se repete todos os meses.</p>
+  <div class="rm"><div class="rm-col"><div class="rm-per">Semana 1</div><div class="rm-nome">Fundação</div><ul class=""><li>Frase de posicionamento</li><li>Bio reescrita com um dos modelos</li><li>Destaques reorganizados</li><li>Paleta e estilo visual definidos</li></ul><div class="rm-ent"><b>Entregável:</b> Perfil que se explica em 5 segundos</div></div><div class="rm-col"><div class="rm-per">Semanas 2–3</div><div class="rm-nome">Conteúdo e conversa</div><ul class=""><li>4 semanas de pauta por intenção</li><li>Bloco de gravação + banco de stories</li><li>Roteiros de resposta a comentário e direct</li><li>Responder 100% dos comentários</li><li>Stories interativos diários</li></ul><div class="rm-ent"><b>Entregável:</b> Grade rodando e direct com roteiro</div></div><div class="rm-col"><div class="rm-per">Semana 4</div><div class="rm-nome">Otimização</div><ul class=""><li>Leitura das métricas de negócio</li><li>Ajuste da proporção de intenções</li><li>Automatizar respostas repetitivas</li><li>Planejar o mês seguinte</li></ul><div class="rm-ent"><b>Entregável:</b> Painel mensal e pauta do próximo mês</div></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Aplicabilidade</div>
+  <h2>Como aplicar na sua realidade</h2>
+  <h3>Por perfil de clínica</h3>
+  <table><thead><tr><th style="width:28%">Perfil</th><th>Como adaptar</th></tr></thead><tbody><tr><td><b>Profissional começando do zero</b></td><td>Priorize P e R. Com poucos seguidores, conteúdo de atração e stories frequentes geram a base; não meça conversão nas primeiras semanas.</td></tr><tr><td><b>Perfil grande com pouca agenda</b></td><td>O gargalo quase sempre está em I (pouca conversão) e M (direct sem roteiro). Aumente a fatia de conteúdo de conversão e treine quem responde.</td></tr><tr><td><b>Clínica com vários profissionais</b></td><td>Perfil da clínica para marca e estrutura; perfis individuais para autoridade. Os destaques da clínica levam aos perfis dos profissionais.</td></tr><tr><td><b>Odontologia</b></td><td>Conteúdo de processo (etapas, tecnologia, planejamento) funciona muito bem para aprofundar. Atenção às regras do CFO sobre imagem e preço.</td></tr><tr><td><b>Saúde mental e nutrição</b></td><td>Proximidade pesa mais: invista em stories de bastidor e em conteúdo que acolhe. Evite qualquer promessa de resultado.</td></tr></tbody></table>
+  <h3 class="mt">Quem faz o quê</h3>
+  <table><thead><tr><th style="width:28%">Papel</th><th>Responsabilidade</th></tr></thead><tbody><tr><td><b>Profissional de saúde</b></td><td>Define o posicionamento, aparece nos vídeos e stories, valida conteúdo técnico.</td></tr><tr><td><b>Social media / agência</b></td><td>Planeja a grade por intenção, edita, publica e organiza destaques.</td></tr><tr><td><b>Recepção / CRC</b></td><td>Responde direct com roteiro e registra a origem dos agendamentos.</td></tr><tr><td><b>Gestor(a)</b></td><td>Acompanha o painel semanal e decide os ajustes do mês.</td></tr></tbody></table>
+  <div class="keep"><h3 class="mt">Indicadores que provam que está funcionando</h3>
+  <table><thead><tr><th style="width:26%">Indicador</th><th>O que responde</th><th style="width:26%">Como medir</th></tr></thead><tbody><tr><td><b>Direct qualificado / semana</b></td><td>O conteúdo gera interesse real?</td><td>Contagem semanal no inbox</td></tr><tr><td><b>Conversão direct → agendamento</b></td><td>A conversa está convertendo?</td><td>Agendamentos ÷ conversas</td></tr><tr><td><b>Engajamento real</b></td><td>O público certo está prestando atenção?</td><td>(Comentários + salvamentos) ÷ alcance</td></tr><tr><td><b>Pacientes vindos do Instagram</b></td><td>O perfil vira faturamento?</td><td>Pergunta de origem na recepção</td></tr></tbody></table></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Modelos prontos</div>
+  <h2>Copie, adapte e use hoje</h2>
+  <p>Troque apenas o que está entre colchetes. Ajuste o tom ao seu público — e valide sempre com as regras do seu conselho profissional.</p>
+  <div class="script"><div class="script-h">Post “Mito ou verdade”</div><div class="script-b">Gancho: “MITO OU VERDADE: [afirmação comum sobre o problema].”
+1. Apresente a crença.
+2. Revele se é mito ou verdade.
+3. Explique o porquê em linguagem simples.
+4. Dê a orientação correta.
+5. Convide: “Ficou com dúvida sobre o seu caso? Me chama no direct.”</div><div class="script-obs"><b>Por que funciona:</b> gera curiosidade imediata, educa e termina com um próximo passo.</div></div><div class="script"><div class="script-h">Post de processo (sem promessa de resultado)</div><div class="script-b">“Toda paciente que chega com [queixa] passa por estas etapas comigo: 1) [avaliação] 2) [exames] 3) [plano personalizado] 4) [acompanhamento]. Cada etapa existe por um motivo: [motivo]. Quer entender se esse caminho faz sentido para você? Agende sua avaliação.”</div><div class="script-obs"><b>Por que funciona:</b> mostra método e cuidado, o que gera confiança sem expor imagem de resultado.</div></div><div class="script"><div class="script-h">Sequência de direct</div><div class="script-b">Agradecimento: “Oi, [nome]! Vi que você curtiu o conteúdo sobre [tema] 😊”
+Qualificação: “Posso te ajudar com alguma dúvida?”
+Descoberta: “Me conta um pouco do seu caso: há quanto tempo isso te incomoda?”
+Direcionamento: “Pelo que você contou, o ideal é uma avaliação para olhar com calma.”
+Convite: “Que tal agendarmos? Tenho [dia] ou [dia]. Qual fica melhor?”</div><div class="script-obs"><b>Por que funciona:</b> segue a ordem natural de uma conversa e termina com uma escolha entre duas opções, não com um “sim ou não”.</div></div><div class="script"><div class="script-h">Resposta a comentário com pergunta técnica</div><div class="script-b">“Ótima pergunta, [nome]! Em linhas gerais, [orientação geral segura]. Mas cada caso tem particularidades — o ideal é avaliar pessoalmente. Te chamei no direct para explicar como funciona 💬”</div><div class="script-obs"><b>Por que funciona:</b> mostra conhecimento em público sem fazer consulta pelos comentários.</div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Conexão com a coleção</div>
+  <h2>Leia em seguida</h2>
+  <div class="xref" style="--c:#7B4DE0">
+    <div class="xref-tag">Volume 01 · Coleção Acelerador de Clínicas</div>
+    <div class="xref-title">DNA Comercial</div>
+    <div class="xref-desc">Defina o que vender e como explicar</div>
+  </div>
+  <h3>Como ele potencializa o que você acabou de aprender</h3>
+  <p>Quase todo perfil de saúde trava na mesma pergunta: <b>“sobre o que eu posto?”</b>. A resposta mais rica está no Volume 01, <b>DNA Comercial</b>. A história do profissional (Etapa H) vira conteúdo de proximidade; os diferenciais do negócio (Etapa E) viram conteúdo de prova; e o X-Ray do Serviço de Ouro — com perguntas frequentes e objeções — vira meses de pauta de atração e conversão.</p><p>Além disso, o DNA garante que a bio, os destaques e os roteiros de direct usem exatamente as mesmas palavras que a recepção usa ao telefone. Paciente que encontra a mesma mensagem em todos os pontos de contato confia mais rápido.</p>
+  <h4>Combinações práticas</h4>
+  <ul class="arrow"><li>Transforme cada objeção clássica do X-Ray em um post de “Objeção direta”.</li><li>Use o parágrafo de apresentação de 30 segundos como roteiro do destaque “Comece aqui”.</li><li>Use o Item de Ouro como tema central de 50% do conteúdo de conversão.</li></ul>
+  <div class="sec-ref" style="--c:#0E9C9C"><b>Também combina com o Volume 04 · Recepção que Fatura:</b> a Recepção que Fatura assume a conversa assim que o interessado sai do direct para o WhatsApp — com resposta rápida, qualificação e acompanhamento.</div>
+  <h3 class="mt">Onde este volume entra na jornada da clínica</h3>
+  <p class="muted">A coleção segue a ordem em que um paciente descobre, decide e volta. Cada volume resolve um elo — e conversa com os outros.</p>
+  <div class="journey"><div class="j-item" style="--c:#7B4DE0"><span class="j-n">01</span><span class="j-t">DNA Comercial</span><span class="j-d">Defina o que vender e como explicar</span></div><div class="j-item" style="--c:#2F6BF0"><span class="j-n">02</span><span class="j-t">Referência na Cidade</span><span class="j-d">Seja encontrado no Google, nas IAs e na imprensa</span></div><div class="j-item on" style="--c:#E0457B"><span class="j-n">03</span><span class="j-t">Vitrine Magnética</span><span class="j-d">Instagram que vende a consulta</span></div><div class="j-item" style="--c:#0E9C9C"><span class="j-n">04</span><span class="j-t">Recepção que Fatura</span><span class="j-d">Converta interessados em pacientes</span></div><div class="j-item" style="--c:#C8932B"><span class="j-n">05</span><span class="j-t">Consulta Assinatura</span><span class="j-d">Entregue uma consulta de alto valor</span></div><div class="j-item" style="--c:#E07B1F"><span class="j-n">06</span><span class="j-t">Resgate de Ouro</span><span class="j-d">Reative quem já confiou em você</span></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Para terminar</div>
+  <h2>O que separa quem executa de quem só lê</h2>
+  <p>Um perfil bem posicionado não é o que tem mais seguidores — é o que faz o paciente certo pensar “é exatamente isso que eu procurava”.</p><p>Comece pela fundação: frase, bio e destaques. Depois, construa a rotina de conteúdo por intenção e treine quem responde as mensagens. Em 30 dias, a diferença aparece na qualidade das conversas; em 90, aparece na agenda.</p><p>Sua marca digital é um ativo da clínica. Trate-a como tal.</p>
+  <div class="compliance"><b>Nota ética e legal:</b> este material é educativo sobre gestão, comunicação e vendas em saúde. Não constitui orientação clínica nem parecer jurídico. Regras de publicidade variam por conselho (CFM, CFO, CFN, COFFITO e outros) e mudam com o tempo — confirme cada peça antes de publicar e trate dados de pacientes conforme a LGPD.</div>
+</section>
+<section class="back">
+  <div class="cover-shape s1"></div>
+  <div class="back-in">
+    <div class="brandmark big"><span class="bm-dot"></span>Acelerador de Clínicas</div>
+    <p class="back-tag">Estratégia, processo e vendas para clínicas e consultórios que querem crescer com previsibilidade — e sem perder a essência do cuidado.</p>
+    <div class="back-cta">
+      <div class="back-cta-h">Quer implementar o Método PRISMA com acompanhamento?</div>
+      <p>Agende um diagnóstico da sua clínica: onde o faturamento está vazando, o que priorizar nos próximos 90 dias e qual volume da coleção aplicar primeiro.</p>
+      <div class="back-site">aceleradordeclinicas.com.br</div>
+    </div>
+    <div class="back-list"><span style="--c:#7B4DE0">01 · DNA Comercial</span><span style="--c:#2F6BF0">02 · Referência na Cidade</span><span style="--c:#E0457B">03 · Vitrine Magnética</span><span style="--c:#0E9C9C">04 · Recepção que Fatura</span><span style="--c:#C8932B">05 · Consulta Assinatura</span><span style="--c:#E07B1F">06 · Resgate de Ouro</span></div>
+    <div class="back-sig">© Acelerador de Clínicas · Coleção Acelerador de Clínicas · Volume 03 — Vitrine Magnética</div>
+  </div>
+</section></body></html>

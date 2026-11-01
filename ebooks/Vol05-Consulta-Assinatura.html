@@ -1,0 +1,338 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Consulta Assinatura · Acelerador de Clínicas</title>
+<style>:root{--accent:#C8932B;}
+@page { size: A4; margin: 18mm 17mm 20mm 17mm; }
+@page :first { margin: 0; }
+* { box-sizing: border-box; }
+:root { --navy:#0B1B33; --ink:#1B2433; --muted:#5B6576; --line:#E3E7EE; --soft:#F5F7FA; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { margin:0; font-family: Inter, "Liberation Sans", sans-serif; color: var(--ink); font-size: 10.4pt; line-height: 1.55; background:#fff; }
+h1,h2,h3,h4 { font-family: "Inter Display", Inter, sans-serif; color: var(--navy); margin: 0; line-height: 1.15; }
+h2 { font-size: 23pt; font-weight: 800; letter-spacing: -0.02em; margin: 2mm 0 5mm; }
+h3 { font-size: 13.5pt; font-weight: 700; margin: 6mm 0 3mm; }
+h4 { font-size: 10.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); margin: 5mm 0 2mm; }
+p { margin: 0 0 3mm; }
+b { color: var(--navy); }
+.mt { margin-top: 8mm; }
+.muted { color: var(--muted); }
+.small { font-size: 9pt; }
+.eyebrow { font-size: 8.5pt; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.page-start { break-before: page; }
+ul { margin: 0 0 3mm; padding-left: 0; list-style: none; }
+ul li { position: relative; padding-left: 6mm; margin-bottom: 1.6mm; }
+ul li::before { content: ""; position: absolute; left: 1mm; top: 2.1mm; width: 2mm; height: 2mm; border-radius: 50%; background: var(--accent); }
+ul.check li::before { content: "✓"; background: none; color: var(--accent); font-weight: 800; top: 0; width: auto; height: auto; }
+ul.arrow li::before { content: "→"; background: none; color: var(--accent); font-weight: 800; top: 0; width: auto; height: auto; }
+ul.steps { counter-reset: s; }
+ul.steps li { counter-increment: s; padding-left: 8mm; }
+ul.steps li::before { content: counter(s); background: var(--accent); color: #fff; font-size: 7.5pt; font-weight: 800; width: 5mm; height: 5mm; top: .6mm; left: 0; display: flex; align-items: center; justify-content: center; }
+
+/* COVER */
+.cover { position: relative; width: 210mm; height: 297mm; background: var(--navy); color: #fff; overflow: hidden; padding: 22mm 20mm; display: flex; flex-direction: column; }
+.cover-shape { position: absolute; border-radius: 50%; }
+.cover-shape.s1 { width: 170mm; height: 170mm; right: -60mm; top: -50mm; background: radial-gradient(circle at 30% 30%, var(--accent), transparent 70%); opacity: .55; }
+.cover-shape.s2 { width: 120mm; height: 120mm; left: -50mm; bottom: 40mm; border: 1.2mm solid var(--accent); opacity: .25; }
+.cover-top, .cover-mid, .cover-puv, .cover-foot { position: relative; z-index: 2; }
+.brandmark { display: inline-flex; align-items: center; gap: 2.5mm; font-family: "Inter Display"; font-weight: 800; font-size: 12pt; letter-spacing: -.01em; }
+.brandmark.big { font-size: 20pt; }
+.bm-dot { width: 4mm; height: 4mm; border-radius: 1mm; background: var(--accent); transform: rotate(45deg); display: inline-block; }
+.cover-vol { margin-top: 3mm; font-size: 8.5pt; letter-spacing: .16em; text-transform: uppercase; opacity: .75; }
+.cover-mid { margin-top: 48mm; }
+.cover-kicker { display: inline-block; background: var(--accent); color: #fff; font-weight: 800; font-size: 9pt; letter-spacing: .12em; text-transform: uppercase; padding: 1.6mm 3.5mm; border-radius: 1.5mm; }
+.cover-title { color: #fff; font-size: 50pt; font-weight: 900; letter-spacing: -.035em; line-height: .98; margin: 6mm 0 6mm; }
+.cover-sub { font-size: 15pt; line-height: 1.35; opacity: .9; max-width: 150mm; }
+.cover-puv { margin-top: auto; background: rgba(255,255,255,.07); border-left: 1.6mm solid var(--accent); padding: 5mm 6mm; border-radius: 0 2mm 2mm 0; }
+.cover-puv p { margin: 0; font-size: 11.5pt; line-height: 1.45; }
+.puv-label { font-size: 7.5pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5mm; }
+.cover-foot { display: flex; justify-content: space-between; margin-top: 10mm; font-size: 9pt; opacity: .85; }
+.cover-foot b { color: #fff; }
+.cover-foot .site { font-weight: 700; color: #fff; }
+
+/* PUV / cards */
+.puv-box { background: var(--soft); border: 1px solid var(--line); border-left: 1.6mm solid var(--accent); border-radius: 0 3mm 3mm 0; padding: 5mm 6mm; margin: 5mm 0; break-inside: avoid; }
+.puv-big { font-family: "Inter Display"; font-size: 13.5pt; font-weight: 700; color: var(--navy); line-height: 1.35; }
+.puv-dif { margin: 2mm 0 0; font-size: 9.8pt; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+.card { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm 5mm; break-inside: avoid; }
+.card h4 { margin-top: 0; }
+
+/* journey */
+.journey { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2mm; margin-top: 3mm; }
+.j-item { border: 1px solid var(--line); border-top: 1.4mm solid var(--c); border-radius: 2mm; padding: 2.5mm; opacity: .55; }
+.j-item.on { opacity: 1; background: color-mix(in srgb, var(--c) 9%, white); border-color: var(--c); }
+.j-n { display: block; font-weight: 900; color: var(--c); font-size: 11pt; }
+.j-t { display: block; font-weight: 800; font-size: 8pt; color: var(--navy); line-height: 1.2; margin: .5mm 0 1mm; }
+.j-d { display: block; font-size: 7pt; color: var(--muted); line-height: 1.25; }
+
+/* diagnóstico */
+ol.diag { list-style: none; padding: 0; margin: 4mm 0; }
+ol.diag li { display: flex; gap: 3mm; padding: 2.4mm 0; border-bottom: 1px dashed var(--line); }
+.box { flex: 0 0 4.2mm; height: 4.2mm; border: .5mm solid var(--accent); border-radius: 1mm; margin-top: .6mm; }
+.bands { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-top: 5mm; }
+.band { display: flex; gap: 3mm; background: var(--soft); border-radius: 2.5mm; padding: 3mm 4mm; font-size: 9.5pt; break-inside: avoid; }
+.band-r { flex: 0 0 auto; background: var(--accent); color: #fff; font-weight: 800; font-size: 8.5pt; border-radius: 1.5mm; padding: .8mm 2.2mm; height: fit-content; white-space: nowrap; }
+
+/* raciocínio */
+.chain { margin: 5mm 0; position: relative; }
+.chain-item { display: flex; gap: 4mm; position: relative; padding-bottom: 3mm; break-inside: avoid; }
+.chain-item:not(:last-child)::after { content: ""; position: absolute; left: 4.2mm; top: 9mm; bottom: 0; width: .5mm; background: color-mix(in srgb, var(--accent) 40%, white); }
+.chain-n { flex: 0 0 9mm; height: 9mm; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.chain-lab { font-weight: 800; color: var(--navy); font-size: 10.5pt; margin-top: 1.5mm; }
+.chain-item p { margin: .5mm 0 0; }
+.tese { background: var(--navy); color: #fff; border-radius: 3mm; padding: 5mm 6mm; font-family: "Inter Display"; font-size: 12.5pt; font-weight: 600; line-height: 1.4; break-inside: avoid; }
+.tese span { display: block; font-family: Inter; font-size: 7.5pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5mm; }
+
+/* método */
+.m-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5mm; margin: 5mm 0; }
+.m-cell { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm; display: grid; grid-template-columns: 13mm 1fr; column-gap: 3mm; break-inside: avoid; }
+.m-letter { grid-row: span 2; width: 13mm; height: 13mm; border-radius: 2.5mm; background: var(--accent); color: #fff; font-family: "Inter Display"; font-weight: 900; font-size: 20pt; display: flex; align-items: center; justify-content: center; }
+.m-name { font-weight: 800; color: var(--navy); font-size: 10.5pt; }
+.m-desc { font-size: 9pt; color: var(--muted); line-height: 1.4; }
+
+/* passos */
+.step-head { display: flex; gap: 5mm; align-items: center; margin-bottom: 3mm; }
+.step-letter { flex: 0 0 22mm; height: 22mm; border-radius: 4mm; background: var(--accent); color: #fff; font-family: "Inter Display"; font-weight: 900; font-size: 38pt; display: flex; align-items: center; justify-content: center; }
+.step-head h2 { margin: 1mm 0 0; }
+.obj { background: color-mix(in srgb, var(--accent) 10%, white); border-radius: 2.5mm; padding: 3mm 4.5mm; margin-bottom: 2mm; }
+.tool { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm 5mm; margin: 4mm 0; background: var(--soft); break-inside: avoid; }
+.tool-h { font-weight: 800; color: var(--navy); margin-bottom: 2mm; font-size: 10.5pt; }
+.tool p:last-child, .tool ul:last-child { margin-bottom: 0; }
+.tool table { margin: 1mm 0 0; background: #fff; }
+.erro { border-left: 1.2mm solid #D64545; background: #FDF1F1; padding: 3mm 4.5mm; border-radius: 0 2.5mm 2.5mm 0; font-size: 9.8pt; break-inside: avoid; }
+.erro b { color: #B12E2E; }
+
+/* roadmap */
+.rm { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.5mm; margin-top: 4mm; }
+.rm-col { border: 1px solid var(--line); border-top: 1.6mm solid var(--accent); border-radius: 2.5mm; padding: 4mm; font-size: 9.3pt; display: flex; flex-direction: column; break-inside: avoid; }
+.rm-per { font-weight: 900; color: var(--accent); font-size: 10pt; letter-spacing: .04em; text-transform: uppercase; }
+.rm-nome { font-family: "Inter Display"; font-weight: 800; color: var(--navy); font-size: 12pt; margin: 1mm 0 3mm; line-height: 1.2; }
+.rm-ent { margin-top: auto; background: var(--soft); border-radius: 2mm; padding: 2.5mm 3mm; font-size: 8.8pt; }
+
+/* tables */
+table { width: 100%; border-collapse: collapse; font-size: 9.3pt; margin-bottom: 3mm; }
+th { background: var(--navy); color: #fff; text-align: left; padding: 2.4mm 3mm; font-weight: 700; font-size: 8.6pt; letter-spacing: .03em; }
+td { border-bottom: 1px solid var(--line); padding: 2.4mm 3mm; vertical-align: top; }
+tr { break-inside: avoid; }
+tbody tr:nth-child(even) td { background: #FAFBFC; }
+
+/* scripts */
+.script { border: 1px solid var(--line); border-radius: 3mm; margin: 4mm 0; overflow: hidden; break-inside: avoid; }
+.script-h { background: var(--accent); color: #fff; font-weight: 800; padding: 2.4mm 4.5mm; font-size: 9.8pt; }
+.script-b { padding: 4mm 5mm; font-size: 10pt; white-space: pre-line; background: #fff; }
+.script-obs { padding: 2.6mm 5mm; background: var(--soft); border-top: 1px solid var(--line); font-size: 9pt; color: var(--muted); }
+
+/* cross ref */
+.xref { background: var(--navy); color: #fff; border-radius: 4mm; padding: 8mm; position: relative; overflow: hidden; margin: 3mm 0 6mm; break-inside: avoid; }
+.xref::after { content: ""; position: absolute; right: -25mm; top: -25mm; width: 80mm; height: 80mm; border-radius: 50%; background: radial-gradient(circle, var(--c), transparent 70%); opacity: .7; }
+.xref-tag { font-size: 8pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--c); position: relative; z-index: 1; filter: brightness(1.35); }
+.xref-title { font-family: "Inter Display"; font-size: 28pt; font-weight: 900; letter-spacing: -.02em; margin: 2mm 0 1mm; position: relative; z-index: 1; }
+.xref-desc { opacity: .85; position: relative; z-index: 1; }
+.sec-ref { margin-top: 5mm; border: 1px solid var(--line); border-left: 1.4mm solid var(--c); border-radius: 0 2.5mm 2.5mm 0; padding: 3.5mm 4.5mm; font-size: 9.6pt; break-inside: avoid; }
+
+.compliance { margin-top: 8mm; font-size: 8.6pt; color: var(--muted); border-top: 1px solid var(--line); padding-top: 3mm; }
+
+/* back */
+.back { break-before: page; position: relative; height: 255mm; background: var(--navy); color: #fff; border-radius: 4mm; overflow: hidden; }
+.back-in { position: relative; z-index: 2; padding: 22mm 16mm; height: 100%; display: flex; flex-direction: column; }
+.back-tag { font-size: 13pt; line-height: 1.45; opacity: .9; margin: 6mm 0 14mm; max-width: 140mm; }
+.back-cta { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15); border-radius: 4mm; padding: 7mm; }
+.back-cta-h { font-family: "Inter Display"; font-size: 16pt; font-weight: 800; margin-bottom: 2mm; }
+.back-cta p { opacity: .85; }
+.back-site { display: inline-block; margin-top: 2mm; background: var(--accent); color: #fff; font-weight: 800; padding: 2.5mm 5mm; border-radius: 2mm; font-size: 12pt; }
+.back-list { display: flex; flex-wrap: wrap; gap: 2mm; margin-top: auto; }
+.back-list span { border: 1px solid var(--c); color: #fff; border-radius: 10mm; padding: 1.2mm 3.5mm; font-size: 8.4pt; font-weight: 700; }
+.back-sig { margin-top: 6mm; font-size: 8pt; opacity: .6; }
+
+.keep{break-inside:avoid;}
+</style></head><body>
+<section class="cover">
+  <div class="cover-shape s1"></div><div class="cover-shape s2"></div>
+  <div class="cover-top">
+    <div class="brandmark"><span class="bm-dot"></span>Acelerador de Clínicas</div>
+    <div class="cover-vol">Coleção Acelerador de Clínicas · Volume 05</div>
+  </div>
+  <div class="cover-mid">
+    <div class="cover-kicker">Método PREMIUM</div>
+    <h1 class="cover-title">Consulta Assinatura</h1>
+    <p class="cover-sub">Como estruturar uma consulta premium que o paciente sente que vale cada real — e que transforma diagnóstico em plano de tratamento.</p>
+  </div>
+  <div class="cover-puv">
+    <div class="puv-label">Proposta Única de Valor</div>
+    <p>Sair da consulta de 15 minutos que termina em receita genérica para uma experiência com a sua assinatura: estruturada em etapas, que une escuta emocional e rigor técnico, justifica o valor cobrado e faz o paciente sair com um plano claro — e vontade de começar.</p>
+  </div>
+  <div class="cover-foot">
+    <div>Uma metodologia <b>Acelerador de Clínicas</b></div>
+    <div class="site">aceleradordeclinicas.com.br</div>
+  </div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Antes de começar</div>
+  <h2>Por que este e-book existe</h2>
+  <p>Muitos profissionais de saúde se sentem desconfortáveis em cobrar um valor justo pela consulta — especialmente em um mercado com tanta oferta de atendimento rápido e barato. O resultado é uma agenda cheia, cansaço crescente e pacientes que comparam preço, não cuidado.</p><p>Consulta de baixo valor costuma atrair quem busca solução rápida e barata. Consulta de alto valor atrai quem quer ser compreendido e está disposto a investir na própria saúde. Mas o valor precisa ser <b>percebido</b> — e percepção não nasce do preço, nasce da experiência.</p><p>Este volume mostra como estruturar essa experiência, etapa por etapa, para que o paciente saia da sala sentindo que recebeu muito mais do que esperava. Cobrar bem é consequência; o objetivo é entregar uma consulta que mereça.</p>
+  <div class="puv-box">
+    <div class="puv-label">A promessa deste volume (PUV)</div>
+    <p class="puv-big">Sair da consulta de 15 minutos que termina em receita genérica para uma experiência com a sua assinatura: estruturada em etapas, que une escuta emocional e rigor técnico, justifica o valor cobrado e faz o paciente sair com um plano claro — e vontade de começar.</p>
+    <p class="puv-dif"><b>O que torna este método único:</b> o PREMIUM trata a consulta como um produto com roteiro, tempo e propósito em cada etapa — do preparo antes de o paciente chegar até o retorno agendado. Ele foi desenhado para funcionar em qualquer especialidade, conectando o plano de tratamento diretamente às dores que o próprio paciente relatou.</p>
+  </div>
+  <div class="two-col">
+    <div class="card"><h4>Para quem é</h4><ul class="check"><li>Profissionais que querem subir o valor da consulta com segurança</li><li>Quem sente que “explica tudo e o paciente não fecha o tratamento”</li><li>Clínicas que querem aumentar a adesão a planos de tratamento</li><li>Especialidades com tratamentos em fases: dermatologia, tricologia, odontologia, nutrologia, fisioterapia, saúde da mulher e outras</li></ul></div>
+    <div class="card"><h4>O que você conquista</h4><ul class="arrow"><li>Uma consulta com roteiro, tempo e propósito em cada etapa</li><li>Perguntas de anamnese emocional que revelam o que realmente importa</li><li>Um momento de exame que educa e gera o “agora eu entendi”</li><li>Planos de tratamento em fases, conectados às dores do paciente</li><li>Mais adesão, mais retorno e menos dúvidas depois da consulta</li></ul></div>
+  </div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Diagnóstico rápido · 3 minutos</div>
+  <h2>Onde sua clínica está hoje</h2>
+  <p>Marque cada afirmação verdadeira. Cada marcação vale 1 ponto. A pontuação diz por onde começar — e o que ainda não adianta fazer.</p>
+  <ol class="diag"><li><span class="box"></span>Minha consulta dura tempo suficiente para uma investigação completa.</li><li><span class="box"></span>O paciente recebe orientações e sente cuidado antes mesmo de chegar.</li><li><span class="box"></span>Pergunto como o problema afeta a vida social, profissional e a autoestima do paciente.</li><li><span class="box"></span>Tenho um roteiro de anamnese técnica que vai além da queixa principal.</li><li><span class="box"></span>Mostro ao paciente imagens, exames ou dados durante a consulta.</li><li><span class="box"></span>Apresento o diagnóstico em linguagem simples, conectando achados e queixas.</li><li><span class="box"></span>Meu plano de tratamento é dividido em fases, com metas e duração.</li><li><span class="box"></span>Conecto o plano às dores e aos desejos que o paciente relatou.</li><li><span class="box"></span>Abro espaço ativo para dúvidas e nunca demonstro pressa no fim.</li><li><span class="box"></span>Todo paciente sai com o retorno agendado e os próximos passos claros.</li></ol>
+  <div class="bands"><div class="band"><div class="band-r">0–3</div><div><b>Consulta rápida</b><br>A consulta é técnica, mas não gera valor percebido. Comece por E e M.</div></div><div class="band"><div class="band-r">4–6</div><div><b>Boa técnica, pouca conexão</b><br>Falta escuta emocional e plano estruturado. Foque em E, I e U.</div></div><div class="band"><div class="band-r">7–8</div><div><b>Consulta valorizada</b><br>Refine a experiência antes e depois. Vá para P, R e o último M.</div></div><div class="band"><div class="band-r">9–10</div><div><b>Consulta Assinatura</b><br>Documente o roteiro e treine a equipe para sustentar a experiência.</div></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Linha de raciocínio</div>
+  <h2>A lógica por trás do método</h2>
+  <p>Antes da técnica, o porquê. Se você entender esta sequência, consegue adaptar o método a qualquer especialidade, tamanho de equipe ou cidade.</p>
+  <div class="chain"><div class="chain-item"><div class="chain-n">1</div><div><div class="chain-lab">O paciente de alto valor busca compreensão, não só diagnóstico</div><p>Ele valoriza a competência técnica, mas se conecta pela empatia. Sentir-se ouvido é parte do que ele está pagando.</p></div></div><div class="chain-item"><div class="chain-n">2</div><div><div class="chain-lab">Queixas raramente são apenas físicas</div><p>Um problema de pele, de cabelo, de dente ou de dor afeta autoestima, relacionamentos e trabalho. Quem enxerga esse impacto cria uma conexão que vai muito além da relação técnica.</p></div></div><div class="chain-item"><div class="chain-n">3</div><div><div class="chain-lab">Investigação ampla revela o que a consulta comum não vê</div><p>Olhar além da queixa principal — hábitos, sono, estresse, histórico, medicações, sinais associados — demonstra atenção diferenciada e, muitas vezes, abre novas frentes legítimas de cuidado.</p></div></div><div class="chain-item"><div class="chain-n">4</div><div><div class="chain-lab">Ver é entender</div><p>Quando o paciente vê na tela o que está acontecendo — uma imagem ampliada, um exame, um comparativo — ele compreende a condição de forma visceral. É o momento que justifica o investimento.</p></div></div><div class="chain-item"><div class="chain-n">5</div><div><div class="chain-lab">Plano conectado à dor vira decisão</div><p>O paciente não compra protocolo; compra a volta à vida que ele descreveu. Um plano em fases, ligado ao que ele contou, transforma custo em investimento.</p></div></div><div class="chain-item"><div class="chain-n">6</div><div><div class="chain-lab">A consulta termina quando acabam as dúvidas</div><p>Paciente que sai com dúvida pesquisa na internet, ouve leigos e adia. Paciente que sai seguro começa.</p></div></div></div>
+  <div class="tese"><span>Tese central</span>O valor da consulta não está no tempo nem no preço: está em o paciente sair sentindo que foi compreendido, que entendeu o que tem e que sabe exatamente o que fazer. O PREMIUM organiza isso em um roteiro repetível.</div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">O método</div>
+  <h2>Método PREMIUM</h2>
+  <p>PREMIUM são sete etapas que cobrem antes, durante e depois da consulta. Os tempos sugeridos somam de 60 a 90 minutos e devem ser adaptados à sua especialidade.</p>
+  <div class="m-grid"><div class="m-cell"><div class="m-letter">P</div><div class="m-name">Preparo antes da chegada</div><div class="m-desc">A experiência começa antes de o paciente entrar.</div></div><div class="m-cell"><div class="m-letter">R</div><div class="m-name">Recepção e primeira impressão</div><div class="m-desc">≈ 10 minutos · Ambiente e acolhimento.</div></div><div class="m-cell"><div class="m-letter">E</div><div class="m-name">Escuta emocional</div><div class="m-desc">≈ 10–15 minutos · O impacto da queixa na vida.</div></div><div class="m-cell"><div class="m-letter">M</div><div class="m-name">Mapeamento técnico</div><div class="m-desc">≈ 20–30 minutos · Anamnese dirigida que vai além da queixa.</div></div><div class="m-cell"><div class="m-letter">I</div><div class="m-name">Imagem que educa</div><div class="m-desc">≈ 15–20 minutos · Exame com o paciente olhando junto.</div></div><div class="m-cell"><div class="m-letter">U</div><div class="m-name">União do plano com a dor</div><div class="m-desc">≈ 20 minutos · Diagnóstico claro e plano em fases.</div></div><div class="m-cell"><div class="m-letter">M</div><div class="m-name">Momento das dúvidas e Marcação do retorno</div><div class="m-desc">≈ 10 minutos · Segurança e próximos passos.</div></div></div>
+  <p class="muted small">Regra de ouro: cada etapa pressupõe a anterior resolvida. Pular etapas é a forma mais rápida de concluir que “isso não funciona na minha área”.</p>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">P</div>
+    <div><div class="eyebrow">Etapa 1 de 7</div><h2>Preparo antes da chegada</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> fazer o paciente chegar orientado, esperado e com a sensação de que algo foi preparado para ele.</div>
+  <h4>Raciocínio</h4>
+  <p>A percepção de valor começa no agendamento. Um paciente que recebe orientações claras, um questionário prévio e uma mensagem de boas-vindas chega mais tranquilo, mais preparado e menos propenso a faltar. O profissional, por sua vez, entra na sala sabendo o essencial do caso.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Envie confirmação com nome do profissional, endereço, tempo de consulta e o que trazer (exames, lista de medicamentos, fotos antigas quando fizer sentido).</li><li>Envie um questionário pré-consulta curto: queixa principal, há quanto tempo, o que já tentou, expectativas.</li><li>Peça à recepção que repasse ao profissional o que descobriu no primeiro contato (dor real, prazo, decisor).</li><li>Explique por que a consulta é mais longa e completa — isso já ancora o valor.</li></ul>
+  
+  <div class="erro"><b>Erro comum:</b> tratar a consulta premium como uma consulta comum com preço maior. Se a experiência antes da sala não muda, o paciente estranha o valor.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">R</div>
+    <div><div class="eyebrow">Etapa 2 de 7</div><h2>Recepção e primeira impressão</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> fazer o paciente sentir, nos primeiros minutos, que está em um lugar especial e organizado.</div>
+  <h4>Raciocínio</h4>
+  <p>O ambiente comunica antes de qualquer palavra: organização, pontualidade, limpeza, a forma como a recepção chama pelo nome. Esses sinais preparam o paciente para confiar no que virá. Uma primeira impressão fria obriga o profissional a reconquistar a confiança dentro da sala.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Receba pelo nome, ofereça água ou café e informe o tempo de espera real.</li><li>Garanta pontualidade: atraso desvaloriza a consulta mais do que qualquer outro fator.</li><li>No início da consulta, explique como ela vai funcionar: “Vamos conversar, examinar com calma e, no fim, eu te apresento o diagnóstico e um plano”.</li><li>Cuide dos detalhes da sala: organizada, iluminada, com o equipamento de exame visível.</li></ul>
+  
+  <div class="erro"><b>Erro comum:</b> começar a consulta direto pela queixa, sem explicar o roteiro. O paciente não sabe o que esperar e fica ansioso para “ir direto ao ponto”.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">E</div>
+    <div><div class="eyebrow">Etapa 3 de 7</div><h2>Escuta emocional</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> entender como o problema afeta a vida do paciente e criar uma conexão genuína.</div>
+  <h4>Raciocínio</h4>
+  <p>Esta é a etapa que mais diferencia uma consulta assinatura. Ao perguntar sobre vida social, trabalho, relacionamentos e autoestima, o profissional mostra que enxerga a pessoa inteira. Essas respostas também serão usadas mais tarde, na apresentação do plano, para conectar tratamento a transformação.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li><b>Vida social:</b> “Como isso tem afetado sua vida social? Tem evitado algum evento ou situação?”</li><li><b>Relacionamentos:</b> “De que forma você sente que isso impactou seus relacionamentos ou sua confiança ao conhecer pessoas?”</li><li><b>Trabalho:</b> “No ambiente profissional, já se sentiu desconfortável ou menos confiante por causa disso?”</li><li><b>Autoestima:</b> “De 0 a 10, quanto essa preocupação afeta a imagem que você tem de si?”</li><li><b>Rotina:</b> “Quanto tempo do seu dia você gasta pensando nisso ou tentando disfarçar?”</li><li>Anote as respostas com as palavras do paciente. Postura de acolhimento e escuta ativa, sem julgamento.</li></ul>
+  <div class="tool"><div class="tool-h">Ajuste por especialidade</div><table><tr><th>Área</th><th>Pergunta emocional-chave</th></tr><tr><td>Dermatologia / tricologia</td><td>“Tem evitado fotos, piscina ou prender o cabelo por causa disso?”</td></tr><tr><td>Odontologia</td><td>“Você costuma sorrir de boca fechada nas fotos?”</td></tr><tr><td>Dor / ortopedia / fisio</td><td>“O que você deixou de fazer por causa da dor?”</td></tr><tr><td>Nutrição / metabolismo</td><td>“Como você se sente ao se vestir de manhã?”</td></tr></table></div>
+  <div class="erro"><b>Erro comum:</b> fazer as perguntas como checklist, sem pausa. O valor está em ouvir a resposta e mostrar que ela foi compreendida.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">M</div>
+    <div><div class="eyebrow">Etapa 4 de 7</div><h2>Mapeamento técnico</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> investigar com rigor todos os fatores relevantes, inclusive os que o paciente não associa à queixa.</div>
+  <h4>Raciocínio</h4>
+  <p>A consulta comum foca a queixa principal e termina em uma prescrição genérica. A consulta assinatura investiga o contexto: histórico, família, hábitos, medicações, condições associadas. Muitas vezes, essa investigação revela sinais que o próprio paciente desconhecia ou minimizava — abrindo frentes legítimas de cuidado e demonstrando um nível de atenção que ele não encontrou antes.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li><b>Histórico da queixa:</b> quando começou, se foi gradual ou súbita, padrão, eventos marcantes antes do início.</li><li><b>Histórico médico e familiar:</b> condições de saúde, medicamentos em uso, tratamentos anteriores, casos na família.</li><li><b>Estilo de vida:</b> alimentação, sono, estresse, atividade física, álcool e tabaco.</li><li><b>Hábitos específicos da área:</b> produtos usados, rotina de cuidados, procedimentos anteriores.</li><li>Solicite exames complementares quando houver indicação clínica — isso demonstra rigor e personaliza o plano.</li><li>Use uma ficha padronizada de anamnese para não esquecer nada e para comparar no retorno.</li></ul>
+  
+  <div class="erro"><b>Erro comum:</b> pedir exames “por protocolo” sem explicar o motivo. Cada exame solicitado deve ter um porquê dito ao paciente, em linguagem simples.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">I</div>
+    <div><div class="eyebrow">Etapa 5 de 7</div><h2>Imagem que educa</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> fazer o paciente ver e entender a própria condição — o momento “agora eu entendi”.</div>
+  <h4>Raciocínio</h4>
+  <p>Explicação verbal convence a razão; imagem convence por inteiro. Quando o paciente vê na tela uma estrutura ampliada, um exame comparado ou uma medida objetiva, a condição deixa de ser abstrata. Esse é o momento que mais justifica o valor da consulta e a necessidade do tratamento. Hoje, equipamentos de captura de imagem (dermatoscópios, tricoscópios, câmeras intraorais, escâneres) ficaram acessíveis e se conectam ao celular, tablet ou TV.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Faça o exame físico com o paciente acompanhando em uma tela sempre que possível.</li><li>Narre o que está sendo visto em linguagem simples: “Está vendo esta área? Isto aqui indica…”.</li><li>Registre imagens de base para comparar nos retornos (com consentimento e armazenamento seguro, conforme a LGPD).</li><li>Se a sua especialidade ainda não usa captura de imagem, avalie um equipamento de entrada — o impacto na percepção do paciente costuma ser imediato.</li></ul>
+  
+  <div class="erro"><b>Erro comum:</b> examinar em silêncio e só falar no final. O paciente perde a parte mais convincente da consulta.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">U</div>
+    <div><div class="eyebrow">Etapa 6 de 7</div><h2>União do plano com a dor</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> apresentar o diagnóstico de forma didática e um plano de tratamento em fases, conectado ao que o paciente contou.</div>
+  <h4>Raciocínio</h4>
+  <p>A forma de apresentar o diagnóstico é tão importante quanto o diagnóstico. Linguagem clara, achados ligados às queixas e um plano em etapas transmitem segurança. E o passo decisivo: mostrar que cada fase do tratamento responde a algo que o paciente relatou na escuta emocional. É aí que o preço deixa de ser custo e passa a ser investimento.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Explique o diagnóstico sem jargão, ligando cada achado a uma queixa.</li><li>Divida o plano em fases com objetivo e duração: <b>Intensiva</b> (controlar o quadro), <b>Consolidação</b> (estabilizar resultados) e <b>Manutenção</b> (prevenir recaídas).</li><li>Defina metas realistas e marcos de reavaliação — nunca prometa resultado.</li><li>Use as palavras do paciente: “Lembra que você me disse que tem evitado [situação]? O objetivo desta fase é justamente…”.</li><li>Entregue o plano por escrito, com etapas, datas e cuidados.</li></ul>
+  <div class="tool"><div class="tool-h">Estrutura do plano em fases</div><table><tr><th>Fase</th><th>Objetivo</th><th>Duração (exemplo)</th></tr><tr><td>Intensiva</td><td>Controlar a condição atual</td><td>1–3 meses</td></tr><tr><td>Consolidação</td><td>Estabilizar e fortalecer os resultados</td><td>3–6 meses</td></tr><tr><td>Manutenção</td><td>Prevenir recaídas e acompanhar</td><td>Contínua</td></tr></table></div>
+  <div class="erro"><b>Erro comum:</b> apresentar só a lista de procedimentos e o preço total. Sem conexão com a vida do paciente, qualquer valor parece alto.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">M</div>
+    <div><div class="eyebrow">Etapa 7 de 7</div><h2>Momento das dúvidas e Marcação do retorno</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> garantir que o paciente saia sem dúvidas, com o tratamento claro e o retorno já agendado.</div>
+  <h4>Raciocínio</h4>
+  <p>Muitos pacientes têm receio de “incomodar” ou de parecer leigos demais. Se o profissional não estimula as perguntas, as dúvidas vão para o Google, para os amigos e para a gaveta do “vou pensar”. E pressa no fim mina toda a confiança construída. A consulta não termina quando o profissional para de falar — termina quando o paciente não tem mais dúvidas.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Convide ativamente: “Agora que expliquei o plano, quero ter certeza de que ficou tudo claro. Quais dúvidas você tem? Pode perguntar qualquer coisa, por menor que pareça.”</li><li>Responda com calma, sem olhar para o relógio.</li><li>Recapitule em três frases: o que você tem, o que vamos fazer, qual é o próximo passo.</li><li>Agende o retorno antes de o paciente sair da sala ou da clínica.</li><li>Combine com a recepção a entrega da proposta e as formas de pagamento, se houver tratamento.</li></ul>
+  
+  <div class="erro"><b>Erro comum:</b> deixar para o paciente “ligar depois para marcar”. Quem sai sem data marcada tem muito mais chance de não voltar.</div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Roadmap de implementação</div>
+  <h2>Da consulta comum à Consulta Assinatura em 45 dias</h2>
+  <p>Implemente primeiro o roteiro, depois a estrutura e só então o novo valor. Valor sobe com segurança quando a experiência já mudou.</p>
+  <div class="rm"><div class="rm-col"><div class="rm-per">Semanas 1–2</div><div class="rm-nome">Desenho</div><ul class=""><li>Roteiro PREMIUM escrito com tempos da sua especialidade</li><li>Questionário pré-consulta</li><li>Ficha de anamnese técnica padronizada</li><li>Perguntas de escuta emocional adaptadas</li></ul><div class="rm-ent"><b>Entregável:</b> Roteiro e fichas prontos</div></div><div class="rm-col"><div class="rm-per">Semanas 3–4</div><div class="rm-nome">Estrutura e equipe</div><ul class=""><li>Ajuste de agenda para consultas mais longas</li><li>Equipamento de imagem definido ou otimizado</li><li>Modelo de plano de tratamento em fases</li><li>Treino da recepção nas etapas P e R</li></ul><div class="rm-ent"><b>Entregável:</b> Primeiras consultas no novo formato</div></div><div class="rm-col"><div class="rm-per">Semanas 5–6</div><div class="rm-nome">Valor e ajuste</div><ul class=""><li>Novo valor de consulta comunicado aos novos pacientes</li><li>Acompanhamento da taxa de adesão ao plano</li><li>Revisão das dúvidas mais comuns no fim da consulta</li><li>Ajuste fino do roteiro</li></ul><div class="rm-ent"><b>Entregável:</b> Indicadores de adesão e retorno medidos</div></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Aplicabilidade</div>
+  <h2>Como aplicar na sua realidade</h2>
+  <h3>Por perfil de clínica</h3>
+  <table><thead><tr><th style="width:28%">Perfil</th><th>Como adaptar</th></tr></thead><tbody><tr><td><b>Tricologia e dermatologia</b></td><td>Imagem que educa tem impacto máximo (tricoscopia, dermatoscopia). A escuta emocional sobre autoestima é central.</td></tr><tr><td><b>Odontologia</b></td><td>Câmera intraoral e escaneamento cumprem a etapa I. O plano em fases ajuda a organizar tratamentos longos e o investimento.</td></tr><tr><td><b>Medicina integrativa e nutrologia</b></td><td>A etapa M (mapeamento amplo) é o coração da consulta. Exames complementares bem explicados reforçam rigor.</td></tr><tr><td><b>Fisioterapia e dor</b></td><td>Avaliações funcionais e testes mostrados ao paciente cumprem a etapa I. Metas funcionais por fase aumentam a adesão.</td></tr><tr><td><b>Clínica geral e especialidades clínicas</b></td><td>Use a investigação ampla para identificar sinais que passam despercebidos em consultas rápidas e encaminhar ou tratar com responsabilidade.</td></tr></tbody></table>
+  <h3 class="mt">Quem faz o quê</h3>
+  <table><thead><tr><th style="width:28%">Papel</th><th>Responsabilidade</th></tr></thead><tbody><tr><td><b>Profissional de saúde</b></td><td>Conduz as etapas E, M, I, U e M; define o plano e o valor.</td></tr><tr><td><b>Recepção / CRC</b></td><td>Executa P e R, repassa informações da qualificação e agenda o retorno.</td></tr><tr><td><b>Gestor(a)</b></td><td>Ajusta a agenda para o novo tempo de consulta e acompanha os indicadores.</td></tr><tr><td><b>Equipe técnica / assistentes</b></td><td>Prepara a sala, os equipamentos e o registro de imagens.</td></tr></tbody></table>
+  <div class="keep"><h3 class="mt">Indicadores que provam que está funcionando</h3>
+  <table><thead><tr><th style="width:26%">Indicador</th><th>O que responde</th><th style="width:26%">Como medir</th></tr></thead><tbody><tr><td><b>Adesão ao plano</b></td><td>O paciente começa o tratamento proposto?</td><td>Iniciaram ÷ receberam plano</td></tr><tr><td><b>Retorno agendado na saída</b></td><td>Os próximos passos ficaram claros?</td><td>% de consultas com retorno marcado</td></tr><tr><td><b>Ticket por paciente novo</b></td><td>A consulta gera valor de tratamento?</td><td>Faturamento em 90 dias ÷ pacientes novos</td></tr><tr><td><b>Dúvidas pós-consulta</b></td><td>A consulta terminou sem dúvidas?</td><td>Mensagens de dúvida nos 7 dias seguintes</td></tr></tbody></table></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Modelos prontos</div>
+  <h2>Copie, adapte e use hoje</h2>
+  <p>Troque apenas o que está entre colchetes. Ajuste o tom ao seu público — e valide sempre com as regras do seu conselho profissional.</p>
+  <div class="script"><div class="script-h">Abertura da consulta</div><div class="script-b">“[Nome], muito obrigada por vir. Para você saber como vai funcionar: primeiro vamos conversar com calma sobre o que te trouxe aqui e como isso afeta o seu dia a dia. Depois eu examino com cuidado — e você vai ver tudo na tela comigo. No final, te explico o que está acontecendo e te apresento um plano. Pode ser?”</div><div class="script-obs"><b>Por que funciona:</b> reduz a ansiedade, mostra que a consulta é diferente e ancora o valor desde o primeiro minuto.</div></div><div class="script"><div class="script-h">Conexão do plano com a dor</div><div class="script-b">“Lembra que você me disse que tem evitado [situação relatada]? O objetivo desta primeira fase é exatamente [objetivo clínico], para que você possa voltar a [desejo relatado] com mais segurança. O valor deste tratamento não está só em [resultado técnico], mas em te devolver [liberdade/confiança] no dia a dia.”</div><div class="script-obs"><b>Por que funciona:</b> usa as palavras do próprio paciente e transforma o plano em um caminho para algo que ele quer, sem prometer resultado.</div></div><div class="script"><div class="script-h">Convite às dúvidas</div><div class="script-b">“Agora que expliquei o plano, quero ter certeza de que tudo ficou claro. Quais dúvidas você tem? Pode perguntar qualquer coisa, por menor que pareça — é para isso que esse tempo existe.”</div><div class="script-obs"><b>Por que funciona:</b> dá permissão explícita para perguntar e mostra que o profissional não tem pressa.</div></div><div class="script"><div class="script-h">Recapitulação final</div><div class="script-b">“Então, resumindo: você tem [diagnóstico em palavras simples]. Vamos começar pela fase [nome], que dura [tempo]. O próximo passo é [ação], e seu retorno fica para [data]. Combinado?”</div><div class="script-obs"><b>Por que funciona:</b> três frases que organizam a cabeça do paciente e reduzem o risco de abandono.</div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Conexão com a coleção</div>
+  <h2>Leia em seguida</h2>
+  <div class="xref" style="--c:#E07B1F">
+    <div class="xref-tag">Volume 06 · Coleção Acelerador de Clínicas</div>
+    <div class="xref-title">Resgate de Ouro</div>
+    <div class="xref-desc">Reative quem já confiou em você</div>
+  </div>
+  <h3>Como ele potencializa o que você acabou de aprender</h3>
+  <p>Mesmo com a melhor consulta, alguns pacientes não iniciam o plano, outros interrompem no meio e muitos somem depois da fase intensiva. O Volume 06, <b>Resgate de Ouro</b>, é o método para trazer essas pessoas de volta — com ética, personalização e sem parecer vendedor.</p><p>A Consulta Assinatura facilita muito o resgate: como o plano foi entregue por escrito, em fases, e conectado às dores do paciente, a clínica sabe exatamente em que ponto cada um parou e o que oferecer. A abordagem deixa de ser “sentimos sua falta” e passa a ser “vamos retomar a fase de consolidação que você começou”.</p>
+  <h4>Combinações práticas</h4>
+  <ul class="arrow"><li>Marque no prontuário a fase em que cada paciente está — isso alimenta o mapeamento do Resgate de Ouro.</li><li>Use as respostas da escuta emocional para personalizar a mensagem de reabordagem.</li><li>Transforme a fase de Manutenção em um programa de acompanhamento contínuo, com o roteiro do Resgate.</li></ul>
+  <div class="sec-ref" style="--c:#7B4DE0"><b>Também combina com o Volume 01 · DNA Comercial:</b> o X-Ray do Serviço do DNA Comercial define pré, pós, perguntas frequentes e objeções do seu principal tratamento — material que deixa a etapa U mais clara e consistente.</div>
+  <h3 class="mt">Onde este volume entra na jornada da clínica</h3>
+  <p class="muted">A coleção segue a ordem em que um paciente descobre, decide e volta. Cada volume resolve um elo — e conversa com os outros.</p>
+  <div class="journey"><div class="j-item" style="--c:#7B4DE0"><span class="j-n">01</span><span class="j-t">DNA Comercial</span><span class="j-d">Defina o que vender e como explicar</span></div><div class="j-item" style="--c:#2F6BF0"><span class="j-n">02</span><span class="j-t">Referência na Cidade</span><span class="j-d">Seja encontrado no Google, nas IAs e na imprensa</span></div><div class="j-item" style="--c:#E0457B"><span class="j-n">03</span><span class="j-t">Vitrine Magnética</span><span class="j-d">Instagram que vende a consulta</span></div><div class="j-item" style="--c:#0E9C9C"><span class="j-n">04</span><span class="j-t">Recepção que Fatura</span><span class="j-d">Converta interessados em pacientes</span></div><div class="j-item on" style="--c:#C8932B"><span class="j-n">05</span><span class="j-t">Consulta Assinatura</span><span class="j-d">Entregue uma consulta de alto valor</span></div><div class="j-item" style="--c:#E07B1F"><span class="j-n">06</span><span class="j-t">Resgate de Ouro</span><span class="j-d">Reative quem já confiou em você</span></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Para terminar</div>
+  <h2>O que separa quem executa de quem só lê</h2>
+  <p>Estruturar uma consulta de alto valor é mais do que uma estratégia de preço. É uma forma de trabalhar que prioriza excelência, personalização e resultado — e que protege o profissional do esgotamento de atender muito e cobrar pouco.</p><p>Comece pelo roteiro. Aplique em dez consultas. Observe o que muda na postura do paciente, na adesão ao plano e na sua própria satisfação. Só então ajuste o valor.</p><p>Crescer não precisa custar a sua energia. Pode — e deve — ser consequência de uma consulta que leva a sua assinatura.</p>
+  <div class="compliance"><b>Nota ética e legal:</b> este material é educativo sobre gestão, comunicação e vendas em saúde. Não constitui orientação clínica nem parecer jurídico. Regras de publicidade variam por conselho (CFM, CFO, CFN, COFFITO e outros) e mudam com o tempo — confirme cada peça antes de publicar e trate dados de pacientes conforme a LGPD.</div>
+</section>
+<section class="back">
+  <div class="cover-shape s1"></div>
+  <div class="back-in">
+    <div class="brandmark big"><span class="bm-dot"></span>Acelerador de Clínicas</div>
+    <p class="back-tag">Estratégia, processo e vendas para clínicas e consultórios que querem crescer com previsibilidade — e sem perder a essência do cuidado.</p>
+    <div class="back-cta">
+      <div class="back-cta-h">Quer implementar o Método PREMIUM com acompanhamento?</div>
+      <p>Agende um diagnóstico da sua clínica: onde o faturamento está vazando, o que priorizar nos próximos 90 dias e qual volume da coleção aplicar primeiro.</p>
+      <div class="back-site">aceleradordeclinicas.com.br</div>
+    </div>
+    <div class="back-list"><span style="--c:#7B4DE0">01 · DNA Comercial</span><span style="--c:#2F6BF0">02 · Referência na Cidade</span><span style="--c:#E0457B">03 · Vitrine Magnética</span><span style="--c:#0E9C9C">04 · Recepção que Fatura</span><span style="--c:#C8932B">05 · Consulta Assinatura</span><span style="--c:#E07B1F">06 · Resgate de Ouro</span></div>
+    <div class="back-sig">© Acelerador de Clínicas · Coleção Acelerador de Clínicas · Volume 05 — Consulta Assinatura</div>
+  </div>
+</section></body></html>

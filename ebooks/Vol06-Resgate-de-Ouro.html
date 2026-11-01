@@ -1,0 +1,338 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Resgate de Ouro · Acelerador de Clínicas</title>
+<style>:root{--accent:#E07B1F;}
+@page { size: A4; margin: 18mm 17mm 20mm 17mm; }
+@page :first { margin: 0; }
+* { box-sizing: border-box; }
+:root { --navy:#0B1B33; --ink:#1B2433; --muted:#5B6576; --line:#E3E7EE; --soft:#F5F7FA; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { margin:0; font-family: Inter, "Liberation Sans", sans-serif; color: var(--ink); font-size: 10.4pt; line-height: 1.55; background:#fff; }
+h1,h2,h3,h4 { font-family: "Inter Display", Inter, sans-serif; color: var(--navy); margin: 0; line-height: 1.15; }
+h2 { font-size: 23pt; font-weight: 800; letter-spacing: -0.02em; margin: 2mm 0 5mm; }
+h3 { font-size: 13.5pt; font-weight: 700; margin: 6mm 0 3mm; }
+h4 { font-size: 10.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); margin: 5mm 0 2mm; }
+p { margin: 0 0 3mm; }
+b { color: var(--navy); }
+.mt { margin-top: 8mm; }
+.muted { color: var(--muted); }
+.small { font-size: 9pt; }
+.eyebrow { font-size: 8.5pt; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.page-start { break-before: page; }
+ul { margin: 0 0 3mm; padding-left: 0; list-style: none; }
+ul li { position: relative; padding-left: 6mm; margin-bottom: 1.6mm; }
+ul li::before { content: ""; position: absolute; left: 1mm; top: 2.1mm; width: 2mm; height: 2mm; border-radius: 50%; background: var(--accent); }
+ul.check li::before { content: "✓"; background: none; color: var(--accent); font-weight: 800; top: 0; width: auto; height: auto; }
+ul.arrow li::before { content: "→"; background: none; color: var(--accent); font-weight: 800; top: 0; width: auto; height: auto; }
+ul.steps { counter-reset: s; }
+ul.steps li { counter-increment: s; padding-left: 8mm; }
+ul.steps li::before { content: counter(s); background: var(--accent); color: #fff; font-size: 7.5pt; font-weight: 800; width: 5mm; height: 5mm; top: .6mm; left: 0; display: flex; align-items: center; justify-content: center; }
+
+/* COVER */
+.cover { position: relative; width: 210mm; height: 297mm; background: var(--navy); color: #fff; overflow: hidden; padding: 22mm 20mm; display: flex; flex-direction: column; }
+.cover-shape { position: absolute; border-radius: 50%; }
+.cover-shape.s1 { width: 170mm; height: 170mm; right: -60mm; top: -50mm; background: radial-gradient(circle at 30% 30%, var(--accent), transparent 70%); opacity: .55; }
+.cover-shape.s2 { width: 120mm; height: 120mm; left: -50mm; bottom: 40mm; border: 1.2mm solid var(--accent); opacity: .25; }
+.cover-top, .cover-mid, .cover-puv, .cover-foot { position: relative; z-index: 2; }
+.brandmark { display: inline-flex; align-items: center; gap: 2.5mm; font-family: "Inter Display"; font-weight: 800; font-size: 12pt; letter-spacing: -.01em; }
+.brandmark.big { font-size: 20pt; }
+.bm-dot { width: 4mm; height: 4mm; border-radius: 1mm; background: var(--accent); transform: rotate(45deg); display: inline-block; }
+.cover-vol { margin-top: 3mm; font-size: 8.5pt; letter-spacing: .16em; text-transform: uppercase; opacity: .75; }
+.cover-mid { margin-top: 48mm; }
+.cover-kicker { display: inline-block; background: var(--accent); color: #fff; font-weight: 800; font-size: 9pt; letter-spacing: .12em; text-transform: uppercase; padding: 1.6mm 3.5mm; border-radius: 1.5mm; }
+.cover-title { color: #fff; font-size: 50pt; font-weight: 900; letter-spacing: -.035em; line-height: .98; margin: 6mm 0 6mm; }
+.cover-sub { font-size: 15pt; line-height: 1.35; opacity: .9; max-width: 150mm; }
+.cover-puv { margin-top: auto; background: rgba(255,255,255,.07); border-left: 1.6mm solid var(--accent); padding: 5mm 6mm; border-radius: 0 2mm 2mm 0; }
+.cover-puv p { margin: 0; font-size: 11.5pt; line-height: 1.45; }
+.puv-label { font-size: 7.5pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5mm; }
+.cover-foot { display: flex; justify-content: space-between; margin-top: 10mm; font-size: 9pt; opacity: .85; }
+.cover-foot b { color: #fff; }
+.cover-foot .site { font-weight: 700; color: #fff; }
+
+/* PUV / cards */
+.puv-box { background: var(--soft); border: 1px solid var(--line); border-left: 1.6mm solid var(--accent); border-radius: 0 3mm 3mm 0; padding: 5mm 6mm; margin: 5mm 0; break-inside: avoid; }
+.puv-big { font-family: "Inter Display"; font-size: 13.5pt; font-weight: 700; color: var(--navy); line-height: 1.35; }
+.puv-dif { margin: 2mm 0 0; font-size: 9.8pt; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+.card { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm 5mm; break-inside: avoid; }
+.card h4 { margin-top: 0; }
+
+/* journey */
+.journey { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2mm; margin-top: 3mm; }
+.j-item { border: 1px solid var(--line); border-top: 1.4mm solid var(--c); border-radius: 2mm; padding: 2.5mm; opacity: .55; }
+.j-item.on { opacity: 1; background: color-mix(in srgb, var(--c) 9%, white); border-color: var(--c); }
+.j-n { display: block; font-weight: 900; color: var(--c); font-size: 11pt; }
+.j-t { display: block; font-weight: 800; font-size: 8pt; color: var(--navy); line-height: 1.2; margin: .5mm 0 1mm; }
+.j-d { display: block; font-size: 7pt; color: var(--muted); line-height: 1.25; }
+
+/* diagnóstico */
+ol.diag { list-style: none; padding: 0; margin: 4mm 0; }
+ol.diag li { display: flex; gap: 3mm; padding: 2.4mm 0; border-bottom: 1px dashed var(--line); }
+.box { flex: 0 0 4.2mm; height: 4.2mm; border: .5mm solid var(--accent); border-radius: 1mm; margin-top: .6mm; }
+.bands { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-top: 5mm; }
+.band { display: flex; gap: 3mm; background: var(--soft); border-radius: 2.5mm; padding: 3mm 4mm; font-size: 9.5pt; break-inside: avoid; }
+.band-r { flex: 0 0 auto; background: var(--accent); color: #fff; font-weight: 800; font-size: 8.5pt; border-radius: 1.5mm; padding: .8mm 2.2mm; height: fit-content; white-space: nowrap; }
+
+/* raciocínio */
+.chain { margin: 5mm 0; position: relative; }
+.chain-item { display: flex; gap: 4mm; position: relative; padding-bottom: 3mm; break-inside: avoid; }
+.chain-item:not(:last-child)::after { content: ""; position: absolute; left: 4.2mm; top: 9mm; bottom: 0; width: .5mm; background: color-mix(in srgb, var(--accent) 40%, white); }
+.chain-n { flex: 0 0 9mm; height: 9mm; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.chain-lab { font-weight: 800; color: var(--navy); font-size: 10.5pt; margin-top: 1.5mm; }
+.chain-item p { margin: .5mm 0 0; }
+.tese { background: var(--navy); color: #fff; border-radius: 3mm; padding: 5mm 6mm; font-family: "Inter Display"; font-size: 12.5pt; font-weight: 600; line-height: 1.4; break-inside: avoid; }
+.tese span { display: block; font-family: Inter; font-size: 7.5pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5mm; }
+
+/* método */
+.m-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5mm; margin: 5mm 0; }
+.m-cell { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm; display: grid; grid-template-columns: 13mm 1fr; column-gap: 3mm; break-inside: avoid; }
+.m-letter { grid-row: span 2; width: 13mm; height: 13mm; border-radius: 2.5mm; background: var(--accent); color: #fff; font-family: "Inter Display"; font-weight: 900; font-size: 20pt; display: flex; align-items: center; justify-content: center; }
+.m-name { font-weight: 800; color: var(--navy); font-size: 10.5pt; }
+.m-desc { font-size: 9pt; color: var(--muted); line-height: 1.4; }
+
+/* passos */
+.step-head { display: flex; gap: 5mm; align-items: center; margin-bottom: 3mm; }
+.step-letter { flex: 0 0 22mm; height: 22mm; border-radius: 4mm; background: var(--accent); color: #fff; font-family: "Inter Display"; font-weight: 900; font-size: 38pt; display: flex; align-items: center; justify-content: center; }
+.step-head h2 { margin: 1mm 0 0; }
+.obj { background: color-mix(in srgb, var(--accent) 10%, white); border-radius: 2.5mm; padding: 3mm 4.5mm; margin-bottom: 2mm; }
+.tool { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm 5mm; margin: 4mm 0; background: var(--soft); break-inside: avoid; }
+.tool-h { font-weight: 800; color: var(--navy); margin-bottom: 2mm; font-size: 10.5pt; }
+.tool p:last-child, .tool ul:last-child { margin-bottom: 0; }
+.tool table { margin: 1mm 0 0; background: #fff; }
+.erro { border-left: 1.2mm solid #D64545; background: #FDF1F1; padding: 3mm 4.5mm; border-radius: 0 2.5mm 2.5mm 0; font-size: 9.8pt; break-inside: avoid; }
+.erro b { color: #B12E2E; }
+
+/* roadmap */
+.rm { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.5mm; margin-top: 4mm; }
+.rm-col { border: 1px solid var(--line); border-top: 1.6mm solid var(--accent); border-radius: 2.5mm; padding: 4mm; font-size: 9.3pt; display: flex; flex-direction: column; break-inside: avoid; }
+.rm-per { font-weight: 900; color: var(--accent); font-size: 10pt; letter-spacing: .04em; text-transform: uppercase; }
+.rm-nome { font-family: "Inter Display"; font-weight: 800; color: var(--navy); font-size: 12pt; margin: 1mm 0 3mm; line-height: 1.2; }
+.rm-ent { margin-top: auto; background: var(--soft); border-radius: 2mm; padding: 2.5mm 3mm; font-size: 8.8pt; }
+
+/* tables */
+table { width: 100%; border-collapse: collapse; font-size: 9.3pt; margin-bottom: 3mm; }
+th { background: var(--navy); color: #fff; text-align: left; padding: 2.4mm 3mm; font-weight: 700; font-size: 8.6pt; letter-spacing: .03em; }
+td { border-bottom: 1px solid var(--line); padding: 2.4mm 3mm; vertical-align: top; }
+tr { break-inside: avoid; }
+tbody tr:nth-child(even) td { background: #FAFBFC; }
+
+/* scripts */
+.script { border: 1px solid var(--line); border-radius: 3mm; margin: 4mm 0; overflow: hidden; break-inside: avoid; }
+.script-h { background: var(--accent); color: #fff; font-weight: 800; padding: 2.4mm 4.5mm; font-size: 9.8pt; }
+.script-b { padding: 4mm 5mm; font-size: 10pt; white-space: pre-line; background: #fff; }
+.script-obs { padding: 2.6mm 5mm; background: var(--soft); border-top: 1px solid var(--line); font-size: 9pt; color: var(--muted); }
+
+/* cross ref */
+.xref { background: var(--navy); color: #fff; border-radius: 4mm; padding: 8mm; position: relative; overflow: hidden; margin: 3mm 0 6mm; break-inside: avoid; }
+.xref::after { content: ""; position: absolute; right: -25mm; top: -25mm; width: 80mm; height: 80mm; border-radius: 50%; background: radial-gradient(circle, var(--c), transparent 70%); opacity: .7; }
+.xref-tag { font-size: 8pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--c); position: relative; z-index: 1; filter: brightness(1.35); }
+.xref-title { font-family: "Inter Display"; font-size: 28pt; font-weight: 900; letter-spacing: -.02em; margin: 2mm 0 1mm; position: relative; z-index: 1; }
+.xref-desc { opacity: .85; position: relative; z-index: 1; }
+.sec-ref { margin-top: 5mm; border: 1px solid var(--line); border-left: 1.4mm solid var(--c); border-radius: 0 2.5mm 2.5mm 0; padding: 3.5mm 4.5mm; font-size: 9.6pt; break-inside: avoid; }
+
+.compliance { margin-top: 8mm; font-size: 8.6pt; color: var(--muted); border-top: 1px solid var(--line); padding-top: 3mm; }
+
+/* back */
+.back { break-before: page; position: relative; height: 255mm; background: var(--navy); color: #fff; border-radius: 4mm; overflow: hidden; }
+.back-in { position: relative; z-index: 2; padding: 22mm 16mm; height: 100%; display: flex; flex-direction: column; }
+.back-tag { font-size: 13pt; line-height: 1.45; opacity: .9; margin: 6mm 0 14mm; max-width: 140mm; }
+.back-cta { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15); border-radius: 4mm; padding: 7mm; }
+.back-cta-h { font-family: "Inter Display"; font-size: 16pt; font-weight: 800; margin-bottom: 2mm; }
+.back-cta p { opacity: .85; }
+.back-site { display: inline-block; margin-top: 2mm; background: var(--accent); color: #fff; font-weight: 800; padding: 2.5mm 5mm; border-radius: 2mm; font-size: 12pt; }
+.back-list { display: flex; flex-wrap: wrap; gap: 2mm; margin-top: auto; }
+.back-list span { border: 1px solid var(--c); color: #fff; border-radius: 10mm; padding: 1.2mm 3.5mm; font-size: 8.4pt; font-weight: 700; }
+.back-sig { margin-top: 6mm; font-size: 8pt; opacity: .6; }
+
+.keep{break-inside:avoid;}
+</style></head><body>
+<section class="cover">
+  <div class="cover-shape s1"></div><div class="cover-shape s2"></div>
+  <div class="cover-top">
+    <div class="brandmark"><span class="bm-dot"></span>Acelerador de Clínicas</div>
+    <div class="cover-vol">Coleção Acelerador de Clínicas · Volume 06</div>
+  </div>
+  <div class="cover-mid">
+    <div class="cover-kicker">Método RESGATE</div>
+    <h1 class="cover-title">Resgate de Ouro</h1>
+    <p class="cover-sub">Como reativar pacientes que sumiram e fazer a clínica crescer com quem já confiou em você — com ética e sem parecer vendedor.</p>
+  </div>
+  <div class="cover-puv">
+    <div class="puv-label">Proposta Única de Valor</div>
+    <p>A receita mais rápida e barata da sua clínica já está no seu prontuário: um método em sete passos para mapear, entender, segmentar e reabordar pacientes inativos com cuidado ativo — gerando retornos, continuidade de tratamento e indicações sem gastar um real a mais em anúncios.</p>
+  </div>
+  <div class="cover-foot">
+    <div>Uma metodologia <b>Acelerador de Clínicas</b></div>
+    <div class="site">aceleradordeclinicas.com.br</div>
+  </div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Antes de começar</div>
+  <h2>Por que este e-book existe</h2>
+  <p>Toda clínica perde pacientes no caminho — mesmo entregando um atendimento técnico impecável. Gente que fez a primeira consulta e não voltou, que começou um tratamento e parou, que deveria estar em acompanhamento e simplesmente sumiu. Na maioria das vezes, o problema não está na consulta: está na falta de um processo para reencontrar essas pessoas.</p><p>Enquanto isso, a clínica corre atrás de pacientes novos, que custam caro e ainda não confiam nela. É um paradoxo: o paciente mais fácil de atender é o que já conhece o profissional, a estrutura e o jeito de cuidar — e é justamente o mais esquecido.</p><p>Este volume entrega um método simples, aplicável e ético para olhar com estratégia para o que a clínica já tem. Antes de buscar novos pacientes, fortaleça quem já confiou em você um dia.</p>
+  <div class="puv-box">
+    <div class="puv-label">A promessa deste volume (PUV)</div>
+    <p class="puv-big">A receita mais rápida e barata da sua clínica já está no seu prontuário: um método em sete passos para mapear, entender, segmentar e reabordar pacientes inativos com cuidado ativo — gerando retornos, continuidade de tratamento e indicações sem gastar um real a mais em anúncios.</p>
+    <p class="puv-dif"><b>O que torna este método único:</b> o RESGATE trata reativação como cuidado, não como cobrança. Ele começa pela causa do afastamento (medo, falta de orientação, custo ou sensação de alta), segmenta a base por temperatura e só então escolhe a proposta, o canal, quem fala e o roteiro — fechando com indicadores de retorno e de impacto financeiro.</p>
+  </div>
+  <div class="two-col">
+    <div class="card"><h4>Para quem é</h4><ul class="check"><li>Clínicas com prontuário cheio e agenda com buracos</li><li>Quem quer crescer sem aumentar o investimento em marketing</li><li>Tratamentos com várias sessões ou acompanhamento contínuo</li><li>Equipes que nunca fizeram reabordagem por medo de “incomodar”</li></ul></div>
+    <div class="card"><h4>O que você conquista</h4><ul class="arrow"><li>Uma lista viva de pacientes a reativar, organizada por prioridade</li><li>Hipóteses claras sobre por que cada perfil se afastou</li><li>Propostas personalizadas e roteiros prontos por situação</li><li>Um calendário de relacionamento que evita novos sumiços</li><li>Indicadores de retorno e de impacto financeiro da reativação</li></ul></div>
+  </div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Diagnóstico rápido · 3 minutos</div>
+  <h2>Onde sua clínica está hoje</h2>
+  <p>Marque cada afirmação verdadeira. Cada marcação vale 1 ponto. A pontuação diz por onde começar — e o que ainda não adianta fazer.</p>
+  <ol class="diag"><li><span class="box"></span>Sei quantos pacientes fizeram a primeira consulta e não voltaram nos últimos 12 meses.</li><li><span class="box"></span>Sei quantos pacientes interromperam um tratamento antes do fim.</li><li><span class="box"></span>Temos uma lista de pacientes que deveriam estar em acompanhamento e não estão.</li><li><span class="box"></span>Registramos no prontuário o motivo provável de cada afastamento.</li><li><span class="box"></span>Temos roteiros de reabordagem diferentes para cada situação.</li><li><span class="box"></span>Está definido quem faz a reabordagem: profissional, secretária ou CRC.</li><li><span class="box"></span>Fazemos pelo menos uma ação de reativação por mês.</li><li><span class="box"></span>Temos um calendário de contatos de relacionamento (pós-consulta, datas especiais, lembretes).</li><li><span class="box"></span>Medimos quantos pacientes reabordados retornam.</li><li><span class="box"></span>Sabemos quanto faturamos com pacientes reativados.</li></ol>
+  <div class="bands"><div class="band"><div class="band-r">0–3</div><div><b>Ouro enterrado</b><br>Há dinheiro parado no prontuário. Comece por R e E nesta semana.</div></div><div class="band"><div class="band-r">4–6</div><div><b>Ações isoladas</b><br>Já existem tentativas, falta método. Foque em S, G e A.</div></div><div class="band"><div class="band-r">7–8</div><div><b>Resgate em andamento</b><br>Falta transformar em rotina. Vá para T e E (eternizar).</div></div><div class="band"><div class="band-r">9–10</div><div><b>Base viva</b><br>Reativação é processo. Use os números para metas mensais.</div></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Linha de raciocínio</div>
+  <h2>A lógica por trás do método</h2>
+  <p>Antes da técnica, o porquê. Se você entender esta sequência, consegue adaptar o método a qualquer especialidade, tamanho de equipe ou cidade.</p>
+  <div class="chain"><div class="chain-item"><div class="chain-n">1</div><div><div class="chain-lab">Não dá para recuperar quem você nem sabe que sumiu</div><p>O primeiro problema da maioria das clínicas não é a abordagem — é a ausência de uma lista. Sem mapeamento, a reativação depende da memória de alguém.</p></div></div><div class="chain-item"><div class="chain-n">2</div><div><div class="chain-lab">Todo afastamento tem um motivo</div><p>Os mais comuns são medo, falta de orientação clara, custo e a sensação de que “já está bom”. Cada motivo pede uma resposta diferente, e o prontuário costuma dar as pistas.</p></div></div><div class="chain-item"><div class="chain-n">3</div><div><div class="chain-lab">Proposta genérica soa como venda</div><p>“Estamos com condições especiais” afasta. “Notei que você começou a fase X e parou; como está se sentindo?” aproxima. A diferença é personalização com base no histórico.</p></div></div><div class="chain-item"><div class="chain-n">4</div><div><div class="chain-lab">Reabordar é cuidado ativo</div><p>Profissional de saúde responsável acompanha quem iniciou um cuidado. Chamar de volta quem precisa de continuidade é ético — desde que respeite a vontade e os dados do paciente.</p></div></div><div class="chain-item"><div class="chain-n">5</div><div><div class="chain-lab">Remarcar não basta</div><p>Se nada mudar depois do retorno, o paciente some de novo. É preciso nutrir o vínculo com lembretes, acompanhamento e atenção ao pós-consulta.</p></div></div><div class="chain-item"><div class="chain-n">6</div><div><div class="chain-lab">O que é medido vira hábito</div><p>Taxa de retorno e faturamento recuperado transformam uma ação pontual em rotina mensal — e mostram para a equipe o valor do trabalho.</p></div></div></div>
+  <div class="tese"><span>Tese central</span>A diferença entre um consultório ocupado e um consultório saudável está em quanto ele cuida de quem já passou por lá. Reativar é a forma mais barata, rápida e ética de crescer.</div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">O método</div>
+  <h2>Método RESGATE</h2>
+  <p>RESGATE são sete passos que vão do levantamento da base até a retenção de longo prazo. Os quatro primeiros acontecem antes de qualquer mensagem ser enviada.</p>
+  <div class="m-grid"><div class="m-cell"><div class="m-letter">R</div><div class="m-name">Radiografia da base</div><div class="m-desc">Liste quem sumiu, parou ou deveria estar em acompanhamento.</div></div><div class="m-cell"><div class="m-letter">E</div><div class="m-name">Entenda o motivo</div><div class="m-desc">Levante hipóteses reais sobre o afastamento.</div></div><div class="m-cell"><div class="m-letter">S</div><div class="m-name">Segmente por temperatura</div><div class="m-desc">Priorize quem tem mais chance e mais necessidade.</div></div><div class="m-cell"><div class="m-letter">G</div><div class="m-name">Gere a proposta certa</div><div class="m-desc">O que esse paciente precisa agora?</div></div><div class="m-cell"><div class="m-letter">A</div><div class="m-name">Aborde com roteiro</div><div class="m-desc">Canal, pessoa e tom certos.</div></div><div class="m-cell"><div class="m-letter">T</div><div class="m-name">Trilhe o retorno</div><div class="m-desc">Acompanhe quem respondeu até a consulta acontecer.</div></div><div class="m-cell"><div class="m-letter">E</div><div class="m-name">Eternize o vínculo</div><div class="m-desc">Relacionamento contínuo para ninguém sumir de novo.</div></div></div>
+  <p class="muted small">Regra de ouro: cada etapa pressupõe a anterior resolvida. Pular etapas é a forma mais rápida de concluir que “isso não funciona na minha área”.</p>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">R</div>
+    <div><div class="eyebrow">Etapa 1 de 7</div><h2>Radiografia da base</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> criar a lista de reativação a partir do prontuário e da agenda.</div>
+  <h4>Raciocínio</h4>
+  <p>Sem uma lista concreta, reativação vira intenção. A radiografia separa os inativos em grupos que exigem abordagens diferentes e revela, muitas vezes pela primeira vez, o tamanho do potencial parado na base.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Exporte do sistema (ou levante manualmente) os pacientes dos últimos 12 a 24 meses.</li><li>Grupo 1 — <b>Primeira consulta sem retorno:</b> vieram uma vez e não voltaram.</li><li>Grupo 2 — <b>Tratamento interrompido:</b> iniciaram um plano e pararam no meio.</li><li>Grupo 3 — <b>Acompanhamento vencido:</b> deveriam ter voltado para revisão e não voltaram.</li><li>Grupo 4 — <b>Orçamento não fechado:</b> receberam proposta e não iniciaram.</li><li>Registre em uma planilha: nome, contato, data da última visita, grupo, serviço e observações do prontuário.</li></ul>
+  <div class="tool"><div class="tool-h">Planilha de radiografia</div><table><tr><th>Paciente</th><th>Última visita</th><th>Grupo</th><th>Serviço / fase</th><th>Pista do prontuário</th></tr><tr><td>[nome]</td><td>[data]</td><td>2 — Interrompido</td><td>[tratamento · fase]</td><td>[ex.: relatou dificuldade financeira]</td></tr></table></div>
+  <div class="erro"><b>Erro comum:</b> tentar abordar a base inteira de uma vez com a mesma mensagem. Isso vira disparo em massa — e disparo em massa parece spam.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">E</div>
+    <div><div class="eyebrow">Etapa 2 de 7</div><h2>Entenda o motivo</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> entender por que cada perfil se afastou antes de decidir o que oferecer.</div>
+  <h4>Raciocínio</h4>
+  <p>A mesma mensagem não serve para quem parou por medo e para quem parou por achar que já estava bom. O prontuário, as anotações da recepção e o histórico de conversas costumam mostrar o motivo. Entender a causa é o que transforma a reabordagem de insistência em ajuda.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Leia as anotações de cada paciente prioritário e classifique a causa provável:</li><li><b>Medo:</b> de dor, de procedimento, de diagnóstico, de efeitos colaterais.</li><li><b>Falta de orientação:</b> não entendeu a importância da continuidade ou os próximos passos.</li><li><b>Custo:</b> dificuldade financeira, prioridade de outros gastos.</li><li><b>Sensação de alta:</b> melhorou e achou que não precisava mais.</li><li>Escolha 3 perfis representativos e escreva uma hipótese para cada um antes de qualquer contato.</li></ul>
+  <div class="tool"><div class="tool-h">Causa → resposta</div><table><tr><th>Causa</th><th>O que o paciente precisa ouvir</th></tr><tr><td>Medo</td><td>Acolhimento, explicação do processo, segurança</td></tr><tr><td>Falta de orientação</td><td>Clareza sobre por que continuar e o que acontece se parar</td></tr><tr><td>Custo</td><td>Opções de etapas, priorização e formas de pagamento</td></tr><tr><td>Sensação de alta</td><td>Importância da consolidação e da prevenção</td></tr></table></div>
+  <div class="erro"><b>Erro comum:</b> assumir que todo mundo parou por preço e já oferecer desconto. Além de reduzir margem, isso ignora o verdadeiro motivo — e o paciente continua sem voltar.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">S</div>
+    <div><div class="eyebrow">Etapa 3 de 7</div><h2>Segmente por temperatura</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> ordenar a lista para começar por quem tem maior probabilidade de retorno e maior benefício clínico.</div>
+  <h4>Raciocínio</h4>
+  <p>Tempo de equipe é limitado. Começar pelos pacientes “quentes” gera resultados rápidos, motiva a equipe e financia o resto do processo. A temperatura combina tempo desde o último contato, estágio do tratamento e o vínculo que o paciente tinha com a clínica.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li><b>Quentes:</b> afastados há menos de 3 meses ou com tratamento interrompido no meio.</li><li><b>Mornos:</b> afastados entre 3 e 12 meses, com bom vínculo anterior.</li><li><b>Frios:</b> afastados há mais de 12 meses ou com pouca interação.</li><li>Dentro de cada temperatura, priorize quem tem maior necessidade clínica de continuidade.</li><li>Defina uma meta semanal de contatos por temperatura (ex.: 15 quentes, 10 mornos, 5 frios).</li></ul>
+  
+  <div class="erro"><b>Erro comum:</b> começar pelos frios porque “são muitos”. Os resultados demoram, a equipe desanima e o processo morre antes de chegar aos quentes.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">G</div>
+    <div><div class="eyebrow">Etapa 4 de 7</div><h2>Gere a proposta certa</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> definir, para cada segmento, uma proposta de retorno personalizada e clinicamente coerente.</div>
+  <h4>Raciocínio</h4>
+  <p>Antes de escrever a mensagem, responda: o que essa pessoa precisa neste momento? Um retorno clínico? Uma revisão? A continuidade da fase em que parou? Um programa de acompanhamento? Evite empurrar qualquer coisa. A proposta nasce do histórico — e é isso que diferencia cuidado ativo de venda.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li><b>Primeira consulta sem retorno:</b> convite para revisão do plano e esclarecimento de dúvidas.</li><li><b>Tratamento interrompido:</b> retomada da fase em que parou, com reavaliação.</li><li><b>Acompanhamento vencido:</b> consulta de revisão no intervalo recomendado.</li><li><b>Orçamento não fechado:</b> nova conversa sobre prioridades, etapas e formas de pagamento.</li><li><b>Pacientes esporádicos:</b> programa de acompanhamento com consultas regulares e calendário organizado.</li><li>Se oferecer qualquer condição comercial, verifique antes as regras do seu conselho profissional.</li></ul>
+  
+  <div class="erro"><b>Erro comum:</b> usar a mesma oferta para todos os grupos. Proposta igual para situações diferentes é exatamente o que faz a reabordagem parecer venda.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">A</div>
+    <div><div class="eyebrow">Etapa 5 de 7</div><h2>Aborde com roteiro</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> retomar o contato com empatia, clareza e ética, usando roteiros adaptáveis.</div>
+  <h4>Raciocínio</h4>
+  <p>O tom faz toda a diferença. A mesma informação pode soar como cuidado ou como cobrança. Por isso o método define três decisões antes do contato: o canal (WhatsApp, ligação ou e-mail), quem fala (profissional, secretária ou CRC) e o roteiro. Perguntas abertas são essenciais: elas revelam o que impediu o retorno e permitem resolver o obstáculo real.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li><b>Canal:</b> WhatsApp para a maioria; ligação para tratamentos interrompidos de maior complexidade; e-mail como complemento.</li><li><b>Quem fala:</b> o profissional para casos clínicos sensíveis (um áudio curto dele tem enorme impacto); a CRC para revisões e orçamentos.</li><li>Use perguntas abertas: “O que seria necessário para retomarmos?”, “Como você está se sentindo?”.</li><li>Ouça a resposta e resolva o que impede o retorno: preço, forma de pagamento, tempo, medo ou falta de entendimento.</li><li>Ofereça duas opções concretas de horário, não um “quando você puder”.</li><li>Respeite quem não quiser retornar: agradeça e registre a preferência (LGPD).</li></ul>
+  
+  <div class="erro"><b>Erro comum:</b> mandar mensagem genérica com emojis de festa para quem interrompeu um tratamento por medo. O roteiro precisa combinar com a causa do afastamento.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">T</div>
+    <div><div class="eyebrow">Etapa 6 de 7</div><h2>Trilhe o retorno</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> garantir que o interesse se transforme em retorno efetivo, sem perder ninguém no caminho.</div>
+  <h4>Raciocínio</h4>
+  <p>Resposta positiva não é retorno. Entre o “quero voltar” e a consulta, existem esquecimentos, imprevistos e dúvidas. A trilha organiza esse caminho com etapas simples e registra o status de cada paciente.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Classifique cada contato: sem resposta / respondeu / agendou / compareceu / retomou tratamento / não quer retornar.</li><li>Sem resposta: nova tentativa em 3 a 5 dias, por outro canal ou com outra abordagem.</li><li>Agendou: confirmação na véspera com mensagem personalizada.</li><li>Compareceu: o profissional reforça a continuidade e agenda o próximo passo antes de o paciente sair.</li><li>Atualize a planilha semanalmente.</li></ul>
+  
+  <div class="erro"><b>Erro comum:</b> comemorar o agendamento e esquecer a confirmação. Paciente reativado tem histórico de afastamento — e precisa de um cuidado extra para comparecer.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">E</div>
+    <div><div class="eyebrow">Etapa 7 de 7</div><h2>Eternize o vínculo</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> nutrir o relacionamento depois do retorno e medir o impacto da reativação.</div>
+  <h4>Raciocínio</h4>
+  <p>Remarcar resolve o hoje; relacionamento resolve o amanhã. Lembretes, acompanhamento simples e atenção ao pós-consulta reduzem novos afastamentos. E os números — percentual de retorno e faturamento recuperado — transformam o resgate em rotina mensal.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Crie um calendário de relacionamento: mensagem pós-consulta (48 h), lembrete de retorno, data de aniversário, conteúdo educativo periódico.</li><li>Ofereça programas de acompanhamento para quem precisa de cuidado contínuo.</li><li>Peça avaliação no Google aos pacientes reativados satisfeitos.</li><li>Meça mensalmente: % de pacientes reabordados que retornam e faturamento gerado por eles.</li><li>Repita o ciclo RESGATE todo mês com novos inativos.</li></ul>
+  <div class="tool"><div class="tool-h">Indicadores do resgate</div><ul><li><b>Taxa de resposta</b> = responderam ÷ reabordados</li><li><b>Taxa de retorno</b> = compareceram ÷ reabordados</li><li><b>Faturamento recuperado</b> = soma do faturamento de pacientes reativados no mês</li><li><b>Retenção em 90 dias</b> = continuaram ativos ÷ reativados</li></ul></div>
+  <div class="erro"><b>Erro comum:</b> fazer um “mutirão de reativação” uma vez por ano. Resgate funciona como hábito mensal, não como campanha.</div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Roadmap de implementação</div>
+  <h2>Primeiro ciclo de resgate em 30 dias</h2>
+  <p>Um ciclo completo cabe em um mês. A partir do segundo mês, o processo vira rotina e leva poucas horas por semana.</p>
+  <div class="rm"><div class="rm-col"><div class="rm-per">Semana 1</div><div class="rm-nome">Mapear e entender</div><ul class=""><li>Radiografia da base em 4 grupos</li><li>Leitura do prontuário dos prioritários</li><li>Hipóteses de causa para 3 perfis</li><li>Segmentação quentes / mornos / frios</li></ul><div class="rm-ent"><b>Entregável:</b> Lista de reativação priorizada</div></div><div class="rm-col"><div class="rm-per">Semana 2</div><div class="rm-nome">Propor e abordar</div><ul class=""><li>Proposta por grupo definida</li><li>Roteiros adaptados e aprovados</li><li>Definição de canal e de quem fala</li><li>Primeiros contatos com os quentes</li></ul><div class="rm-ent"><b>Entregável:</b> Primeira rodada de contatos feita</div></div><div class="rm-col"><div class="rm-per">Semanas 3–4</div><div class="rm-nome">Trilhar e medir</div><ul class=""><li>Segunda tentativa para quem não respondeu</li><li>Confirmações e retornos acontecendo</li><li>Calendário de relacionamento ativo</li><li>Primeira leitura dos indicadores</li></ul><div class="rm-ent"><b>Entregável:</b> Relatório do ciclo e meta do próximo mês</div></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Aplicabilidade</div>
+  <h2>Como aplicar na sua realidade</h2>
+  <h3>Por perfil de clínica</h3>
+  <table><thead><tr><th style="width:28%">Perfil</th><th>Como adaptar</th></tr></thead><tbody><tr><td><b>Consultório solo</b></td><td>O próprio profissional grava áudios curtos para os casos mais sensíveis; a secretária executa o restante com os roteiros.</td></tr><tr><td><b>Odontologia</b></td><td>Orçamentos não fechados e manutenções vencidas (limpeza, revisão de aparelho, controle de implante) costumam ser os grupos mais rentáveis.</td></tr><tr><td><b>Dermatologia e estética</b></td><td>Tratamentos em sessões interrompidos e protocolos de manutenção têm alto potencial. Cuidado com ofertas que conflitem com as regras de publicidade.</td></tr><tr><td><b>Especialidades clínicas e crônicas</b></td><td>Acompanhamento vencido é o principal grupo — e reabordar aqui tem também um forte componente de segurança do paciente.</td></tr><tr><td><b>Fisioterapia, nutrição e psicologia</b></td><td>Sensação de alta é a causa mais comum. Fale de consolidação, prevenção e manutenção dos resultados.</td></tr></tbody></table>
+  <h3 class="mt">Quem faz o quê</h3>
+  <table><thead><tr><th style="width:28%">Papel</th><th>Responsabilidade</th></tr></thead><tbody><tr><td><b>Profissional de saúde</b></td><td>Valida as propostas por grupo, grava áudios para casos sensíveis e reforça a continuidade no retorno.</td></tr><tr><td><b>Secretária / CRC</b></td><td>Faz a radiografia, executa os contatos, trilha os retornos e atualiza a planilha.</td></tr><tr><td><b>Gestor(a)</b></td><td>Define metas mensais, acompanha indicadores e garante horário protegido para o resgate.</td></tr></tbody></table>
+  <div class="keep"><h3 class="mt">Indicadores que provam que está funcionando</h3>
+  <table><thead><tr><th style="width:26%">Indicador</th><th>O que responde</th><th style="width:26%">Como medir</th></tr></thead><tbody><tr><td><b>Taxa de retorno</b></td><td>Quantos reabordados voltaram?</td><td>Compareceram ÷ reabordados</td></tr><tr><td><b>Faturamento recuperado</b></td><td>Quanto a reativação gerou?</td><td>Soma mensal dos reativados</td></tr><tr><td><b>Retenção em 90 dias</b></td><td>Eles ficaram ou sumiram de novo?</td><td>Ativos em 90 dias ÷ reativados</td></tr><tr><td><b>Inativos novos por mês</b></td><td>Estamos prevenindo novos sumiços?</td><td>Novos pacientes sem retorno no mês</td></tr></tbody></table></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Modelos prontos</div>
+  <h2>Copie, adapte e use hoje</h2>
+  <p>Troque apenas o que está entre colchetes. Ajuste o tom ao seu público — e valide sempre com as regras do seu conselho profissional.</p>
+  <div class="script"><div class="script-h">Reabordagem simples (orçamento ou primeira consulta)</div><div class="script-b">“Olá, [nome]! Aqui é a [nome], da [clínica]. Há [x] meses você esteve conosco para conversar com [Dr(a). nome] sobre [tratamento]. Pelo que vi aqui, você ainda não iniciou — é isso mesmo? O que seria necessário para darmos esse passo juntos? Tenho [dia] às [hora] ou [dia] às [hora] disponíveis. Qual fica melhor para você?”</div><div class="script-obs"><b>Por que funciona:</b> a pergunta aberta “o que seria necessário” revela a objeção real (preço, forma de pagamento, tempo, dúvida). O objetivo é resolver o que impede o retorno.</div></div><div class="script"><div class="script-h">Tratamento interrompido</div><div class="script-b">“Olá, [nome]! Aqui é a [nome], da [clínica]. Notamos que você iniciou o seu tratamento com [Dr(a). nome], mas não deu continuidade. Como você está se sentindo? Há algo em que possamos ajudar? Queremos garantir que você alcance o melhor cuidado possível. Temos horário no dia [data] para retomarmos de onde paramos — como seria para você?”</div><div class="script-obs"><b>Por que funciona:</b> abre com cuidado, não com cobrança, e propõe retomar exatamente do ponto em que o paciente parou.</div></div><div class="script"><div class="script-h">Paciente esporádico → programa de acompanhamento</div><div class="script-b">“Olá, [nome]! Aqui é a [nome], da [clínica]. Notei que suas consultas têm ficado mais espaçadas e queria te fazer um convite: organizamos um acompanhamento ao longo do ano, com consultas em intervalos regulares — você não precisa se preocupar em lembrar de agendar e mantém o cuidado em dia. Posso te explicar como funciona ou já agendamos a próxima consulta?”</div><div class="script-obs"><b>Por que funciona:</b> transforma visitas soltas em continuidade organizada, com benefício claro para o paciente.</div></div><div class="script"><div class="script-h">Aniversário (relacionamento, sem desconto em procedimento)</div><div class="script-b">“Feliz aniversário, [nome]! 🎉 Toda a equipe da [clínica] deseja um novo ano de muita saúde e realizações. Obrigada por confiar no nosso cuidado. Se quiser aproveitar para colocar sua revisão em dia, é só responder esta mensagem que a gente organiza tudo para você. 💙”</div><div class="script-obs"><b>Por que funciona:</b> mantém o vínculo sem oferecer desconto em procedimento — prática que pode conflitar com regras de publicidade de alguns conselhos.</div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Conexão com a coleção</div>
+  <h2>Leia em seguida</h2>
+  <div class="xref" style="--c:#0E9C9C">
+    <div class="xref-tag">Volume 04 · Coleção Acelerador de Clínicas</div>
+    <div class="xref-title">Recepção que Fatura</div>
+    <div class="xref-desc">Converta interessados em pacientes</div>
+  </div>
+  <h3>Como ele potencializa o que você acabou de aprender</h3>
+  <p>O Resgate de Ouro define <b>quem</b> reabordar e <b>o que</b> propor. O Volume 04, <b>Recepção que Fatura</b>, dá à equipe as ferramentas para executar isso com consistência: CRM com estágios, cadência de acompanhamento, técnicas de conexão, contorno de objeções e protocolo anti-falta.</p><p>Na prática, o paciente reativado entra no funil da Recepção que Fatura como um interessado “morno”: já conhece a clínica, mas precisa de conexão, clareza e acompanhamento para voltar. Quando a CRC domina o Método FECHA, a taxa de retorno do resgate sobe — e quem não volta agora continua sendo acompanhado com valor.</p>
+  <h4>Combinações práticas</h4>
+  <ul class="arrow"><li>Cadastre cada paciente da radiografia no CRM, na estação “Contatado” ou “Engajado”.</li><li>Use a técnica do aliado (Etapa A do FECHA) para responder às objeções da reabordagem.</li><li>Aplique o protocolo anti-falta do Volume 04 em todo retorno agendado pelo resgate.</li></ul>
+  <div class="sec-ref" style="--c:#2F6BF0"><b>Também combina com o Volume 02 · Referência na Cidade:</b> pacientes reativados e satisfeitos são a melhor fonte de avaliações no Google — combustível direto para a Etapa S do Referência na Cidade.</div>
+  <h3 class="mt">Onde este volume entra na jornada da clínica</h3>
+  <p class="muted">A coleção segue a ordem em que um paciente descobre, decide e volta. Cada volume resolve um elo — e conversa com os outros.</p>
+  <div class="journey"><div class="j-item" style="--c:#7B4DE0"><span class="j-n">01</span><span class="j-t">DNA Comercial</span><span class="j-d">Defina o que vender e como explicar</span></div><div class="j-item" style="--c:#2F6BF0"><span class="j-n">02</span><span class="j-t">Referência na Cidade</span><span class="j-d">Seja encontrado no Google, nas IAs e na imprensa</span></div><div class="j-item" style="--c:#E0457B"><span class="j-n">03</span><span class="j-t">Vitrine Magnética</span><span class="j-d">Instagram que vende a consulta</span></div><div class="j-item" style="--c:#0E9C9C"><span class="j-n">04</span><span class="j-t">Recepção que Fatura</span><span class="j-d">Converta interessados em pacientes</span></div><div class="j-item" style="--c:#C8932B"><span class="j-n">05</span><span class="j-t">Consulta Assinatura</span><span class="j-d">Entregue uma consulta de alto valor</span></div><div class="j-item on" style="--c:#E07B1F"><span class="j-n">06</span><span class="j-t">Resgate de Ouro</span><span class="j-d">Reative quem já confiou em você</span></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Para terminar</div>
+  <h2>O que separa quem executa de quem só lê</h2>
+  <p>O Método RESGATE é sobre olhar com estratégia para o que a clínica já tem. Cada nome no prontuário é alguém que um dia confiou em você — e muitos deles ainda precisam do seu cuidado.</p><p>Comece pequeno: dez pacientes quentes nesta semana. Leia o prontuário, entenda o motivo, escreva uma mensagem que só aquela pessoa poderia receber. Os primeiros retornos vão mostrar o caminho.</p><p>Antes de correr atrás de quem ainda não te conhece, cuide de quem já te escolheu.</p>
+  <div class="compliance"><b>Nota ética e legal:</b> este material é educativo sobre gestão, comunicação e vendas em saúde. Não constitui orientação clínica nem parecer jurídico. Regras de publicidade variam por conselho (CFM, CFO, CFN, COFFITO e outros) e mudam com o tempo — confirme cada peça antes de publicar e trate dados de pacientes conforme a LGPD.</div>
+</section>
+<section class="back">
+  <div class="cover-shape s1"></div>
+  <div class="back-in">
+    <div class="brandmark big"><span class="bm-dot"></span>Acelerador de Clínicas</div>
+    <p class="back-tag">Estratégia, processo e vendas para clínicas e consultórios que querem crescer com previsibilidade — e sem perder a essência do cuidado.</p>
+    <div class="back-cta">
+      <div class="back-cta-h">Quer implementar o Método RESGATE com acompanhamento?</div>
+      <p>Agende um diagnóstico da sua clínica: onde o faturamento está vazando, o que priorizar nos próximos 90 dias e qual volume da coleção aplicar primeiro.</p>
+      <div class="back-site">aceleradordeclinicas.com.br</div>
+    </div>
+    <div class="back-list"><span style="--c:#7B4DE0">01 · DNA Comercial</span><span style="--c:#2F6BF0">02 · Referência na Cidade</span><span style="--c:#E0457B">03 · Vitrine Magnética</span><span style="--c:#0E9C9C">04 · Recepção que Fatura</span><span style="--c:#C8932B">05 · Consulta Assinatura</span><span style="--c:#E07B1F">06 · Resgate de Ouro</span></div>
+    <div class="back-sig">© Acelerador de Clínicas · Coleção Acelerador de Clínicas · Volume 06 — Resgate de Ouro</div>
+  </div>
+</section></body></html>

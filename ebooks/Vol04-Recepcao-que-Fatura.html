@@ -1,0 +1,316 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Recepção que Fatura · Acelerador de Clínicas</title>
+<style>:root{--accent:#0E9C9C;}
+@page { size: A4; margin: 18mm 17mm 20mm 17mm; }
+@page :first { margin: 0; }
+* { box-sizing: border-box; }
+:root { --navy:#0B1B33; --ink:#1B2433; --muted:#5B6576; --line:#E3E7EE; --soft:#F5F7FA; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { margin:0; font-family: Inter, "Liberation Sans", sans-serif; color: var(--ink); font-size: 10.4pt; line-height: 1.55; background:#fff; }
+h1,h2,h3,h4 { font-family: "Inter Display", Inter, sans-serif; color: var(--navy); margin: 0; line-height: 1.15; }
+h2 { font-size: 23pt; font-weight: 800; letter-spacing: -0.02em; margin: 2mm 0 5mm; }
+h3 { font-size: 13.5pt; font-weight: 700; margin: 6mm 0 3mm; }
+h4 { font-size: 10.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); margin: 5mm 0 2mm; }
+p { margin: 0 0 3mm; }
+b { color: var(--navy); }
+.mt { margin-top: 8mm; }
+.muted { color: var(--muted); }
+.small { font-size: 9pt; }
+.eyebrow { font-size: 8.5pt; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.page-start { break-before: page; }
+ul { margin: 0 0 3mm; padding-left: 0; list-style: none; }
+ul li { position: relative; padding-left: 6mm; margin-bottom: 1.6mm; }
+ul li::before { content: ""; position: absolute; left: 1mm; top: 2.1mm; width: 2mm; height: 2mm; border-radius: 50%; background: var(--accent); }
+ul.check li::before { content: "✓"; background: none; color: var(--accent); font-weight: 800; top: 0; width: auto; height: auto; }
+ul.arrow li::before { content: "→"; background: none; color: var(--accent); font-weight: 800; top: 0; width: auto; height: auto; }
+ul.steps { counter-reset: s; }
+ul.steps li { counter-increment: s; padding-left: 8mm; }
+ul.steps li::before { content: counter(s); background: var(--accent); color: #fff; font-size: 7.5pt; font-weight: 800; width: 5mm; height: 5mm; top: .6mm; left: 0; display: flex; align-items: center; justify-content: center; }
+
+/* COVER */
+.cover { position: relative; width: 210mm; height: 297mm; background: var(--navy); color: #fff; overflow: hidden; padding: 22mm 20mm; display: flex; flex-direction: column; }
+.cover-shape { position: absolute; border-radius: 50%; }
+.cover-shape.s1 { width: 170mm; height: 170mm; right: -60mm; top: -50mm; background: radial-gradient(circle at 30% 30%, var(--accent), transparent 70%); opacity: .55; }
+.cover-shape.s2 { width: 120mm; height: 120mm; left: -50mm; bottom: 40mm; border: 1.2mm solid var(--accent); opacity: .25; }
+.cover-top, .cover-mid, .cover-puv, .cover-foot { position: relative; z-index: 2; }
+.brandmark { display: inline-flex; align-items: center; gap: 2.5mm; font-family: "Inter Display"; font-weight: 800; font-size: 12pt; letter-spacing: -.01em; }
+.brandmark.big { font-size: 20pt; }
+.bm-dot { width: 4mm; height: 4mm; border-radius: 1mm; background: var(--accent); transform: rotate(45deg); display: inline-block; }
+.cover-vol { margin-top: 3mm; font-size: 8.5pt; letter-spacing: .16em; text-transform: uppercase; opacity: .75; }
+.cover-mid { margin-top: 48mm; }
+.cover-kicker { display: inline-block; background: var(--accent); color: #fff; font-weight: 800; font-size: 9pt; letter-spacing: .12em; text-transform: uppercase; padding: 1.6mm 3.5mm; border-radius: 1.5mm; }
+.cover-title { color: #fff; font-size: 50pt; font-weight: 900; letter-spacing: -.035em; line-height: .98; margin: 6mm 0 6mm; }
+.cover-sub { font-size: 15pt; line-height: 1.35; opacity: .9; max-width: 150mm; }
+.cover-puv { margin-top: auto; background: rgba(255,255,255,.07); border-left: 1.6mm solid var(--accent); padding: 5mm 6mm; border-radius: 0 2mm 2mm 0; }
+.cover-puv p { margin: 0; font-size: 11.5pt; line-height: 1.45; }
+.puv-label { font-size: 7.5pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5mm; }
+.cover-foot { display: flex; justify-content: space-between; margin-top: 10mm; font-size: 9pt; opacity: .85; }
+.cover-foot b { color: #fff; }
+.cover-foot .site { font-weight: 700; color: #fff; }
+
+/* PUV / cards */
+.puv-box { background: var(--soft); border: 1px solid var(--line); border-left: 1.6mm solid var(--accent); border-radius: 0 3mm 3mm 0; padding: 5mm 6mm; margin: 5mm 0; break-inside: avoid; }
+.puv-big { font-family: "Inter Display"; font-size: 13.5pt; font-weight: 700; color: var(--navy); line-height: 1.35; }
+.puv-dif { margin: 2mm 0 0; font-size: 9.8pt; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+.card { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm 5mm; break-inside: avoid; }
+.card h4 { margin-top: 0; }
+
+/* journey */
+.journey { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2mm; margin-top: 3mm; }
+.j-item { border: 1px solid var(--line); border-top: 1.4mm solid var(--c); border-radius: 2mm; padding: 2.5mm; opacity: .55; }
+.j-item.on { opacity: 1; background: color-mix(in srgb, var(--c) 9%, white); border-color: var(--c); }
+.j-n { display: block; font-weight: 900; color: var(--c); font-size: 11pt; }
+.j-t { display: block; font-weight: 800; font-size: 8pt; color: var(--navy); line-height: 1.2; margin: .5mm 0 1mm; }
+.j-d { display: block; font-size: 7pt; color: var(--muted); line-height: 1.25; }
+
+/* diagnóstico */
+ol.diag { list-style: none; padding: 0; margin: 4mm 0; }
+ol.diag li { display: flex; gap: 3mm; padding: 2.4mm 0; border-bottom: 1px dashed var(--line); }
+.box { flex: 0 0 4.2mm; height: 4.2mm; border: .5mm solid var(--accent); border-radius: 1mm; margin-top: .6mm; }
+.bands { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-top: 5mm; }
+.band { display: flex; gap: 3mm; background: var(--soft); border-radius: 2.5mm; padding: 3mm 4mm; font-size: 9.5pt; break-inside: avoid; }
+.band-r { flex: 0 0 auto; background: var(--accent); color: #fff; font-weight: 800; font-size: 8.5pt; border-radius: 1.5mm; padding: .8mm 2.2mm; height: fit-content; white-space: nowrap; }
+
+/* raciocínio */
+.chain { margin: 5mm 0; position: relative; }
+.chain-item { display: flex; gap: 4mm; position: relative; padding-bottom: 3mm; break-inside: avoid; }
+.chain-item:not(:last-child)::after { content: ""; position: absolute; left: 4.2mm; top: 9mm; bottom: 0; width: .5mm; background: color-mix(in srgb, var(--accent) 40%, white); }
+.chain-n { flex: 0 0 9mm; height: 9mm; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.chain-lab { font-weight: 800; color: var(--navy); font-size: 10.5pt; margin-top: 1.5mm; }
+.chain-item p { margin: .5mm 0 0; }
+.tese { background: var(--navy); color: #fff; border-radius: 3mm; padding: 5mm 6mm; font-family: "Inter Display"; font-size: 12.5pt; font-weight: 600; line-height: 1.4; break-inside: avoid; }
+.tese span { display: block; font-family: Inter; font-size: 7.5pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5mm; }
+
+/* método */
+.m-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5mm; margin: 5mm 0; }
+.m-cell { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm; display: grid; grid-template-columns: 13mm 1fr; column-gap: 3mm; break-inside: avoid; }
+.m-letter { grid-row: span 2; width: 13mm; height: 13mm; border-radius: 2.5mm; background: var(--accent); color: #fff; font-family: "Inter Display"; font-weight: 900; font-size: 20pt; display: flex; align-items: center; justify-content: center; }
+.m-name { font-weight: 800; color: var(--navy); font-size: 10.5pt; }
+.m-desc { font-size: 9pt; color: var(--muted); line-height: 1.4; }
+
+/* passos */
+.step-head { display: flex; gap: 5mm; align-items: center; margin-bottom: 3mm; }
+.step-letter { flex: 0 0 22mm; height: 22mm; border-radius: 4mm; background: var(--accent); color: #fff; font-family: "Inter Display"; font-weight: 900; font-size: 38pt; display: flex; align-items: center; justify-content: center; }
+.step-head h2 { margin: 1mm 0 0; }
+.obj { background: color-mix(in srgb, var(--accent) 10%, white); border-radius: 2.5mm; padding: 3mm 4.5mm; margin-bottom: 2mm; }
+.tool { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm 5mm; margin: 4mm 0; background: var(--soft); break-inside: avoid; }
+.tool-h { font-weight: 800; color: var(--navy); margin-bottom: 2mm; font-size: 10.5pt; }
+.tool p:last-child, .tool ul:last-child { margin-bottom: 0; }
+.tool table { margin: 1mm 0 0; background: #fff; }
+.erro { border-left: 1.2mm solid #D64545; background: #FDF1F1; padding: 3mm 4.5mm; border-radius: 0 2.5mm 2.5mm 0; font-size: 9.8pt; break-inside: avoid; }
+.erro b { color: #B12E2E; }
+
+/* roadmap */
+.rm { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.5mm; margin-top: 4mm; }
+.rm-col { border: 1px solid var(--line); border-top: 1.6mm solid var(--accent); border-radius: 2.5mm; padding: 4mm; font-size: 9.3pt; display: flex; flex-direction: column; break-inside: avoid; }
+.rm-per { font-weight: 900; color: var(--accent); font-size: 10pt; letter-spacing: .04em; text-transform: uppercase; }
+.rm-nome { font-family: "Inter Display"; font-weight: 800; color: var(--navy); font-size: 12pt; margin: 1mm 0 3mm; line-height: 1.2; }
+.rm-ent { margin-top: auto; background: var(--soft); border-radius: 2mm; padding: 2.5mm 3mm; font-size: 8.8pt; }
+
+/* tables */
+table { width: 100%; border-collapse: collapse; font-size: 9.3pt; margin-bottom: 3mm; }
+th { background: var(--navy); color: #fff; text-align: left; padding: 2.4mm 3mm; font-weight: 700; font-size: 8.6pt; letter-spacing: .03em; }
+td { border-bottom: 1px solid var(--line); padding: 2.4mm 3mm; vertical-align: top; }
+tr { break-inside: avoid; }
+tbody tr:nth-child(even) td { background: #FAFBFC; }
+
+/* scripts */
+.script { border: 1px solid var(--line); border-radius: 3mm; margin: 4mm 0; overflow: hidden; break-inside: avoid; }
+.script-h { background: var(--accent); color: #fff; font-weight: 800; padding: 2.4mm 4.5mm; font-size: 9.8pt; }
+.script-b { padding: 4mm 5mm; font-size: 10pt; white-space: pre-line; background: #fff; }
+.script-obs { padding: 2.6mm 5mm; background: var(--soft); border-top: 1px solid var(--line); font-size: 9pt; color: var(--muted); }
+
+/* cross ref */
+.xref { background: var(--navy); color: #fff; border-radius: 4mm; padding: 8mm; position: relative; overflow: hidden; margin: 3mm 0 6mm; break-inside: avoid; }
+.xref::after { content: ""; position: absolute; right: -25mm; top: -25mm; width: 80mm; height: 80mm; border-radius: 50%; background: radial-gradient(circle, var(--c), transparent 70%); opacity: .7; }
+.xref-tag { font-size: 8pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--c); position: relative; z-index: 1; filter: brightness(1.35); }
+.xref-title { font-family: "Inter Display"; font-size: 28pt; font-weight: 900; letter-spacing: -.02em; margin: 2mm 0 1mm; position: relative; z-index: 1; }
+.xref-desc { opacity: .85; position: relative; z-index: 1; }
+.sec-ref { margin-top: 5mm; border: 1px solid var(--line); border-left: 1.4mm solid var(--c); border-radius: 0 2.5mm 2.5mm 0; padding: 3.5mm 4.5mm; font-size: 9.6pt; break-inside: avoid; }
+
+.compliance { margin-top: 8mm; font-size: 8.6pt; color: var(--muted); border-top: 1px solid var(--line); padding-top: 3mm; }
+
+/* back */
+.back { break-before: page; position: relative; height: 255mm; background: var(--navy); color: #fff; border-radius: 4mm; overflow: hidden; }
+.back-in { position: relative; z-index: 2; padding: 22mm 16mm; height: 100%; display: flex; flex-direction: column; }
+.back-tag { font-size: 13pt; line-height: 1.45; opacity: .9; margin: 6mm 0 14mm; max-width: 140mm; }
+.back-cta { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15); border-radius: 4mm; padding: 7mm; }
+.back-cta-h { font-family: "Inter Display"; font-size: 16pt; font-weight: 800; margin-bottom: 2mm; }
+.back-cta p { opacity: .85; }
+.back-site { display: inline-block; margin-top: 2mm; background: var(--accent); color: #fff; font-weight: 800; padding: 2.5mm 5mm; border-radius: 2mm; font-size: 12pt; }
+.back-list { display: flex; flex-wrap: wrap; gap: 2mm; margin-top: auto; }
+.back-list span { border: 1px solid var(--c); color: #fff; border-radius: 10mm; padding: 1.2mm 3.5mm; font-size: 8.4pt; font-weight: 700; }
+.back-sig { margin-top: 6mm; font-size: 8pt; opacity: .6; }
+
+.keep{break-inside:avoid;}
+</style></head><body>
+<section class="cover">
+  <div class="cover-shape s1"></div><div class="cover-shape s2"></div>
+  <div class="cover-top">
+    <div class="brandmark"><span class="bm-dot"></span>Acelerador de Clínicas</div>
+    <div class="cover-vol">Coleção Acelerador de Clínicas · Volume 04</div>
+  </div>
+  <div class="cover-mid">
+    <div class="cover-kicker">Método FECHA</div>
+    <h1 class="cover-title">Recepção que Fatura</h1>
+    <p class="cover-sub">Da secretária que agenda à central de relacionamento que converte interessados em pacientes — com respeito, método e sem pressão.</p>
+  </div>
+  <div class="cover-puv">
+    <div class="puv-label">Proposta Única de Valor</div>
+    <p>Nenhum interessado esquecido: um processo comercial que responde rápido, qualifica com respeito, acompanha com conteúdo de valor e conduz ao fechamento sem pressão — para que cada real investido em marketing vire paciente na cadeira, e não mensagem perdida no WhatsApp.</p>
+  </div>
+  <div class="cover-foot">
+    <div>Uma metodologia <b>Acelerador de Clínicas</b></div>
+    <div class="site">aceleradordeclinicas.com.br</div>
+  </div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Antes de começar</div>
+  <h2>Por que este e-book existe</h2>
+  <p>Toda clínica que investe em marketing gera interessados. Mas interessado não é paciente — é uma oportunidade com prazo de validade. Ele está com a dúvida fresca, comparando opções, e é bombardeado por anúncios de concorrentes no mesmo dia em que pediu informação.</p><p>Na maioria das clínicas, quem recebe esse interessado é uma secretária competente, mas sobrecarregada: atende telefone, confirma consultas, cobra, organiza a agenda. Ninguém a treinou para vender — e ninguém deu a ela um processo. O resultado são mensagens respondidas horas depois, orçamentos enviados sem acompanhamento e uma pilha de conversas que simplesmente param.</p><p>Este volume transforma essa função em uma <b>Central de Relacionamento com o Cliente</b> (CRC): uma pessoa ou equipe cujo trabalho começa quando alguém levanta a mão e só termina quando essa pessoa vira paciente — ou pede, explicitamente, para não ser mais contatada.</p>
+  <div class="puv-box">
+    <div class="puv-label">A promessa deste volume (PUV)</div>
+    <p class="puv-big">Nenhum interessado esquecido: um processo comercial que responde rápido, qualifica com respeito, acompanha com conteúdo de valor e conduz ao fechamento sem pressão — para que cada real investido em marketing vire paciente na cadeira, e não mensagem perdida no WhatsApp.</p>
+    <p class="puv-dif"><b>O que torna este método único:</b> o FECHA une três coisas que normalmente vivem separadas: velocidade de atendimento, qualificação consultiva adaptada à saúde e um funil de seis estações com tarefas obrigatórias em cada uma. A recepção deixa de ser um balcão de horários e passa a ser a ponte entre o marketing e a consulta.</p>
+  </div>
+  <div class="two-col">
+    <div class="card"><h4>Para quem é</h4><ul class="check"><li>Clínicas que geram contatos mas sentem que “os leads não fecham”</li><li>Gestores que querem separar a função administrativa da comercial</li><li>Secretárias e CRCs que querem se profissionalizar em vendas</li><li>Clínicas de ticket médio e alto, com tratamentos que exigem decisão</li></ul></div>
+    <div class="card"><h4>O que você conquista</h4><ul class="arrow"><li>Um padrão de tempo de resposta que não deixa o interesse esfriar</li><li>Perguntas de qualificação que respeitam o paciente e economizam tempo</li><li>Um funil de seis estações com tarefas claras em cada uma</li><li>Uma cadência de acompanhamento com conteúdo de valor</li><li>Técnicas para reduzir faltas, contornar objeções e fechar sem pressão</li></ul></div>
+  </div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Diagnóstico rápido · 3 minutos</div>
+  <h2>Onde sua clínica está hoje</h2>
+  <p>Marque cada afirmação verdadeira. Cada marcação vale 1 ponto. A pontuação diz por onde começar — e o que ainda não adianta fazer.</p>
+  <ol class="diag"><li><span class="box"></span>Todo interessado recebe a primeira resposta em poucos minutos no horário comercial.</li><li><span class="box"></span>Temos uma pessoa com a função comercial separada da função administrativa.</li><li><span class="box"></span>Fazemos ligação ou áudio, e não só mensagem de texto, nos primeiros contatos.</li><li><span class="box"></span>Existe um roteiro de perguntas para entender necessidade, momento e decisor.</li><li><span class="box"></span>Usamos um CRM ou planilha com o estágio de cada interessado.</li><li><span class="box"></span>Todo interessado que não fechou recebe acompanhamento por semanas, não por dias.</li><li><span class="box"></span>O acompanhamento envia conteúdo de valor, não só “oi, tudo bem?”.</li><li><span class="box"></span>Temos um protocolo para reduzir faltas na consulta agendada.</li><li><span class="box"></span>A equipe sabe responder às objeções clássicas com roteiro aprovado.</li><li><span class="box"></span>Medimos a taxa de conversão de cada estágio do funil.</li></ol>
+  <div class="bands"><div class="band"><div class="band-r">0–3</div><div><b>Balcão de horários</b><br>A recepção agenda, mas não vende. Comece por F e pela separação de funções.</div></div><div class="band"><div class="band-r">4–6</div><div><b>Venda no improviso</b><br>Há esforço, falta processo. Implante E, C e o funil de seis estações.</div></div><div class="band"><div class="band-r">7–8</div><div><b>CRC em formação</b><br>O gargalo está no acompanhamento e nas faltas. Foque em H e A.</div></div><div class="band"><div class="band-r">9–10</div><div><b>Central madura</b><br>Otimize com metas por estágio e treinamento contínuo.</div></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Linha de raciocínio</div>
+  <h2>A lógica por trás do método</h2>
+  <p>Antes da técnica, o porquê. Se você entender esta sequência, consegue adaptar o método a qualquer especialidade, tamanho de equipe ou cidade.</p>
+  <div class="chain"><div class="chain-item"><div class="chain-n">1</div><div><div class="chain-lab">Interesse tem prazo de validade</div><p>O momento em que a pessoa pede informação é o pico da intenção. A cada hora sem resposta, ela esfria, se distrai ou é capturada por outra clínica.</p></div></div><div class="chain-item"><div class="chain-n">2</div><div><div class="chain-lab">Texto dá liberdade para ignorar; voz cria vínculo</div><p>Mensagem escrita é cômoda, mas fria. Uma ligação ou áudio curto cria conexão, permite explicar com clareza e encurta o ciclo de decisão. O WhatsApp complementa — não substitui.</p></div></div><div class="chain-item"><div class="chain-n">3</div><div><div class="chain-lab">Nem todo interessado está pronto, e tudo bem</div><p>Qualificar não é descartar: é entender em que momento a pessoa está para oferecer o próximo passo certo, sem pressionar quem ainda precisa amadurecer.</p></div></div><div class="chain-item"><div class="chain-n">4</div><div><div class="chain-lab">Rapport vem antes de proposta</div><p>Sem confiança não há conversão. Escutar mais do que falar, personalizar e fazer a pessoa se sentir compreendida é parte do processo, não perda de tempo.</p></div></div><div class="chain-item"><div class="chain-n">5</div><div><div class="chain-lab">A maior parte das decisões não acontece no primeiro contato</div><p>Tratamentos de saúde exigem reflexão, conversa com a família e organização financeira. Quem para de acompanhar entrega o paciente a quem continuou presente.</p></div></div><div class="chain-item"><div class="chain-n">6</div><div><div class="chain-lab">Processo só existe quando há movimento</div><p>Um interessado parado há semanas no CRM não é um processo de vendas — é um nome em uma lista. Cada estágio precisa de tarefas e prazos.</p></div></div></div>
+  <div class="tese"><span>Tese central</span>Marketing traz a oportunidade; a recepção decide se ela vira paciente. Uma CRC com método é o investimento de maior retorno de uma clínica que já gera contatos.</div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">O método</div>
+  <h2>Método FECHA</h2>
+  <p>FECHA são cinco competências que a CRC executa ao longo de um funil de seis estações. As competências dizem <b>como</b> agir; as estações dizem <b>em que ponto</b> o interessado está.</p>
+  <div class="m-grid"><div class="m-cell"><div class="m-letter">F</div><div class="m-name">Fale em minutos</div><div class="m-desc">Velocidade e voz no primeiro contato.</div></div><div class="m-cell"><div class="m-letter">E</div><div class="m-name">Escute e Qualifique</div><div class="m-desc">Perguntas que revelam necessidade, momento e decisor.</div></div><div class="m-cell"><div class="m-letter">C</div><div class="m-name">Conecte de verdade</div><div class="m-desc">Rapport, escuta ativa e a dor real por trás da queixa.</div></div><div class="m-cell"><div class="m-letter">H</div><div class="m-name">Habitue com valor</div><div class="m-desc">Acompanhamento com cadência e conteúdo, até a decisão.</div></div><div class="m-cell"><div class="m-letter">A</div><div class="m-name">Agende, Ancore e Assuma</div><div class="m-desc">Reduzir faltas, contornar objeções e fechar sem criar dúvida.</div></div></div>
+  <p class="muted small">Regra de ouro: cada etapa pressupõe a anterior resolvida. Pular etapas é a forma mais rápida de concluir que “isso não funciona na minha área”.</p>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">F</div>
+    <div><div class="eyebrow">Etapa 1 de 5</div><h2>Fale em minutos</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> garantir que todo interessado receba resposta rápida e, sempre que possível, uma conversa por voz.</div>
+  <h4>Raciocínio</h4>
+  <p>Quando alguém se cadastra em uma campanha ou manda mensagem, está no momento de maior abertura. É também quando começa a ver anúncios de concorrentes. Responder rápido não é cortesia — é a diferença entre conduzir a conversa e chegar atrasado nela. E a voz, mais do que o texto, transmite cuidado e segurança.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Defina um tempo-alvo de primeira resposta no horário comercial (ex.: até 5 minutos) e meça.</li><li>Configure alerta imediato de novo contato (formulário, anúncio, Instagram, WhatsApp) no celular da CRC.</li><li>Na primeira resposta escrita, já peça permissão para ligar: “Posso te ligar rapidinho para entender melhor?”.</li><li>Tenha uma mensagem automática fora do horário que informe quando a pessoa será atendida — e cumpra.</li><li>Separe a função comercial da administrativa: quem confirma consulta e cobra não consegue responder em minutos.</li></ul>
+  <div class="tool"><div class="tool-h">Use o canal certo</div><table><tr><th>Canal</th><th>Melhor uso</th></tr><tr><td>Ligação / vídeo</td><td>Primeiro contato, qualificação, explicar tratamento, fechar</td></tr><tr><td>Áudio curto</td><td>Quando a pessoa não atende; personaliza sem invadir</td></tr><tr><td>Texto</td><td>Confirmações, envio de material, lembretes</td></tr></table></div>
+  <div class="erro"><b>Erro comum:</b> responder com “Olá! Segue nossa tabela de valores” e esperar. Preço sem contexto é a forma mais rápida de perder um interessado.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">E</div>
+    <div><div class="eyebrow">Etapa 2 de 5</div><h2>Escute e Qualifique</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> entender, com respeito, se a pessoa precisa do tratamento, quando quer fazer, quem decide e se o investimento é viável.</div>
+  <h4>Raciocínio</h4>
+  <p>Qualificação economiza o tempo de todos e personaliza a conversa. Usamos dois filtros. O primeiro, os <b>4 Cs</b>, responde se o interessado está pronto: <b>Carência</b> (precisa mesmo?), <b>Calendário</b> (é agora?), <b>Comando</b> (é quem decide?) e <b>Capacidade</b> (o investimento cabe?). O segundo, a <b>Escada da Consciência</b>, ajuda o paciente a perceber a importância do cuidado: situação, problema, consequência e desejo.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li><b>Situação:</b> “Me conta como está hoje: o que te fez procurar a clínica agora?”</li><li><b>Problema:</b> “Como isso tem afetado sua rotina?”</li><li><b>Consequência:</b> “O que você imagina que acontece se deixar para depois?” (educar, não assustar)</li><li><b>Desejo:</b> “Se isso estivesse resolvido, o que mudaria para você?”</li><li>Confirme os 4 Cs de forma natural: “Você pensa em começar quando?”, “Alguém participa dessa decisão com você?”, “Prefere que eu já te explique as formas de pagamento?”.</li><li>Registre as respostas no CRM: elas personalizam cada contato seguinte.</li></ul>
+  <div class="tool"><div class="tool-h">Os 4 Cs da qualificação em saúde</div><table><tr><th>C</th><th>Pergunta interna</th><th>Se a resposta for “não”</th></tr><tr><td>Carência</td><td>Ela precisa deste cuidado?</td><td>Oriente com honestidade — gera confiança e indicação</td></tr><tr><td>Calendário</td><td>Quer resolver agora?</td><td>Entra em acompanhamento de longo prazo</td></tr><tr><td>Comando</td><td>É quem decide?</td><td>Convide o decisor para a conversa ou a consulta</td></tr><tr><td>Capacidade</td><td>O investimento é viável?</td><td>Apresente formas de pagamento ou etapas</td></tr></table></div>
+  <div class="erro"><b>Erro comum:</b> transformar a qualificação em interrogatório. As perguntas são uma conversa, intercaladas com escuta e acolhimento.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">C</div>
+    <div><div class="eyebrow">Etapa 3 de 5</div><h2>Conecte de verdade</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> construir confiança genuína e descobrir a dor e o sonho reais que movem a decisão.</div>
+  <h4>Raciocínio</h4>
+  <p>A queixa que a pessoa traz raramente é o motivo real da decisão. “Dificuldade para mastigar” pode ser, no fundo, “vergonha de sorrir nas fotos do casamento da filha”. Quem descobre a dor e o sonho reais consegue mostrar valor de forma muito mais profunda — e contornar objeções com naturalidade, porque o paciente sente que foi compreendido.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Ouça mais do que fala. Faça perguntas abertas sobre a vida da pessoa, não só sobre o sintoma.</li><li>Espelhe tom, ritmo e vocabulário: com quem é formal, seja formal; com quem é descontraído, relaxe.</li><li>Use as informações do CRM para personalizar (“Da última vez você comentou que…”).</li><li>Valorize decisões e conquistas da pessoa com sinceridade.</li><li>Vá além da dor óbvia: “E o que mais te incomoda nisso tudo?” — e descubra o desejo concreto, com prazo (“até o casamento em junho”).</li></ul>
+  <div class="tool"><div class="tool-h">Dor óbvia × dor real</div><table><tr><th>O paciente diz</th><th>O que pode estar por trás</th></tr><tr><td>“Quero melhorar a mastigação”</td><td>Vergonha de sorrir em eventos importantes</td></tr><tr><td>“Minha pele está manchada”</td><td>Evita fotos e se sente insegura no trabalho</td></tr><tr><td>“Tenho dor nas costas”</td><td>Não consegue brincar com os netos</td></tr></table></div>
+  <div class="erro"><b>Erro comum:</b> pular direto para a proposta porque “a pessoa já sabe o que quer”. Sem conexão, a primeira objeção encerra a conversa.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">H</div>
+    <div><div class="eyebrow">Etapa 4 de 5</div><h2>Habitue com valor</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> manter o relacionamento ativo com quem ainda não decidiu, entregando valor em cada contato.</div>
+  <h4>Raciocínio</h4>
+  <p>O momento certo de um interessado pode ser daqui a 30, 60 ou 90 dias — ele pode estar juntando dinheiro, resolvendo outra prioridade ou esperando uma data. Se a clínica para de falar com ele, outra ocupa o espaço. Mas acompanhar não é repetir “oi, tudo bem?”: cada contato precisa trazer algo útil.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Cadência sugerida: contato intenso nas duas primeiras semanas (a cada 1–2 dias), depois a cada 3–4 dias no primeiro mês e, então, semanal ou quinzenal.</li><li>Varie o conteúdo: vídeo personalizado do profissional, explicação do procedimento, depoimentos permitidos de casos parecidos, tour pela clínica, formação do profissional, matérias sobre o tema.</li><li>Registre cada contato e a próxima data no CRM. Interessado sem próxima ação agendada é interessado perdido.</li><li>O interessado só sai do acompanhamento quando fecha ou pede explicitamente para parar — e esse pedido é sempre respeitado (LGPD).</li></ul>
+  <div class="tool"><div class="tool-h">Banco de conteúdos de acompanhamento</div><ul><li>Vídeo de 30 s do profissional chamando a pessoa pelo nome</li><li>“Como funciona” do procedimento em 1 minuto</li><li>Perguntas frequentes respondidas (do DNA Comercial)</li><li>Tour pela estrutura e equipe</li><li>Matéria ou conteúdo educativo sobre o tema</li></ul></div>
+  <div class="erro"><b>Erro comum:</b> desistir depois de duas mensagens sem resposta. Silêncio não é “não” — muitas vezes é “agora não”.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">A</div>
+    <div><div class="eyebrow">Etapa 5 de 5</div><h2>Agende, Ancore e Assuma</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> transformar o “sim” em presença na consulta e o interesse em tratamento iniciado.</div>
+  <h4>Raciocínio</h4>
+  <p>Falta na consulta raramente é falta de compromisso; é falta de valor percebido e de vínculo. Quanto mais a pessoa sente que algo foi preparado para ela, maior a chance de comparecer. Na objeção, o erro é confrontar; o caminho é ficar ao lado do paciente contra o verdadeiro adversário — o problema, o tempo que passa, a falta de informação. E no fechamento, perguntas como “então, vamos fechar?” criam dúvida onde não havia.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li><b>Ancore o agendamento:</b> envie confirmação com o nome do profissional, um vídeo curto de boas-vindas e orientações de preparo.</li><li>Faça uma pré-avaliação leve com base nas respostas da qualificação (“a doutora já vai saber do seu caso”).</li><li>Confirme 24–48 horas antes por voz ou áudio, não só por mensagem automática.</li><li><b>Objeções — técnica do aliado:</b> 1) acolha (“entendo completamente”), 2) valide (“faz todo sentido pensar com calma”), 3) nomeie o adversário comum (“o desafio é que, quando adiamos, o problema costuma…”).</li><li>Pergunte o que está por trás de “está caro”: pode ser “não confio ainda” ou “não entendi o valor”.</li><li><b>Fechamento assumido:</b> quando a pessoa já disse que gostou, que cabe no orçamento e que é o que precisa, siga para o próximo passo: “Perfeito! Vou só pegar alguns dados para o cadastro…”.</li><li>Termine sempre com energia alta — uma história de cuidado, uma conquista de paciente — e nunca apenas falando de preço.</li></ul>
+  <div class="tool"><div class="tool-h">As 6 estações do funil</div><table><tr><th>Estação</th><th>O interessado…</th><th>Tarefa obrigatória para avançar</th></tr><tr><td>1. Novo</td><td>acabou de chegar</td><td>Primeiro contato em minutos</td></tr><tr><td>2. Contatado</td><td>falou com a CRC</td><td>Qualificação (4 Cs) registrada</td></tr><tr><td>3. Engajado</td><td>responde e interage</td><td>Conteúdo de valor + dor/sonho reais identificados</td></tr><tr><td>4. Agendado</td><td>marcou avaliação</td><td>Protocolo anti-falta completo</td></tr><tr><td>5. Proposta</td><td>recebeu o plano</td><td>Objeções tratadas + data de decisão</td></tr><tr><td>6. Paciente</td><td>iniciou o tratamento</td><td>Boas-vindas e pós-venda</td></tr></table><p class='small muted'>Pular estações é perder vendas: só avance quando a tarefa da estação atual estiver cumprida.</p></div>
+  <div class="erro"><b>Erro comum:</b> tentar agendar quem ainda está na estação 2. Sem engajamento e conexão, o agendamento vira falta.</div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Roadmap de implementação</div>
+  <h2>Implantação em 60 dias</h2>
+  <p>Execute na ordem. Cada fase termina com um entregável concreto — se ele não existir, a fase não acabou.</p>
+  <div class="rm"><div class="rm-col"><div class="rm-per">Semanas 1–2</div><div class="rm-nome">Estrutura</div><ul class=""><li>Separar funções comercial e administrativa</li><li>CRM ou planilha com as 6 estações</li><li>Alerta de novo contato configurado</li><li>Tempo-alvo de resposta definido</li></ul><div class="rm-ent"><b>Entregável:</b> Funil visível e alimentado</div></div><div class="rm-col"><div class="rm-per">Semanas 3–5</div><div class="rm-nome">Roteiros e treino</div><ul class=""><li>Roteiro de primeiro contato e qualificação</li><li>Banco de conteúdos de acompanhamento</li><li>Protocolo anti-falta</li><li>Role-play semanal de objeções</li></ul><div class="rm-ent"><b>Entregável:</b> CRC treinada com roteiros aprovados</div></div><div class="rm-col"><div class="rm-per">Semanas 6–8</div><div class="rm-nome">Ritmo e metas</div><ul class=""><li>Cadência de acompanhamento rodando</li><li>Reunião semanal de funil</li><li>Metas de conversão por estação</li><li>Ajuste dos roteiros pelas objeções reais</li></ul><div class="rm-ent"><b>Entregável:</b> Relatório de conversão por estação</div></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Aplicabilidade</div>
+  <h2>Como aplicar na sua realidade</h2>
+  <h3>Por perfil de clínica</h3>
+  <table><thead><tr><th style="width:28%">Perfil</th><th>Como adaptar</th></tr></thead><tbody><tr><td><b>Consultório solo com secretária</b></td><td>A secretária assume a CRC em blocos de horário protegidos (ex.: 2 períodos de 1h30 por dia só para interessados). Automatize confirmações para liberar tempo.</td></tr><tr><td><b>Clínica média</b></td><td>Uma CRC dedicada, separada da recepção presencial. Metas por estação e reunião semanal com o gestor.</td></tr><tr><td><b>Rede ou clínica grande</b></td><td>Divida em pré-vendas (estações 1–4) e fechamento (estação 5). Padronize roteiros e meça por pessoa.</td></tr><tr><td><b>Odontologia de alto ticket</b></td><td>Estação 5 merece atenção extra: proposta apresentada pessoalmente, com etapas e formas de pagamento claras.</td></tr><tr><td><b>Procedimentos estéticos</b></td><td>Ciclo de decisão costuma ser emocional: invista em C (dor e sonho reais) e em conteúdo de acompanhamento.</td></tr></tbody></table>
+  <h3 class="mt">Quem faz o quê</h3>
+  <table><thead><tr><th style="width:28%">Papel</th><th>Responsabilidade</th></tr></thead><tbody><tr><td><b>CRC</b></td><td>Executa o FECHA, mantém o CRM atualizado e cumpre as tarefas de cada estação.</td></tr><tr><td><b>Profissional de saúde</b></td><td>Grava vídeos de boas-vindas e acompanhamento, valida roteiros técnicos.</td></tr><tr><td><b>Gestor(a)</b></td><td>Define metas, conduz a reunião semanal de funil e garante o treinamento.</td></tr><tr><td><b>Marketing</b></td><td>Gera contatos qualificados e recebe da CRC o retorno sobre a qualidade de cada campanha.</td></tr></tbody></table>
+  <div class="keep"><h3 class="mt">Indicadores que provam que está funcionando</h3>
+  <table><thead><tr><th style="width:26%">Indicador</th><th>O que responde</th><th style="width:26%">Como medir</th></tr></thead><tbody><tr><td><b>Tempo de primeira resposta</b></td><td>Estamos chegando antes do concorrente?</td><td>Média por dia no CRM</td></tr><tr><td><b>Taxa contato → agendamento</b></td><td>A qualificação e a conexão funcionam?</td><td>Agendados ÷ contatados</td></tr><tr><td><b>Taxa de comparecimento</b></td><td>O protocolo anti-falta funciona?</td><td>Compareceram ÷ agendados</td></tr><tr><td><b>Taxa proposta → paciente</b></td><td>O fechamento funciona?</td><td>Fecharam ÷ propostas</td></tr><tr><td><b>Vendas de contatos antigos</b></td><td>O acompanhamento gera resultado?</td><td>% de fechamentos com contato > 30 dias</td></tr></tbody></table></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Modelos prontos</div>
+  <h2>Copie, adapte e use hoje</h2>
+  <p>Troque apenas o que está entre colchetes. Ajuste o tom ao seu público — e valide sempre com as regras do seu conselho profissional.</p>
+  <div class="script"><div class="script-h">Primeira resposta (texto)</div><div class="script-b">“Oi, [nome]! Aqui é a [nome], da [clínica] 😊 Vi seu interesse em [tratamento]. Para te orientar direitinho, posso te ligar rapidinho agora ou prefere em outro horário?”</div><div class="script-obs"><b>Por que funciona:</b> personaliza, mostra rapidez e pede permissão para levar a conversa para a voz.</div></div><div class="script"><div class="script-h">Abertura da ligação</div><div class="script-b">“[Nome], obrigada por atender! Vou ser breve: quero entender seu caso para te dizer se faz sentido uma avaliação com [Dr(a). nome]. Me conta, o que te fez procurar a gente agora?”</div><div class="script-obs"><b>Por que funciona:</b> deixa claro o objetivo, respeita o tempo da pessoa e abre com uma pergunta de situação.</div></div><div class="script"><div class="script-h">Mensagem anti-falta (véspera)</div><div class="script-b">“Oi, [nome]! Amanhã, às [hora], é o seu horário com [Dr(a). nome]. Ela já leu o que você me contou sobre [dor/sonho] e preparou a avaliação pensando nisso. Endereço: [link]. Qualquer imprevisto, me avisa por aqui 💙”</div><div class="script-obs"><b>Por que funciona:</b> reforça que algo foi preparado para a pessoa — o principal antídoto contra a falta.</div></div><div class="script"><div class="script-h">Resposta a “preciso pensar”</div><div class="script-b">“Claro, faz todo sentido pensar com calma — é uma decisão importante. Posso te perguntar o que ainda pesa mais: o investimento, o momento ou alguma dúvida sobre o tratamento? Assim eu te mando exatamente o que ajuda a decidir.”</div><div class="script-obs"><b>Por que funciona:</b> acolhe sem pressionar e transforma uma objeção vaga em uma objeção específica, que pode ser tratada.</div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Conexão com a coleção</div>
+  <h2>Leia em seguida</h2>
+  <div class="xref" style="--c:#C8932B">
+    <div class="xref-tag">Volume 05 · Coleção Acelerador de Clínicas</div>
+    <div class="xref-title">Consulta Assinatura</div>
+    <div class="xref-desc">Entregue uma consulta de alto valor</div>
+  </div>
+  <h3>Como ele potencializa o que você acabou de aprender</h3>
+  <p>A Recepção que Fatura leva o paciente até a cadeira — preparado, conectado e com expectativa alta. O Volume 05, <b>Consulta Assinatura</b>, garante que o que acontece dentro da sala esteja à altura dessa expectativa: uma consulta estruturada em etapas, com escuta emocional, investigação técnica, um momento que educa e um plano de tratamento que o paciente sente que vale o investimento.</p><p>As duas pontas se alimentam. Tudo o que a CRC descobre na qualificação — dor real, sonho, prazo, decisor — chega ao profissional antes da consulta e vira matéria-prima da anamnese. E o que o profissional apresenta no plano volta para a CRC conduzir a proposta e o acompanhamento.</p>
+  <h4>Combinações práticas</h4>
+  <ul class="arrow"><li>Envie ao profissional, antes da consulta, uma ficha com os 4 Cs e a dor/sonho reais do paciente.</li><li>Use a Etapa P (Preparo) da Consulta Assinatura como parte do protocolo anti-falta.</li><li>Combine com o profissional um roteiro único de apresentação de plano e de proposta.</li></ul>
+  <div class="sec-ref" style="--c:#7B4DE0"><b>Também combina com o Volume 01 · DNA Comercial:</b> o DNA Comercial fornece as respostas aprovadas para perguntas frequentes e objeções que a CRC usa em todas as estações.</div>
+  <h3 class="mt">Onde este volume entra na jornada da clínica</h3>
+  <p class="muted">A coleção segue a ordem em que um paciente descobre, decide e volta. Cada volume resolve um elo — e conversa com os outros.</p>
+  <div class="journey"><div class="j-item" style="--c:#7B4DE0"><span class="j-n">01</span><span class="j-t">DNA Comercial</span><span class="j-d">Defina o que vender e como explicar</span></div><div class="j-item" style="--c:#2F6BF0"><span class="j-n">02</span><span class="j-t">Referência na Cidade</span><span class="j-d">Seja encontrado no Google, nas IAs e na imprensa</span></div><div class="j-item" style="--c:#E0457B"><span class="j-n">03</span><span class="j-t">Vitrine Magnética</span><span class="j-d">Instagram que vende a consulta</span></div><div class="j-item on" style="--c:#0E9C9C"><span class="j-n">04</span><span class="j-t">Recepção que Fatura</span><span class="j-d">Converta interessados em pacientes</span></div><div class="j-item" style="--c:#C8932B"><span class="j-n">05</span><span class="j-t">Consulta Assinatura</span><span class="j-d">Entregue uma consulta de alto valor</span></div><div class="j-item" style="--c:#E07B1F"><span class="j-n">06</span><span class="j-t">Resgate de Ouro</span><span class="j-d">Reative quem já confiou em você</span></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Para terminar</div>
+  <h2>O que separa quem executa de quem só lê</h2>
+  <p>CRC não é cargo; é postura. É a decisão de tratar cada pessoa que levantou a mão como alguém que confiou na clínica o suficiente para perguntar.</p><p>Comece pelo básico: responder em minutos, ligar em vez de só escrever e registrar tudo. Depois, construa os roteiros, a cadência e as metas. A conversão sobe junto com a disciplina.</p><p>CRC que estuda, treina e se valoriza vende mais — e faz o paciente se sentir cuidado antes mesmo de chegar.</p>
+  <div class="compliance"><b>Nota ética e legal:</b> este material é educativo sobre gestão, comunicação e vendas em saúde. Não constitui orientação clínica nem parecer jurídico. Regras de publicidade variam por conselho (CFM, CFO, CFN, COFFITO e outros) e mudam com o tempo — confirme cada peça antes de publicar e trate dados de pacientes conforme a LGPD.</div>
+</section>
+<section class="back">
+  <div class="cover-shape s1"></div>
+  <div class="back-in">
+    <div class="brandmark big"><span class="bm-dot"></span>Acelerador de Clínicas</div>
+    <p class="back-tag">Estratégia, processo e vendas para clínicas e consultórios que querem crescer com previsibilidade — e sem perder a essência do cuidado.</p>
+    <div class="back-cta">
+      <div class="back-cta-h">Quer implementar o Método FECHA com acompanhamento?</div>
+      <p>Agende um diagnóstico da sua clínica: onde o faturamento está vazando, o que priorizar nos próximos 90 dias e qual volume da coleção aplicar primeiro.</p>
+      <div class="back-site">aceleradordeclinicas.com.br</div>
+    </div>
+    <div class="back-list"><span style="--c:#7B4DE0">01 · DNA Comercial</span><span style="--c:#2F6BF0">02 · Referência na Cidade</span><span style="--c:#E0457B">03 · Vitrine Magnética</span><span style="--c:#0E9C9C">04 · Recepção que Fatura</span><span style="--c:#C8932B">05 · Consulta Assinatura</span><span style="--c:#E07B1F">06 · Resgate de Ouro</span></div>
+    <div class="back-sig">© Acelerador de Clínicas · Coleção Acelerador de Clínicas · Volume 04 — Recepção que Fatura</div>
+  </div>
+</section></body></html>

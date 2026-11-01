@@ -1,0 +1,316 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>DNA Comercial · Acelerador de Clínicas</title>
+<style>:root{--accent:#7B4DE0;}
+@page { size: A4; margin: 18mm 17mm 20mm 17mm; }
+@page :first { margin: 0; }
+* { box-sizing: border-box; }
+:root { --navy:#0B1B33; --ink:#1B2433; --muted:#5B6576; --line:#E3E7EE; --soft:#F5F7FA; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { margin:0; font-family: Inter, "Liberation Sans", sans-serif; color: var(--ink); font-size: 10.4pt; line-height: 1.55; background:#fff; }
+h1,h2,h3,h4 { font-family: "Inter Display", Inter, sans-serif; color: var(--navy); margin: 0; line-height: 1.15; }
+h2 { font-size: 23pt; font-weight: 800; letter-spacing: -0.02em; margin: 2mm 0 5mm; }
+h3 { font-size: 13.5pt; font-weight: 700; margin: 6mm 0 3mm; }
+h4 { font-size: 10.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); margin: 5mm 0 2mm; }
+p { margin: 0 0 3mm; }
+b { color: var(--navy); }
+.mt { margin-top: 8mm; }
+.muted { color: var(--muted); }
+.small { font-size: 9pt; }
+.eyebrow { font-size: 8.5pt; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.page-start { break-before: page; }
+ul { margin: 0 0 3mm; padding-left: 0; list-style: none; }
+ul li { position: relative; padding-left: 6mm; margin-bottom: 1.6mm; }
+ul li::before { content: ""; position: absolute; left: 1mm; top: 2.1mm; width: 2mm; height: 2mm; border-radius: 50%; background: var(--accent); }
+ul.check li::before { content: "✓"; background: none; color: var(--accent); font-weight: 800; top: 0; width: auto; height: auto; }
+ul.arrow li::before { content: "→"; background: none; color: var(--accent); font-weight: 800; top: 0; width: auto; height: auto; }
+ul.steps { counter-reset: s; }
+ul.steps li { counter-increment: s; padding-left: 8mm; }
+ul.steps li::before { content: counter(s); background: var(--accent); color: #fff; font-size: 7.5pt; font-weight: 800; width: 5mm; height: 5mm; top: .6mm; left: 0; display: flex; align-items: center; justify-content: center; }
+
+/* COVER */
+.cover { position: relative; width: 210mm; height: 297mm; background: var(--navy); color: #fff; overflow: hidden; padding: 22mm 20mm; display: flex; flex-direction: column; }
+.cover-shape { position: absolute; border-radius: 50%; }
+.cover-shape.s1 { width: 170mm; height: 170mm; right: -60mm; top: -50mm; background: radial-gradient(circle at 30% 30%, var(--accent), transparent 70%); opacity: .55; }
+.cover-shape.s2 { width: 120mm; height: 120mm; left: -50mm; bottom: 40mm; border: 1.2mm solid var(--accent); opacity: .25; }
+.cover-top, .cover-mid, .cover-puv, .cover-foot { position: relative; z-index: 2; }
+.brandmark { display: inline-flex; align-items: center; gap: 2.5mm; font-family: "Inter Display"; font-weight: 800; font-size: 12pt; letter-spacing: -.01em; }
+.brandmark.big { font-size: 20pt; }
+.bm-dot { width: 4mm; height: 4mm; border-radius: 1mm; background: var(--accent); transform: rotate(45deg); display: inline-block; }
+.cover-vol { margin-top: 3mm; font-size: 8.5pt; letter-spacing: .16em; text-transform: uppercase; opacity: .75; }
+.cover-mid { margin-top: 48mm; }
+.cover-kicker { display: inline-block; background: var(--accent); color: #fff; font-weight: 800; font-size: 9pt; letter-spacing: .12em; text-transform: uppercase; padding: 1.6mm 3.5mm; border-radius: 1.5mm; }
+.cover-title { color: #fff; font-size: 50pt; font-weight: 900; letter-spacing: -.035em; line-height: .98; margin: 6mm 0 6mm; }
+.cover-sub { font-size: 15pt; line-height: 1.35; opacity: .9; max-width: 150mm; }
+.cover-puv { margin-top: auto; background: rgba(255,255,255,.07); border-left: 1.6mm solid var(--accent); padding: 5mm 6mm; border-radius: 0 2mm 2mm 0; }
+.cover-puv p { margin: 0; font-size: 11.5pt; line-height: 1.45; }
+.puv-label { font-size: 7.5pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5mm; }
+.cover-foot { display: flex; justify-content: space-between; margin-top: 10mm; font-size: 9pt; opacity: .85; }
+.cover-foot b { color: #fff; }
+.cover-foot .site { font-weight: 700; color: #fff; }
+
+/* PUV / cards */
+.puv-box { background: var(--soft); border: 1px solid var(--line); border-left: 1.6mm solid var(--accent); border-radius: 0 3mm 3mm 0; padding: 5mm 6mm; margin: 5mm 0; break-inside: avoid; }
+.puv-big { font-family: "Inter Display"; font-size: 13.5pt; font-weight: 700; color: var(--navy); line-height: 1.35; }
+.puv-dif { margin: 2mm 0 0; font-size: 9.8pt; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+.card { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm 5mm; break-inside: avoid; }
+.card h4 { margin-top: 0; }
+
+/* journey */
+.journey { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2mm; margin-top: 3mm; }
+.j-item { border: 1px solid var(--line); border-top: 1.4mm solid var(--c); border-radius: 2mm; padding: 2.5mm; opacity: .55; }
+.j-item.on { opacity: 1; background: color-mix(in srgb, var(--c) 9%, white); border-color: var(--c); }
+.j-n { display: block; font-weight: 900; color: var(--c); font-size: 11pt; }
+.j-t { display: block; font-weight: 800; font-size: 8pt; color: var(--navy); line-height: 1.2; margin: .5mm 0 1mm; }
+.j-d { display: block; font-size: 7pt; color: var(--muted); line-height: 1.25; }
+
+/* diagnóstico */
+ol.diag { list-style: none; padding: 0; margin: 4mm 0; }
+ol.diag li { display: flex; gap: 3mm; padding: 2.4mm 0; border-bottom: 1px dashed var(--line); }
+.box { flex: 0 0 4.2mm; height: 4.2mm; border: .5mm solid var(--accent); border-radius: 1mm; margin-top: .6mm; }
+.bands { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-top: 5mm; }
+.band { display: flex; gap: 3mm; background: var(--soft); border-radius: 2.5mm; padding: 3mm 4mm; font-size: 9.5pt; break-inside: avoid; }
+.band-r { flex: 0 0 auto; background: var(--accent); color: #fff; font-weight: 800; font-size: 8.5pt; border-radius: 1.5mm; padding: .8mm 2.2mm; height: fit-content; white-space: nowrap; }
+
+/* raciocínio */
+.chain { margin: 5mm 0; position: relative; }
+.chain-item { display: flex; gap: 4mm; position: relative; padding-bottom: 3mm; break-inside: avoid; }
+.chain-item:not(:last-child)::after { content: ""; position: absolute; left: 4.2mm; top: 9mm; bottom: 0; width: .5mm; background: color-mix(in srgb, var(--accent) 40%, white); }
+.chain-n { flex: 0 0 9mm; height: 9mm; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.chain-lab { font-weight: 800; color: var(--navy); font-size: 10.5pt; margin-top: 1.5mm; }
+.chain-item p { margin: .5mm 0 0; }
+.tese { background: var(--navy); color: #fff; border-radius: 3mm; padding: 5mm 6mm; font-family: "Inter Display"; font-size: 12.5pt; font-weight: 600; line-height: 1.4; break-inside: avoid; }
+.tese span { display: block; font-family: Inter; font-size: 7.5pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5mm; }
+
+/* método */
+.m-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5mm; margin: 5mm 0; }
+.m-cell { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm; display: grid; grid-template-columns: 13mm 1fr; column-gap: 3mm; break-inside: avoid; }
+.m-letter { grid-row: span 2; width: 13mm; height: 13mm; border-radius: 2.5mm; background: var(--accent); color: #fff; font-family: "Inter Display"; font-weight: 900; font-size: 20pt; display: flex; align-items: center; justify-content: center; }
+.m-name { font-weight: 800; color: var(--navy); font-size: 10.5pt; }
+.m-desc { font-size: 9pt; color: var(--muted); line-height: 1.4; }
+
+/* passos */
+.step-head { display: flex; gap: 5mm; align-items: center; margin-bottom: 3mm; }
+.step-letter { flex: 0 0 22mm; height: 22mm; border-radius: 4mm; background: var(--accent); color: #fff; font-family: "Inter Display"; font-weight: 900; font-size: 38pt; display: flex; align-items: center; justify-content: center; }
+.step-head h2 { margin: 1mm 0 0; }
+.obj { background: color-mix(in srgb, var(--accent) 10%, white); border-radius: 2.5mm; padding: 3mm 4.5mm; margin-bottom: 2mm; }
+.tool { border: 1px solid var(--line); border-radius: 3mm; padding: 4mm 5mm; margin: 4mm 0; background: var(--soft); break-inside: avoid; }
+.tool-h { font-weight: 800; color: var(--navy); margin-bottom: 2mm; font-size: 10.5pt; }
+.tool p:last-child, .tool ul:last-child { margin-bottom: 0; }
+.tool table { margin: 1mm 0 0; background: #fff; }
+.erro { border-left: 1.2mm solid #D64545; background: #FDF1F1; padding: 3mm 4.5mm; border-radius: 0 2.5mm 2.5mm 0; font-size: 9.8pt; break-inside: avoid; }
+.erro b { color: #B12E2E; }
+
+/* roadmap */
+.rm { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.5mm; margin-top: 4mm; }
+.rm-col { border: 1px solid var(--line); border-top: 1.6mm solid var(--accent); border-radius: 2.5mm; padding: 4mm; font-size: 9.3pt; display: flex; flex-direction: column; break-inside: avoid; }
+.rm-per { font-weight: 900; color: var(--accent); font-size: 10pt; letter-spacing: .04em; text-transform: uppercase; }
+.rm-nome { font-family: "Inter Display"; font-weight: 800; color: var(--navy); font-size: 12pt; margin: 1mm 0 3mm; line-height: 1.2; }
+.rm-ent { margin-top: auto; background: var(--soft); border-radius: 2mm; padding: 2.5mm 3mm; font-size: 8.8pt; }
+
+/* tables */
+table { width: 100%; border-collapse: collapse; font-size: 9.3pt; margin-bottom: 3mm; }
+th { background: var(--navy); color: #fff; text-align: left; padding: 2.4mm 3mm; font-weight: 700; font-size: 8.6pt; letter-spacing: .03em; }
+td { border-bottom: 1px solid var(--line); padding: 2.4mm 3mm; vertical-align: top; }
+tr { break-inside: avoid; }
+tbody tr:nth-child(even) td { background: #FAFBFC; }
+
+/* scripts */
+.script { border: 1px solid var(--line); border-radius: 3mm; margin: 4mm 0; overflow: hidden; break-inside: avoid; }
+.script-h { background: var(--accent); color: #fff; font-weight: 800; padding: 2.4mm 4.5mm; font-size: 9.8pt; }
+.script-b { padding: 4mm 5mm; font-size: 10pt; white-space: pre-line; background: #fff; }
+.script-obs { padding: 2.6mm 5mm; background: var(--soft); border-top: 1px solid var(--line); font-size: 9pt; color: var(--muted); }
+
+/* cross ref */
+.xref { background: var(--navy); color: #fff; border-radius: 4mm; padding: 8mm; position: relative; overflow: hidden; margin: 3mm 0 6mm; break-inside: avoid; }
+.xref::after { content: ""; position: absolute; right: -25mm; top: -25mm; width: 80mm; height: 80mm; border-radius: 50%; background: radial-gradient(circle, var(--c), transparent 70%); opacity: .7; }
+.xref-tag { font-size: 8pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--c); position: relative; z-index: 1; filter: brightness(1.35); }
+.xref-title { font-family: "Inter Display"; font-size: 28pt; font-weight: 900; letter-spacing: -.02em; margin: 2mm 0 1mm; position: relative; z-index: 1; }
+.xref-desc { opacity: .85; position: relative; z-index: 1; }
+.sec-ref { margin-top: 5mm; border: 1px solid var(--line); border-left: 1.4mm solid var(--c); border-radius: 0 2.5mm 2.5mm 0; padding: 3.5mm 4.5mm; font-size: 9.6pt; break-inside: avoid; }
+
+.compliance { margin-top: 8mm; font-size: 8.6pt; color: var(--muted); border-top: 1px solid var(--line); padding-top: 3mm; }
+
+/* back */
+.back { break-before: page; position: relative; height: 255mm; background: var(--navy); color: #fff; border-radius: 4mm; overflow: hidden; }
+.back-in { position: relative; z-index: 2; padding: 22mm 16mm; height: 100%; display: flex; flex-direction: column; }
+.back-tag { font-size: 13pt; line-height: 1.45; opacity: .9; margin: 6mm 0 14mm; max-width: 140mm; }
+.back-cta { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15); border-radius: 4mm; padding: 7mm; }
+.back-cta-h { font-family: "Inter Display"; font-size: 16pt; font-weight: 800; margin-bottom: 2mm; }
+.back-cta p { opacity: .85; }
+.back-site { display: inline-block; margin-top: 2mm; background: var(--accent); color: #fff; font-weight: 800; padding: 2.5mm 5mm; border-radius: 2mm; font-size: 12pt; }
+.back-list { display: flex; flex-wrap: wrap; gap: 2mm; margin-top: auto; }
+.back-list span { border: 1px solid var(--c); color: #fff; border-radius: 10mm; padding: 1.2mm 3.5mm; font-size: 8.4pt; font-weight: 700; }
+.back-sig { margin-top: 6mm; font-size: 8pt; opacity: .6; }
+
+.keep{break-inside:avoid;}
+</style></head><body>
+<section class="cover">
+  <div class="cover-shape s1"></div><div class="cover-shape s2"></div>
+  <div class="cover-top">
+    <div class="brandmark"><span class="bm-dot"></span>Acelerador de Clínicas</div>
+    <div class="cover-vol">Coleção Acelerador de Clínicas · Volume 01</div>
+  </div>
+  <div class="cover-mid">
+    <div class="cover-kicker">Método HELIX</div>
+    <h1 class="cover-title">DNA Comercial</h1>
+    <p class="cover-sub">O manual que faz sua equipe vender como você venderia — mesmo quando você está dentro do consultório.</p>
+  </div>
+  <div class="cover-puv">
+    <div class="puv-label">Proposta Única de Valor</div>
+    <p>Transformar o que hoje só existe na cabeça do profissional em um manual de vendas escrito, que qualquer pessoa da equipe usa no dia seguinte — para a clínica parar de depender do doutor para explicar, convencer e fechar.</p>
+  </div>
+  <div class="cover-foot">
+    <div>Uma metodologia <b>Acelerador de Clínicas</b></div>
+    <div class="site">aceleradordeclinicas.com.br</div>
+  </div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Antes de começar</div>
+  <h2>Por que este e-book existe</h2>
+  <p>Em quase toda clínica que atendemos, o melhor vendedor é o próprio profissional de saúde. Ele sabe por que escolheu a especialidade, conhece cada detalhe do procedimento e responde objeções com naturalidade. O problema é que ele está dentro da sala de atendimento — e a venda começa muito antes, no WhatsApp, no telefone e na recepção.</p><p>Quando a equipe não sabe explicar o que torna aquela clínica diferente, ela faz a única coisa que resta: fala de preço e de horário. E quem compete por preço e horário compete com todas as clínicas da cidade.</p><p>O <b>DNA Comercial</b> resolve isso com um processo de extração: perguntas certas, na ordem certa, que viram um manual vivo. Ele é o Volume 01 da coleção porque tudo o que vem depois — autoridade, Instagram, recepção, consulta e reativação — fica mais fácil quando a clínica sabe exatamente o que vende, para quem e por quê.</p>
+  <div class="puv-box">
+    <div class="puv-label">A promessa deste volume (PUV)</div>
+    <p class="puv-big">Transformar o que hoje só existe na cabeça do profissional em um manual de vendas escrito, que qualquer pessoa da equipe usa no dia seguinte — para a clínica parar de depender do doutor para explicar, convencer e fechar.</p>
+    <p class="puv-dif"><b>O que torna este método único:</b> em vez de scripts genéricos, o HELIX parte da história, dos valores e dos diferenciais reais do profissional e do negócio, escolhe um único Serviço de Ouro e desmonta esse serviço em uma ficha comercial completa. O resultado é um texto que só a sua clínica poderia ter — e que se torna a fonte de todo o marketing, atendimento e conteúdo.</p>
+  </div>
+  <div class="two-col">
+    <div class="card"><h4>Para quem é</h4><ul class="check"><li>Profissionais de saúde que sentem que “só eu sei vender o meu trabalho”</li><li>Clínicas com secretária ou CRC que responde bem, mas não converte</li><li>Quem vai contratar ou treinar equipe comercial e precisa de material base</li><li>Quem vai investir em marketing e quer que a mensagem seja clara e consistente</li></ul></div>
+    <div class="card"><h4>O que você conquista</h4><ul class="arrow"><li>Um manual de vendas escrito, com a voz e os diferenciais da sua clínica</li><li>A definição do seu Serviço de Ouro — o que mais gera margem e porta de entrada</li><li>Respostas padronizadas para as perguntas e objeções mais frequentes</li><li>Uma base única para conteúdo, anúncios, site, scripts e treinamentos</li></ul></div>
+  </div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Diagnóstico rápido · 3 minutos</div>
+  <h2>Onde sua clínica está hoje</h2>
+  <p>Marque cada afirmação verdadeira. Cada marcação vale 1 ponto. A pontuação diz por onde começar — e o que ainda não adianta fazer.</p>
+  <ol class="diag"><li><span class="box"></span>Consigo explicar em uma frase por que um paciente deveria escolher minha clínica e não outra.</li><li><span class="box"></span>Minha equipe sabe contar a minha trajetória e os marcos da minha carreira.</li><li><span class="box"></span>Existe um documento escrito com a lista completa de serviços e o diferencial de cada um.</li><li><span class="box"></span>Sei qual serviço gera maior faturamento e maior margem — com base em números, não em sensação.</li><li><span class="box"></span>A recepção sabe explicar como é feito, o pré e o pós do meu principal procedimento.</li><li><span class="box"></span>Existe uma lista escrita das perguntas frequentes com respostas aprovadas por mim.</li><li><span class="box"></span>Existe uma lista escrita das objeções clássicas e como contorná-las.</li><li><span class="box"></span>Sei quais concorrentes oferecem o mesmo serviço e em que nos diferenciamos deles.</li><li><span class="box"></span>Um novo colaborador consegue ser treinado sem depender de horas da minha agenda.</li><li><span class="box"></span>Meu Instagram, site e atendimento usam as mesmas palavras para descrever o que fazemos.</li></ol>
+  <div class="bands"><div class="band"><div class="band-r">0–3</div><div><b>Fundação ausente</b><br>A clínica vende no improviso. Comece pela Etapa H e não invista em tráfego antes de concluir a Etapa I.</div></div><div class="band"><div class="band-r">4–6</div><div><b>Conhecimento disperso</b><br>As informações existem, mas não estão escritas. Foque nas Etapas L e X para transformar memória em processo.</div></div><div class="band"><div class="band-r">7–8</div><div><b>Base sólida</b><br>Falta padronizar e treinar. Use a Etapa X como roteiro de treinamento e conecte com o Volume 04.</div></div><div class="band"><div class="band-r">9–10</div><div><b>DNA maduro</b><br>Revise o manual a cada trimestre e replique a ficha X para o segundo e o terceiro serviço.</div></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Linha de raciocínio</div>
+  <h2>A lógica por trás do método</h2>
+  <p>Antes da técnica, o porquê. Se você entender esta sequência, consegue adaptar o método a qualquer especialidade, tamanho de equipe ou cidade.</p>
+  <div class="chain"><div class="chain-item"><div class="chain-n">1</div><div><div class="chain-lab">Paciente não compra técnica, compra confiança</div><p>Ele não consegue avaliar a qualidade de uma sutura ou de um protocolo. Ele avalia sinais: clareza, segurança, coerência e a sensação de estar sendo entendido.</p></div></div><div class="chain-item"><div class="chain-n">2</div><div><div class="chain-lab">Confiança nasce de uma história coerente</div><p>Quando profissional, clínica e serviço contam a mesma história — por que existimos, o que defendemos, como fazemos — o paciente percebe consistência e reduz o risco percebido.</p></div></div><div class="chain-item"><div class="chain-n">3</div><div><div class="chain-lab">Essa história hoje vive só na cabeça do doutor</div><p>Por isso a venda depende dele. Quando ele não está na conversa, sobra preço, horário e convênio.</p></div></div><div class="chain-item"><div class="chain-n">4</div><div><div class="chain-lab">O que não está escrito não pode ser treinado</div><p>Equipe não aprende por osmose. Precisa de um documento que diga o que falar, em que ordem e com quais palavras.</p></div></div><div class="chain-item"><div class="chain-n">5</div><div><div class="chain-lab">Foco multiplica resultado</div><p>Explicar dez serviços de forma rasa vende menos do que explicar um serviço de forma profunda. Por isso o método escolhe um Serviço de Ouro antes de detalhar.</p></div></div><div class="chain-item"><div class="chain-n">6</div><div><div class="chain-lab">Um documento, todos os canais</div><p>O manual vira a fonte única para recepção, CRC, conteúdo, anúncios e site. A mensagem para de mudar conforme quem atende.</p></div></div></div>
+  <div class="tese"><span>Tese central</span>Clínica que depende do doutor para vender tem um teto de crescimento do tamanho da agenda dele. O DNA Comercial tira o conhecimento da cabeça e coloca no processo.</div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">O método</div>
+  <h2>Método HELIX</h2>
+  <p>HELIX é a dupla hélice do DNA: cinco camadas que vão do mais pessoal (quem você é) ao mais operacional (como explicar um serviço do começo ao fim). Cada camada gera uma parte do manual.</p>
+  <div class="m-grid"><div class="m-cell"><div class="m-letter">H</div><div class="m-name">História do Profissional</div><div class="m-desc">Por que você faz o que faz — a origem da confiança.</div></div><div class="m-cell"><div class="m-letter">E</div><div class="m-name">Estrutura do Negócio</div><div class="m-desc">O que a clínica entrega além do profissional.</div></div><div class="m-cell"><div class="m-letter">L</div><div class="m-name">Linha de Serviços</div><div class="m-desc">O catálogo completo, com o porquê de cada item.</div></div><div class="m-cell"><div class="m-letter">I</div><div class="m-name">Item de Ouro</div><div class="m-desc">O serviço que merece todo o foco comercial.</div></div><div class="m-cell"><div class="m-letter">X</div><div class="m-name">X-Ray do Serviço</div><div class="m-desc">A ficha comercial completa do Item de Ouro.</div></div></div>
+  <p class="muted small">Regra de ouro: cada etapa pressupõe a anterior resolvida. Pular etapas é a forma mais rápida de concluir que “isso não funciona na minha área”.</p>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">H</div>
+    <div><div class="eyebrow">Etapa 1 de 5</div><h2>História do Profissional</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> registrar a trajetória, os valores inegociáveis e a experiência que o profissional quer proporcionar, em linguagem que a equipe consiga contar.</div>
+  <h4>Raciocínio</h4>
+  <p>Pessoas confiam em pessoas antes de confiar em procedimentos. Quando a recepção sabe contar por que o profissional escolheu aquela especialidade e quais marcos construiu, a conversa deixa de ser sobre preço e passa a ser sobre escolha. Valores inegociáveis também filtram pacientes: quem se identifica fica, quem não se identifica sai antes de virar problema.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Reserve 60 minutos sem interrupções e responda por escrito: por que escolhi a saúde? Por que esta especialidade? Que momento me fez ter certeza?</li><li>Liste de 3 a 5 valores inegociáveis — coisas que você não faz, mesmo que o paciente peça (ex.: não indicar procedimento sem necessidade).</li><li>Descreva a experiência que você quer que o paciente sinta, do primeiro contato ao pós-atendimento, em 5 adjetivos.</li><li>Liste os marcos da carreira em ordem: formação, títulos, cursos relevantes, número de atendimentos, publicações, palestras.</li><li>Escreva seu diferencial principal em uma frase e até três diferenciais secundários.</li><li>Transforme tudo em um parágrafo de apresentação de 30 segundos que a equipe possa falar ao telefone.</li></ul>
+  <div class="tool"><div class="tool-h">Ficha H · Perguntas de extração</div><ul><li>Por que escolheu a saúde? E por que esta especialidade?</li><li>Quais são os seus valores inegociáveis?</li><li>Que experiência você quer proporcionar aos pacientes?</li><li>Quais são os marcos da sua carreira?</li><li>Qual é o seu diferencial principal? E os secundários?</li></ul></div>
+  <div class="erro"><b>Erro comum:</b> escrever um currículo. A equipe não precisa repetir títulos; precisa contar uma história curta que gere confiança. Títulos entram como prova, não como abertura.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">E</div>
+    <div><div class="eyebrow">Etapa 2 de 5</div><h2>Estrutura do Negócio</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> documentar os marcos e os diferenciais da clínica como empresa — estrutura, equipe, processos e experiência.</div>
+  <h4>Raciocínio</h4>
+  <p>O paciente compra o profissional, mas convive com a clínica: recepção, ambiente, pontualidade, tecnologia, pós-atendimento. Esses elementos são provas concretas e, ao contrário de promessas de resultado, podem ser comunicados com segurança. Uma clínica que sabe descrever sua estrutura vende segurança mesmo quando o profissional não está presente.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Liste os marcos do negócio: fundação, mudanças de sede, ampliações, novas especialidades, número de pacientes atendidos.</li><li>Liste diferenciais estruturais verificáveis: equipamentos, protocolos de biossegurança, acessibilidade, estacionamento, tempo médio de espera.</li><li>Liste diferenciais de experiência: acompanhamento pós-procedimento, canal direto de dúvidas, lembretes, materiais educativos.</li><li>Separe o que é <b>diferencial real</b> (só você tem ou faz melhor) do que é <b>obrigação</b> (todo mundo deveria ter). Só o primeiro vai para o discurso.</li><li>Escreva uma frase-síntese do negócio: “Somos a clínica que…”.</li></ul>
+  <div class="tool"><div class="tool-h">Teste do diferencial</div><p>Para cada item da lista, pergunte: <b>“Um concorrente sério poderia dizer exatamente a mesma frase?”</b> Se sim, não é diferencial — é obrigação. Reescreva com um dado concreto ou descarte.</p></div>
+  <div class="erro"><b>Erro comum:</b> listar “atendimento humanizado” e “profissionais qualificados” como diferenciais. Todos dizem isso. Diferencial precisa ser específico, verificável e relevante para o paciente.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">L</div>
+    <div><div class="eyebrow">Etapa 3 de 5</div><h2>Linha de Serviços</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> construir um catálogo de todos os serviços realizados, com descrição simples, público e diferencial de cada um.</div>
+  <h4>Raciocínio</h4>
+  <p>Muitas clínicas perdem faturamento porque a própria equipe desconhece parte do que é oferecido. O paciente que veio para um serviço sai sem saber que existia outro que resolveria a próxima necessidade dele. O catálogo organiza a oferta e mostra onde estão as oportunidades de continuidade de cuidado.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Liste absolutamente todos os serviços realizados — consultas, procedimentos, exames, pacotes, acompanhamentos.</li><li>Para cada um, escreva em uma linha: o que é, para quem é e qual problema resolve, em linguagem de paciente.</li><li>Marque a relação entre serviços: qual costuma levar a qual (porta de entrada → continuidade).</li><li>Anote ticket médio, tempo de execução e frequência mensal de cada serviço.</li><li>Revise com a equipe: o que eles mais ouvem os pacientes perguntarem e não sabem responder?</li></ul>
+  <div class="tool"><div class="tool-h">Modelo de linha do catálogo</div><table><tr><th>Serviço</th><th>Para quem</th><th>Resolve</th><th>Leva a</th><th>Ticket</th></tr><tr><td>[Avaliação completa]</td><td>[perfil]</td><td>[dor]</td><td>[serviço seguinte]</td><td>R$ [x]</td></tr></table></div>
+  <div class="erro"><b>Erro comum:</b> descrever serviços com termos técnicos. O catálogo é para a equipe explicar ao paciente — se a recepção não consegue ler em voz alta sem tropeçar, reescreva.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">I</div>
+    <div><div class="eyebrow">Etapa 4 de 5</div><h2>Item de Ouro</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> escolher, com critério, o serviço que será a bandeira comercial da clínica nos próximos meses.</div>
+  <h4>Raciocínio</h4>
+  <p>Recurso é finito: tempo de equipe, verba de marketing, energia de conteúdo. Distribuir igualmente entre todos os serviços dilui o resultado. O Item de Ouro é o serviço que, ao mesmo tempo, tem demanda, margem, diferencial real e abre portas para outros cuidados. Ele não é o único que você faz — é o que você comunica primeiro.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li>Pegue o catálogo da Etapa L e dê nota de 1 a 5 em quatro critérios para cada serviço.</li><li><b>Demanda:</b> o paciente já procura por esse serviço pelo nome?</li><li><b>Margem:</b> o ticket paga o custo de aquisição e ainda sobra com folga?</li><li><b>Diferencial:</b> você tem técnica, experiência, estrutura ou resultado superior nele?</li><li><b>Porta:</b> quem entra por ele costuma consumir outros serviços depois?</li><li>Multiplique as notas. O maior produto é o seu Item de Ouro. Em caso de empate, escolha o de maior margem.</li></ul>
+  <div class="tool"><div class="tool-h">Matriz do Item de Ouro</div><table><tr><th>Serviço</th><th>Demanda</th><th>Margem</th><th>Diferencial</th><th>Porta</th><th>Produto</th></tr><tr><td>[Serviço A]</td><td>4</td><td>5</td><td>4</td><td>3</td><td><b>240</b></td></tr><tr><td>[Serviço B]</td><td>5</td><td>2</td><td>3</td><td>2</td><td>60</td></tr></table><p class='small muted'>Multiplicar (em vez de somar) penaliza serviços com uma nota muito baixa — exatamente o que queremos.</p></div>
+  <div class="erro"><b>Erro comum:</b> escolher o serviço de que você mais gosta ou o mais “moderno”. O Item de Ouro é uma decisão de negócio, baseada em números do financeiro e da agenda.</div>
+</section>
+<section class="step page-start">
+  <div class="step-head"><div class="step-letter">X</div>
+    <div><div class="eyebrow">Etapa 5 de 5</div><h2>X-Ray do Serviço</h2></div></div>
+  <div class="obj"><b>Objetivo:</b> desmontar o Item de Ouro em todas as informações que a equipe precisa para explicar, comparar, responder e fechar.</div>
+  <h4>Raciocínio</h4>
+  <p>É aqui que o manual vira ferramenta de venda. Cada campo da ficha responde a uma dúvida que, se não respondida, vira “vou pensar”. Transformação, público, como é feito, pré e pós, concorrentes, perguntas frequentes e objeções: quando tudo está escrito, a equipe deixa de improvisar e o paciente recebe a mesma qualidade de explicação, seja quem for que atenda.</p>
+  <h4>Como aplicar</h4>
+  <ul class="steps"><li><b>Público:</b> descreva o paciente ideal desse serviço — idade, momento de vida, o que já tentou.</li><li><b>Transformação:</b> o antes e o depois na vida do paciente (sem prometer resultado clínico).</li><li><b>Condições que trata:</b> lista das queixas e diagnósticos em que o serviço é indicado — e quando não é.</li><li><b>Como é feito:</b> passo a passo em linguagem simples, duração e número de sessões.</li><li><b>Pré e pós:</b> preparo necessário, cuidados depois, tempo de recuperação.</li><li><b>Concorrência:</b> serviços alternativos que o paciente considera e o diferencial dos concorrentes — para saber o que responder.</li><li><b>Perguntas frequentes e objeções clássicas:</b> peça à recepção para anotar por 30 dias tudo o que ouvem e escreva a resposta aprovada.</li></ul>
+  <div class="tool"><div class="tool-h">Os 12 campos do X-Ray</div><ul><li>Serviço · Público · Transformação · Condições tratadas</li><li>Como é realizado · Pré-realização · Pós-realização</li><li>Diferencial principal · Diferenciais secundários</li><li>Serviços concorrentes · Diferencial dos concorrentes</li><li>Perguntas frequentes · Objeções clássicas (com resposta)</li></ul></div>
+  <div class="erro"><b>Erro comum:</b> escrever a ficha uma vez e engavetar. O X-Ray é um documento vivo: toda objeção nova que a equipe ouvir entra na ficha na mesma semana.</div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Roadmap de implementação</div>
+  <h2>Do zero ao manual em 4 semanas</h2>
+  <p>Execute na ordem. Cada fase termina com um entregável concreto — se ele não existir, a fase não acabou.</p>
+  <div class="rm"><div class="rm-col"><div class="rm-per">Semana 1</div><div class="rm-nome">Extração pessoal e do negócio</div><ul class=""><li>Sessão de 60 min para a Ficha H</li><li>Lista de marcos e diferenciais do negócio</li><li>Teste do diferencial aplicado a cada item</li><li>Parágrafo de apresentação de 30 segundos</li></ul><div class="rm-ent"><b>Entregável:</b> Camadas H e E escritas e revisadas</div></div><div class="rm-col"><div class="rm-per">Semana 2</div><div class="rm-nome">Catálogo e escolha do Item de Ouro</div><ul class=""><li>Catálogo completo com ticket e frequência</li><li>Matriz do Item de Ouro preenchida com dados do financeiro</li><li>Recepção começa a anotar perguntas e objeções</li></ul><div class="rm-ent"><b>Entregável:</b> Item de Ouro definido e justificado</div></div><div class="rm-col"><div class="rm-per">Semanas 3–4</div><div class="rm-nome">X-Ray e treinamento</div><ul class=""><li>Ficha X completa com os 12 campos</li><li>Respostas aprovadas para FAQ e objeções</li><li>Treino de role-play com a equipe</li><li>Manual consolidado em PDF ou documento compartilhado</li></ul><div class="rm-ent"><b>Entregável:</b> Manual HELIX v1 em uso pela equipe</div></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Aplicabilidade</div>
+  <h2>Como aplicar na sua realidade</h2>
+  <h3>Por perfil de clínica</h3>
+  <table><thead><tr><th style="width:28%">Perfil</th><th>Como adaptar</th></tr></thead><tbody><tr><td><b>Consultório solo</b></td><td>O próprio profissional preenche H, E e I; a secretária participa de L e X anotando perguntas reais. O manual vira o roteiro de atendimento da secretária.</td></tr><tr><td><b>Clínica com 2 a 5 profissionais</b></td><td>Uma Ficha H por profissional e uma camada E única da clínica. Defina um Item de Ouro por profissional e um da clínica como marca.</td></tr><tr><td><b>Clínica multiespecialidade</b></td><td>Comece pela especialidade de maior faturamento. Crie um X-Ray por especialidade antes de padronizar o resto.</td></tr><tr><td><b>Odontologia de alto ticket</b></td><td>Detalhe muito bem pré, pós e alternativas (o paciente compara opções e orçamentos). Objeções financeiras merecem respostas com formas de pagamento claras.</td></tr><tr><td><b>Estética e dermatologia</b></td><td>Cuidado redobrado com promessa de resultado. Use a camada Transformação para falar de experiência e autoestima, nunca de garantia.</td></tr></tbody></table>
+  <h3 class="mt">Quem faz o quê</h3>
+  <table><thead><tr><th style="width:28%">Papel</th><th>Responsabilidade</th></tr></thead><tbody><tr><td><b>Profissional de saúde</b></td><td>Responde H, valida E e I, aprova todas as respostas técnicas do X-Ray.</td></tr><tr><td><b>Gestor(a) ou sócio(a)</b></td><td>Traz os números do financeiro para a Matriz do Item de Ouro e organiza o documento final.</td></tr><tr><td><b>Secretária / CRC</b></td><td>Anota perguntas e objeções por 30 dias e testa o manual nas conversas reais.</td></tr><tr><td><b>Marketing / agência</b></td><td>Usa o manual como briefing de conteúdo, anúncios e site.</td></tr></tbody></table>
+  <div class="keep"><h3 class="mt">Indicadores que provam que está funcionando</h3>
+  <table><thead><tr><th style="width:26%">Indicador</th><th>O que responde</th><th style="width:26%">Como medir</th></tr></thead><tbody><tr><td><b>Tempo de treinamento</b></td><td>Um novo colaborador aprende mais rápido?</td><td>Dias até atender sozinho</td></tr><tr><td><b>Conversão contato → agendamento</b></td><td>A equipe explica melhor e converte mais?</td><td>Agendamentos ÷ contatos, por mês</td></tr><tr><td><b>Participação do Item de Ouro</b></td><td>O foco está gerando venda do serviço certo?</td><td>% do faturamento vindo dele</td></tr><tr><td><b>Objeções sem resposta</b></td><td>O manual cobre o que o paciente pergunta?</td><td>Nº de objeções novas por mês</td></tr></tbody></table></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Modelos prontos</div>
+  <h2>Copie, adapte e use hoje</h2>
+  <p>Troque apenas o que está entre colchetes. Ajuste o tom ao seu público — e valide sempre com as regras do seu conselho profissional.</p>
+  <div class="script"><div class="script-h">Apresentação de 30 segundos (telefone/WhatsApp)</div><div class="script-b">“A Dra. [nome] é [especialidade] há [x] anos e escolheu essa área porque [motivo humano em uma frase]. Aqui na clínica, o foco dela é [Item de Ouro] para [público], e o que os pacientes mais comentam é [diferencial verificável]. Posso te explicar como funciona a primeira consulta?”</div><div class="script-obs"><b>Por que funciona:</b> abre com história, ancora no Item de Ouro e termina com uma pergunta que avança a conversa — sem falar de preço antes de gerar valor.</div></div><div class="script"><div class="script-h">Resposta à objeção “está caro”</div><div class="script-b">“Entendo, é um investimento importante e faz sentido avaliar com calma. Posso te contar o que está incluído? [Pré, execução, pós e acompanhamento do X-Ray]. Muitas pessoas comparam só o valor da sessão, mas o que faz diferença no resultado é [diferencial principal]. Qual parte você gostaria que eu detalhasse?”</div><div class="script-obs"><b>Por que funciona:</b> acolhe, reapresenta o valor com os campos do X-Ray e devolve a conversa com uma pergunta aberta.</div></div><div class="script"><div class="script-h">Pedido de anotação para a recepção (30 dias)</div><div class="script-b">“Durante este mês, anote em uma planilha toda pergunta e toda dúvida que um paciente fizer antes de marcar — exatamente com as palavras dele. Toda sexta, revisamos juntos e escrevemos a resposta oficial.”</div><div class="script-obs"><b>Por que funciona:</b> objeções reais valem mais do que qualquer lista pronta: são elas que estão travando a agenda.</div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Conexão com a coleção</div>
+  <h2>Leia em seguida</h2>
+  <div class="xref" style="--c:#0E9C9C">
+    <div class="xref-tag">Volume 04 · Coleção Acelerador de Clínicas</div>
+    <div class="xref-title">Recepção que Fatura</div>
+    <div class="xref-desc">Converta interessados em pacientes</div>
+  </div>
+  <h3>Como ele potencializa o que você acabou de aprender</h3>
+  <p>O DNA Comercial define <b>o que</b> dizer. O Volume 04, <b>Recepção que Fatura</b>, define <b>como, quando e em que ritmo</b> dizer. Ele pega o manual HELIX e o transforma em um processo comercial: resposta rápida ao interessado, qualificação respeitosa, acompanhamento com conteúdo de valor e fechamento sem pressão.</p><p>Sem o DNA, a recepção tem processo mas não tem conteúdo. Sem a Recepção que Fatura, o DNA tem conteúdo mas fica no papel. Juntos, eles formam a base comercial de qualquer clínica que queira crescer sem depender só do profissional.</p>
+  <h4>Combinações práticas</h4>
+  <ul class="arrow"><li>Use a Ficha X (FAQ e objeções) como banco de respostas da etapa de Engajamento do Volume 04.</li><li>Use o parágrafo de apresentação da Etapa H como abertura do primeiro contato telefônico.</li><li>Use a Matriz do Item de Ouro para decidir quais interessados recebem atendimento prioritário.</li></ul>
+  <div class="sec-ref" style="--c:#E0457B"><b>Também combina com o Volume 03 · Vitrine Magnética:</b> a Vitrine Magnética usa os diferenciais e as perguntas frequentes do manual como pauta de conteúdo e como base da bio do Instagram.</div>
+  <h3 class="mt">Onde este volume entra na jornada da clínica</h3>
+  <p class="muted">A coleção segue a ordem em que um paciente descobre, decide e volta. Cada volume resolve um elo — e conversa com os outros.</p>
+  <div class="journey"><div class="j-item on" style="--c:#7B4DE0"><span class="j-n">01</span><span class="j-t">DNA Comercial</span><span class="j-d">Defina o que vender e como explicar</span></div><div class="j-item" style="--c:#2F6BF0"><span class="j-n">02</span><span class="j-t">Referência na Cidade</span><span class="j-d">Seja encontrado no Google, nas IAs e na imprensa</span></div><div class="j-item" style="--c:#E0457B"><span class="j-n">03</span><span class="j-t">Vitrine Magnética</span><span class="j-d">Instagram que vende a consulta</span></div><div class="j-item" style="--c:#0E9C9C"><span class="j-n">04</span><span class="j-t">Recepção que Fatura</span><span class="j-d">Converta interessados em pacientes</span></div><div class="j-item" style="--c:#C8932B"><span class="j-n">05</span><span class="j-t">Consulta Assinatura</span><span class="j-d">Entregue uma consulta de alto valor</span></div><div class="j-item" style="--c:#E07B1F"><span class="j-n">06</span><span class="j-t">Resgate de Ouro</span><span class="j-d">Reative quem já confiou em você</span></div></div>
+</section>
+<section class="page-start">
+  <div class="eyebrow">Para terminar</div>
+  <h2>O que separa quem executa de quem só lê</h2>
+  <p>Nada neste volume é complicado. O que trava a maioria das clínicas não é falta de conhecimento — é que ninguém parou para escrever o que o profissional já sabe.</p><p>Reserve as horas. Preencha as fichas. Treine a equipe. A primeira versão do manual não precisa ser perfeita; precisa existir. A partir dela, cada conversa com paciente vira um teste e cada objeção nova vira uma resposta melhor.</p><p>Quando o DNA está escrito, a clínica para de depender de quem estiver de plantão para vender bem.</p>
+  <div class="compliance"><b>Nota ética e legal:</b> este material é educativo sobre gestão, comunicação e vendas em saúde. Não constitui orientação clínica nem parecer jurídico. Regras de publicidade variam por conselho (CFM, CFO, CFN, COFFITO e outros) e mudam com o tempo — confirme cada peça antes de publicar e trate dados de pacientes conforme a LGPD.</div>
+</section>
+<section class="back">
+  <div class="cover-shape s1"></div>
+  <div class="back-in">
+    <div class="brandmark big"><span class="bm-dot"></span>Acelerador de Clínicas</div>
+    <p class="back-tag">Estratégia, processo e vendas para clínicas e consultórios que querem crescer com previsibilidade — e sem perder a essência do cuidado.</p>
+    <div class="back-cta">
+      <div class="back-cta-h">Quer implementar o Método HELIX com acompanhamento?</div>
+      <p>Agende um diagnóstico da sua clínica: onde o faturamento está vazando, o que priorizar nos próximos 90 dias e qual volume da coleção aplicar primeiro.</p>
+      <div class="back-site">aceleradordeclinicas.com.br</div>
+    </div>
+    <div class="back-list"><span style="--c:#7B4DE0">01 · DNA Comercial</span><span style="--c:#2F6BF0">02 · Referência na Cidade</span><span style="--c:#E0457B">03 · Vitrine Magnética</span><span style="--c:#0E9C9C">04 · Recepção que Fatura</span><span style="--c:#C8932B">05 · Consulta Assinatura</span><span style="--c:#E07B1F">06 · Resgate de Ouro</span></div>
+    <div class="back-sig">© Acelerador de Clínicas · Coleção Acelerador de Clínicas · Volume 01 — DNA Comercial</div>
+  </div>
+</section></body></html>
